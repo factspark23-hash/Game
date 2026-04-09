@@ -850,9 +850,193 @@ body::after {
 
 .badge.earned { border-color: var(--accent); color: var(--accent); background: rgba(255,230,0,0.1); }
 .badge.locked { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.2); }
+
+/* Level Progress Bar */
+#level-progress-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: rgba(255,255,255,0.05);
+  z-index: 100;
+}
+
+#level-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+  transition: width 0.8s ease;
+  box-shadow: 0 0 10px var(--primary);
+}
+
+#level-progress-dots {
+  position: absolute;
+  top: -8px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1%;
+}
+
+.progress-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: all 0.3s;
+}
+
+.progress-dot.current {
+  background: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+  animation: dotPulse 1s infinite;
+}
+
+.progress-dot.completed {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.progress-dot.failed {
+  background: var(--danger);
+  border-color: var(--danger);
+}
+
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+}
+
+/* Pause Overlay */
+#pause-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,10,15,0.92);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9990;
+  animation: fadeIn 0.3s ease;
+}
+
+/* Skill Rating */
+.skill-rating {
+  text-align: center;
+  margin: 1rem 0;
+}
+
+.skill-rating .iq-score {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 4rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--primary), var(--accent), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.skill-rating .iq-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.3em;
+  margin-top: 0.3rem;
+}
+
+.skill-bars {
+  max-width: 400px;
+  margin: 1rem auto;
+}
+
+.skill-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.7rem;
+}
+
+.skill-bar-row .skill-name {
+  width: 100px;
+  text-align: right;
+  color: rgba(255,255,255,0.5);
+}
+
+.skill-bar-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s ease;
+}
+
+.skill-bar-row .skill-val {
+  width: 30px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.65rem;
+}
+
+/* Animated grid background */
+#bg-grid {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.06;
+  background-image: 
+    linear-gradient(rgba(0,240,255,0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,240,255,0.3) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridScroll 20s linear infinite;
+}
+
+@keyframes gridScroll {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(40px, 40px); }
+}
+
+/* Matrix rain effect */
+#matrix-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.04;
+}
+
+/* Share button */
+.share-btn {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: rgba(255,255,255,0.6);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.share-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
 </style>
 </head>
 <body>
+
+<!-- Animated Background -->
+<canvas id="matrix-canvas"></canvas>
+<div id="bg-grid"></div>
 
 <div id="app">
   <!-- Particles -->
@@ -930,9 +1114,27 @@ body::after {
     </div>
     <div class="timer" id="hud-timer">--:--</div>
     <div class="hud-right">
+      <button id="hud-sound" onclick="toggleSound()" style="background:none;border:1px solid var(--glass-border);color:var(--primary);padding:0.3rem 0.6rem;font-size:0.9rem;cursor:pointer;border-radius:4px;">🔊</button>
+      <button id="hud-pause" onclick="togglePause()" style="background:none;border:1px solid var(--glass-border);color:var(--accent);padding:0.3rem 0.6rem;font-size:0.8rem;cursor:pointer;border-radius:4px;font-family:Orbitron;">⏸</button>
       <div class="combo-display" id="hud-combo"></div>
       <div class="score-display" id="hud-score">0</div>
       <div class="lives" id="hud-lives">♥ ♥ ♥</div>
+    </div>
+  </div>
+  
+  <!-- Level Progress Bar -->
+  <div id="level-progress-bar" style="display:none;">
+    <div id="level-progress-fill"></div>
+    <div id="level-progress-dots"></div>
+  </div>
+  
+  <!-- Pause Overlay -->
+  <div id="pause-overlay" style="display:none;">
+    <div style="text-align:center;">
+      <div style="font-family:Orbitron;font-size:3rem;color:var(--accent);margin-bottom:1rem;">PAUSED</div>
+      <div style="color:rgba(255,255,255,0.5);margin-bottom:2rem;">Take a breath. Your brain needs it.</div>
+      <button class="btn btn-small" onclick="togglePause()">RESUME</button>
+      <button class="btn btn-small" onclick="restartGame()" style="margin-left:0.5rem;background:linear-gradient(135deg,var(--danger),#ff6600);">QUIT</button>
     </div>
   </div>
 
@@ -944,22 +1146,28 @@ body::after {
     <h2>SYSTEM FAILURE</h2>
     <div class="fail-msg" id="fail-msg">Your mind collapsed.</div>
     <div style="margin-top:1rem; color:rgba(255,255,255,0.3); font-size:0.8rem;" id="fail-stats"></div>
+    <div id="fail-skill-rating"></div>
     <div class="achievement-list" id="fail-badges"></div>
-    <button class="btn btn-small" onclick="retryLevel()" style="margin-top:1.5rem; margin-right:0.5rem;">RETRY</button>
-    <button class="btn btn-small" onclick="restartGame()" style="margin-top:1.5rem; background:linear-gradient(135deg,var(--danger),#ff6600);">RESTART</button>
+    <button class="share-btn" onclick="shareResults()" style="margin-top:1rem;">📋 SHARE RESULTS</button>
+    <div style="margin-top:1rem;">
+      <button class="btn btn-small" onclick="retryLevel()">RETRY</button>
+      <button class="btn btn-small" onclick="restartGame()" style="margin-left:0.5rem;background:linear-gradient(135deg,var(--danger),#ff6600);">RESTART</button>
+    </div>
   </div>
 
   <!-- Win Screen -->
   <div id="win-screen" style="display:none">
     <h2>MIND CONQUERED</h2>
     <div style="color:rgba(255,255,255,0.5); margin-top:1rem;">You are the 1%.</div>
+    <div id="win-skill-rating"></div>
     <div class="stats" id="win-stats"></div>
     <div class="achievement-list" id="win-badges" style="margin-top:1rem;"></div>
     <div style="margin-top:1.5rem;">
       <div class="panel-title" style="margin-bottom:0.5rem;">🏆 LEADERBOARD</div>
       <div class="leaderboard" id="win-leaderboard"></div>
     </div>
-    <button class="btn btn-small" onclick="restartGame()" style="margin-top:2rem;">PLAY AGAIN</button>
+    <button class="share-btn" onclick="shareResults()">📋 SHARE RESULTS</button>
+    <div><button class="btn btn-small" onclick="restartGame()" style="margin-top:1.5rem;">PLAY AGAIN</button></div>
   </div>
 </div>
 
@@ -1265,6 +1473,7 @@ function startTimer(seconds) {
   updateTimerDisplay();
   clearInterval(state.timerInterval);
   state.timerInterval = setInterval(() => {
+    if (isPaused) return;
     state.timer--;
     updateTimerDisplay();
     if (state.timer <= 10) {
@@ -1307,8 +1516,10 @@ function startGame() {
   state.achievements = new Set();
   state.totalCorrect = 0;
   state.totalWrong = 0;
+  isPaused = false;
   updateScoreDisplay();
   updateComboDisplay();
+  initProgressBar();
   startAmbient();
   nextLevel();
 }
@@ -1376,6 +1587,7 @@ function startLevel(level) {
   ];
   document.getElementById('hud-name').textContent = names[level];
   updateLives();
+  updateProgressBar(level);
   showScreen('game-area');
 
   const area = document.getElementById('game-area');
@@ -1398,10 +1610,12 @@ function failLevel(reason) {
   screenShake();
   spawnFailParticles();
   breakCombo();
+  markLevelFailed(state.level);
   
   const elapsed = Math.round((Date.now() - state.levelStartTime) / 1000);
   document.getElementById('fail-msg').textContent = reason || 'Your mind collapsed.';
   document.getElementById('fail-stats').textContent = `Time: ${elapsed}s | Lives: ${state.lives} | Score: ${state.score}`;
+  renderSkillRating('fail-skill-rating');
   renderBadges('fail-badges');
   showScreen('fail-screen');
 }
@@ -1439,6 +1653,8 @@ function winGame() {
   unlockAchievement('BRAIN MELTER', 'Complete all 15 levels');
   
   const board = saveToLeaderboard();
+  
+  renderSkillRating('win-skill-rating');
   
   const stats = document.getElementById('win-stats');
   let html = `<div>Total time: ${state.totalTime}s | Score: ${state.score} | Max Combo: x${state.maxCombo}</div>`;
@@ -3342,10 +3558,217 @@ function level15() {
   startTimer(120);
 }
 
+// ===== MATRIX RAIN BACKGROUND =====
+(function initMatrix() {
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  
+  const chars = 'MIND01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+  const fontSize = 14;
+  const columns = Math.floor(canvas.width / fontSize);
+  const drops = Array(columns).fill(1);
+  
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00f0ff';
+    ctx.font = `${fontSize}px monospace`;
+    
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+  
+  setInterval(drawMatrix, 50);
+  
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+})();
+
+// ===== PAUSE SYSTEM =====
+let isPaused = false;
+let pausedTimerValue = 0;
+
+function togglePause() {
+  if (state.phase !== 'playing') return;
+  
+  isPaused = !isPaused;
+  const overlay = document.getElementById('pause-overlay');
+  const btn = document.getElementById('hud-pause');
+  
+  if (isPaused) {
+    pausedTimerValue = state.timer;
+    clearInterval(state.timerInterval);
+    overlay.style.display = '';
+    btn.textContent = '▶';
+  } else {
+    overlay.style.display = 'none';
+    btn.textContent = '⏸';
+    state.timer = pausedTimerValue;
+    state.timerInterval = setInterval(() => {
+      if (isPaused) return;
+      state.timer--;
+      updateTimerDisplay();
+      if (state.timer <= 10) {
+        document.getElementById('hud-timer').classList.add('danger');
+      }
+      if (state.timer <= 0) {
+        clearInterval(state.timerInterval);
+        failLevel('Time expired.');
+      }
+    }, 1000);
+  }
+}
+
+// ===== SOUND TOGGLE =====
+let soundEnabled = true;
+
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  document.getElementById('hud-sound').textContent = soundEnabled ? '🔊' : '🔇';
+}
+
+// Override playTone to respect sound toggle
+const originalPlayTone = playTone;
+playTone = function(freq, duration, type) {
+  if (soundEnabled) originalPlayTone(freq, duration, type);
+};
+
+// ===== LEVEL PROGRESS BAR =====
+function initProgressBar() {
+  const bar = document.getElementById('level-progress-bar');
+  const dots = document.getElementById('level-progress-dots');
+  bar.style.display = '';
+  dots.innerHTML = '';
+  
+  for (let i = 1; i <= 15; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'progress-dot';
+    dot.id = `progress-dot-${i}`;
+    dot.title = `Level ${i}`;
+    dots.appendChild(dot);
+  }
+}
+
+function updateProgressBar(level, status) {
+  const fill = document.getElementById('level-progress-fill');
+  fill.style.width = `${((level - 1) / 15) * 100}%`;
+  
+  for (let i = 1; i <= 15; i++) {
+    const dot = document.getElementById(`progress-dot-${i}`);
+    if (!dot) continue;
+    dot.classList.remove('current', 'completed', 'failed');
+    if (i < level) dot.classList.add('completed');
+    if (i === level) dot.classList.add('current');
+  }
+}
+
+function markLevelFailed(level) {
+  const dot = document.getElementById(`progress-dot-${level}`);
+  if (dot) {
+    dot.classList.remove('current');
+    dot.classList.add('failed');
+  }
+}
+
+// ===== SKILL RATING =====
+function calculateSkillRating() {
+  const accuracy = (state.totalCorrect + state.totalWrong) > 0 
+    ? state.totalCorrect / (state.totalCorrect + state.totalWrong) : 0;
+  const speedScore = Math.max(0, 100 - (state.totalTime / 10));
+  const comboScore = state.maxCombo * 10;
+  const levelScore = state.level * 50;
+  const scoreBonus = state.score / 50;
+  
+  const raw = (accuracy * 200) + speedScore + comboScore + levelScore + scoreBonus;
+  const iq = Math.round(Math.max(70, Math.min(200, 70 + raw / 5)));
+  
+  let label = 'AVERAGE';
+  let color = 'rgba(255,255,255,0.5)';
+  if (iq >= 180) { label = 'LEGENDARY'; color = 'var(--accent)'; }
+  else if (iq >= 160) { label = 'GENIUS'; color = 'var(--secondary)'; }
+  else if (iq >= 140) { label = 'ELITE'; color = 'var(--primary)'; }
+  else if (iq >= 120) { label = 'SHARP'; color = 'var(--success)'; }
+  else if (iq >= 100) { label = 'CAPABLE'; color = 'rgba(255,255,255,0.6)'; }
+  else if (iq >= 80) { label = 'DEVELOPING'; color = 'rgba(255,255,255,0.4)'; }
+  
+  // Skill breakdowns
+  const memory = Math.min(100, Math.round((state.level >= 5 ? 40 : state.level * 8) + accuracy * 30 + (state.maxCombo > 5 ? 20 : 0)));
+  const logic = Math.min(100, Math.round((state.level >= 3 ? 30 : state.level * 10) + accuracy * 40 + (state.level >= 8 ? 20 : 0)));
+  const speed = Math.min(100, Math.round(speedScore + comboScore / 3));
+  const focus = Math.min(100, Math.round(accuracy * 60 + (state.maxCombo > 10 ? 30 : state.maxCombo * 3)));
+  const combat = Math.min(100, Math.round((state.level >= 11 ? 50 : (state.level >= 10 ? 20 : 0)) + (state.level >= 15 ? 40 : 0) + accuracy * 10));
+  
+  return { iq, label, color, skills: { memory, logic, speed, focus, combat } };
+}
+
+function renderSkillRating(containerId) {
+  const { iq, label, color, skills } = calculateSkillRating();
+  const el = document.getElementById(containerId);
+  
+  const skillColors = {
+    memory: 'var(--primary)',
+    logic: 'var(--secondary)',
+    speed: 'var(--accent)',
+    focus: 'var(--success)',
+    combat: 'var(--danger)'
+  };
+  
+  el.innerHTML = `
+    <div class="skill-rating">
+      <div class="iq-score">${iq}</div>
+      <div class="iq-label" style="color:${color};">${label}</div>
+    </div>
+    <div class="skill-bars">
+      ${Object.entries(skills).map(([name, val]) => `
+        <div class="skill-bar-row">
+          <span class="skill-name">${name.toUpperCase()}</span>
+          <div class="skill-bar-track">
+            <div class="skill-bar-fill" style="width:${val}%;background:${skillColors[name]};"></div>
+          </div>
+          <span class="skill-val" style="color:${skillColors[name]};">${val}</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+// ===== SHARE RESULTS =====
+function shareResults() {
+  const { iq, label } = calculateSkillRating();
+  const text = `🧠 MIND — The Brain Melter\n` +
+    `Score: ${state.score} | Level: ${state.level}/15\n` +
+    `IQ Rating: ${iq} (${label})\n` +
+    `Max Combo: x${state.maxCombo}\n` +
+    `Achievements: ${state.achievements.size}/12\n\n` +
+    `Can you beat me? 🧠⚡\n` +
+    `factspark23-hash.github.io/Game`;
+  
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Results copied to clipboard!');
+    });
+  } else {
+    prompt('Copy your results:', text);
+  }
+}
+
 // ===== KEYBOARD SHORTCUTS =====
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && state.phase === 'playing') {
     if (confirm('Quit current game?')) restartGame();
+  }
+  if ((e.key === 'p' || e.key === 'P') && state.phase === 'playing') {
+    togglePause();
   }
 });
 
