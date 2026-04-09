@@ -1,0 +1,2153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MIND — The Brain Melter</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap');
+
+:root {
+  --bg: #0a0a0f;
+  --primary: #00f0ff;
+  --secondary: #ff00aa;
+  --accent: #ffe600;
+  --danger: #ff3333;
+  --success: #00ff88;
+  --glass: rgba(255,255,255,0.05);
+  --glass-border: rgba(255,255,255,0.1);
+}
+
+body {
+  background: var(--bg);
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* Animated background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(0,240,255,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(255,0,170,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(255,230,0,0.04) 0%, transparent 50%);
+  animation: bgPulse 8s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+@keyframes bgPulse {
+  0% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+/* Scanlines */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.15) 2px,
+    rgba(0,0,0,0.15) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+#app {
+  position: relative;
+  z-index: 1;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== TITLE SCREEN ===== */
+#title-screen {
+  text-align: center;
+  animation: fadeIn 1s ease;
+}
+
+#title-screen h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.3em;
+  text-shadow: 0 0 60px rgba(0,240,255,0.3);
+  animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.3); }
+}
+
+#title-screen .subtitle {
+  font-size: clamp(0.7rem, 2vw, 1rem);
+  color: rgba(255,255,255,0.4);
+  margin-top: 1rem;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+}
+
+#title-screen .warning {
+  margin-top: 2rem;
+  padding: 1rem 2rem;
+  border: 1px solid var(--danger);
+  background: rgba(255,51,51,0.1);
+  color: var(--danger);
+  font-size: 0.8rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  animation: warningPulse 2s ease-in-out infinite;
+}
+
+@keyframes warningPulse {
+  0%, 100% { border-color: var(--danger); }
+  50% { border-color: transparent; }
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 2rem;
+  padding: 1rem 3rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--bg);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 40px rgba(0,240,255,0.4);
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+  animation: btnShine 3s infinite;
+}
+
+@keyframes btnShine {
+  0% { transform: translateX(-100%); }
+  50%, 100% { transform: translateX(100%); }
+}
+
+.btn-small {
+  padding: 0.6rem 1.5rem;
+  font-size: 0.8rem;
+}
+
+/* ===== HUD ===== */
+#hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(10,10,15,0.9);
+  border-bottom: 1px solid var(--glass-border);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.8rem;
+}
+
+#hud .level-info {
+  color: var(--primary);
+}
+
+#hud .level-name {
+  color: var(--secondary);
+  margin-left: 1rem;
+  font-size: 0.7rem;
+}
+
+#hud .timer {
+  color: var(--accent);
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+#hud .timer.danger { color: var(--danger); animation: timerDanger 0.5s infinite; }
+
+@keyframes timerDanger {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+#hud .lives {
+  color: var(--danger);
+  font-size: 1.1rem;
+}
+
+/* ===== GAME AREA ===== */
+#game-area {
+  width: 90vw;
+  max-width: 800px;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.level-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  color: var(--primary);
+  text-align: center;
+}
+
+.level-desc {
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  max-width: 600px;
+  line-height: 1.6;
+  font-size: 0.85rem;
+}
+
+.level-rules {
+  color: var(--accent);
+  text-align: center;
+  font-size: 0.75rem;
+  padding: 0.8rem 1.5rem;
+  border: 1px solid rgba(255,230,0,0.2);
+  background: rgba(255,230,0,0.05);
+  max-width: 600px;
+}
+
+/* Grid styles */
+.game-grid {
+  display: grid;
+  gap: 4px;
+}
+
+.grid-cell {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.grid-cell:hover {
+  border-color: var(--primary);
+  background: rgba(0,240,255,0.1);
+}
+
+.grid-cell.active {
+  background: rgba(0,240,255,0.2);
+  border-color: var(--primary);
+  box-shadow: 0 0 15px rgba(0,240,255,0.3);
+}
+
+.grid-cell.correct {
+  background: rgba(0,255,136,0.2);
+  border-color: var(--success);
+}
+
+.grid-cell.wrong {
+  background: rgba(255,51,51,0.2);
+  border-color: var(--danger);
+  animation: shake 0.3s;
+}
+
+.grid-cell.locked {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
+  cursor: default;
+  color: rgba(255,255,255,0.5);
+}
+
+.grid-cell.empty {
+  background: rgba(255,0,170,0.1);
+  border-color: var(--secondary);
+  border-style: dashed;
+}
+
+.grid-cell.empty:hover {
+  background: rgba(255,0,170,0.2);
+}
+
+.grid-cell.flash {
+  animation: cellFlash 0.5s;
+}
+
+@keyframes cellFlash {
+  0% { background: var(--primary); transform: scale(1.1); }
+  100% { background: var(--glass); transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+/* Sequence display */
+.sequence-display {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.seq-item {
+  width: 60px;
+  height: 60px;
+  border-radius: 8px;
+  border: 2px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.seq-item:hover { transform: scale(1.1); }
+.seq-item.lit { box-shadow: 0 0 30px currentColor; transform: scale(1.15); }
+
+/* Color buttons */
+.color-btn {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.2);
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+
+.color-btn:hover { transform: scale(1.15); border-color: rgba(255,255,255,0.6); }
+.color-btn:active { transform: scale(0.95); }
+.color-btn.lit::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  background: inherit;
+  filter: blur(15px);
+  opacity: 0.6;
+  z-index: -1;
+}
+
+/* Input fields */
+.game-input {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 1.2rem;
+  padding: 0.8rem 1.5rem;
+  text-align: center;
+  outline: none;
+  width: 200px;
+  transition: border-color 0.3s;
+}
+
+.game-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 20px rgba(0,240,255,0.2);
+}
+
+/* Options / choices */
+.choices {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.choice-btn {
+  padding: 0.8rem 1.5rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 80px;
+  text-align: center;
+}
+
+.choice-btn:hover {
+  border-color: var(--primary);
+  background: rgba(0,240,255,0.1);
+}
+
+.choice-btn.selected {
+  border-color: var(--primary);
+  background: rgba(0,240,255,0.2);
+  box-shadow: 0 0 15px rgba(0,240,255,0.2);
+}
+
+/* Info boxes */
+.info-box {
+  padding: 0.6rem 1.2rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+}
+
+.info-box.highlight {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Multi-panel layout */
+.panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  width: 100%;
+  max-width: 700px;
+}
+
+.panel {
+  padding: 1rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  text-align: center;
+}
+
+.panel-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  color: var(--secondary);
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.2em;
+}
+
+/* ===== TRANSITION SCREEN ===== */
+#transition-screen {
+  text-align: center;
+  animation: fadeIn 0.5s;
+}
+
+#transition-screen .level-num {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(4rem, 12vw, 10rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+#transition-screen .level-label {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.2rem;
+  color: var(--accent);
+  letter-spacing: 0.3em;
+}
+
+#transition-screen .level-subtitle {
+  color: rgba(255,255,255,0.4);
+  margin-top: 1rem;
+  font-size: 0.8rem;
+}
+
+/* ===== FAIL SCREEN ===== */
+#fail-screen {
+  text-align: center;
+  animation: fadeIn 0.5s;
+}
+
+#fail-screen h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3rem;
+  color: var(--danger);
+}
+
+#fail-screen .fail-msg {
+  color: rgba(255,255,255,0.5);
+  margin-top: 1rem;
+}
+
+/* ===== WIN SCREEN ===== */
+#win-screen {
+  text-align: center;
+  animation: fadeIn 1s;
+}
+
+#win-screen h2 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent), var(--success), var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+#win-screen .stats {
+  margin-top: 2rem;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.85rem;
+  line-height: 2;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fadeIn 0.5s ease; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .grid-cell { width: 40px; height: 40px; font-size: 0.9rem; }
+  .seq-item { width: 50px; height: 50px; }
+  .color-btn { width: 55px; height: 55px; }
+  .panels { grid-template-columns: 1fr; }
+  #hud { padding: 0.6rem 1rem; font-size: 0.65rem; }
+}
+
+/* Puzzle piece / shapes */
+.shape-canvas {
+  border: 1px solid var(--glass-border);
+  background: rgba(0,0,0,0.3);
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  max-width: 400px;
+  height: 4px;
+  background: var(--glass);
+  margin-top: 1rem;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+  transition: width 0.5s;
+}
+
+/* Number pad for mobile */
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  max-width: 240px;
+}
+
+.numpad-btn {
+  padding: 0.8rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+
+.numpad-btn:hover { border-color: var(--primary); background: rgba(0,240,255,0.1); }
+.numpad-btn:active { transform: scale(0.95); }
+
+/* Stroop colors */
+.stroop-word {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  user-select: none;
+  margin: 1rem 0;
+  transition: all 0.2s;
+}
+
+/* Connection lines */
+.connection-area {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  height: 300px;
+}
+
+/* Matrix display */
+.matrix-display {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.4rem;
+  line-height: 1.8;
+  letter-spacing: 0.5em;
+  color: var(--primary);
+  white-space: pre;
+}
+
+/* Countdown overlay */
+.countdown-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,10,15,0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 8rem;
+  font-weight: 900;
+  color: var(--primary);
+  animation: countdownPop 0.5s ease;
+}
+
+@keyframes countdownPop {
+  0% { transform: scale(2); opacity: 0; }
+  50% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  background: rgba(10,10,15,0.95);
+  border: 1px solid var(--primary);
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+  color: var(--primary);
+  pointer-events: none;
+  z-index: 200;
+}
+
+/* Dual task separator */
+.dual-separator {
+  width: 2px;
+  background: linear-gradient(180deg, transparent, var(--secondary), transparent);
+  align-self: stretch;
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- Title Screen -->
+  <div id="title-screen">
+    <h1>MIND</h1>
+    <div class="subtitle">the brain melter</div>
+    <div class="warning">
+      ⚠️ WARNING: This game activates multiple cognitive functions simultaneously.<br>
+      10 levels. Brutal from level 1. Less than 1% will finish.<br>
+      You have been warned.
+    </div>
+    <button class="btn" onclick="startGame()">BEGIN</button>
+  </div>
+
+  <!-- Transition Screen -->
+  <div id="transition-screen" style="display:none">
+    <div class="level-num" id="trans-level">1</div>
+    <div class="level-label" id="trans-label">LOADING</div>
+    <div class="level-subtitle" id="trans-sub"></div>
+  </div>
+
+  <!-- Game HUD -->
+  <div id="hud" style="display:none">
+    <div>
+      <span class="level-info">LEVEL <span id="hud-level">1</span>/10</span>
+      <span class="level-name" id="hud-name"></span>
+    </div>
+    <div class="timer" id="hud-timer">--:--</div>
+    <div class="lives" id="hud-lives">♥ ♥ ♥</div>
+  </div>
+
+  <!-- Game Area -->
+  <div id="game-area" style="display:none"></div>
+
+  <!-- Fail Screen -->
+  <div id="fail-screen" style="display:none">
+    <h2>SYSTEM FAILURE</h2>
+    <div class="fail-msg" id="fail-msg">Your mind collapsed.</div>
+    <div style="margin-top:1rem; color:rgba(255,255,255,0.3); font-size:0.8rem;" id="fail-stats"></div>
+    <button class="btn btn-small" onclick="retryLevel()" style="margin-top:1.5rem; margin-right:0.5rem;">RETRY</button>
+    <button class="btn btn-small" onclick="restartGame()" style="margin-top:1.5rem; background:linear-gradient(135deg,var(--danger),#ff6600);">RESTART</button>
+  </div>
+
+  <!-- Win Screen -->
+  <div id="win-screen" style="display:none">
+    <h2>MIND CONQUERED</h2>
+    <div style="color:rgba(255,255,255,0.5); margin-top:1rem;">You are the 1%.</div>
+    <div class="stats" id="win-stats"></div>
+    <button class="btn btn-small" onclick="restartGame()" style="margin-top:2rem;">PLAY AGAIN</button>
+  </div>
+</div>
+
+<script>
+// ===== GAME STATE =====
+const state = {
+  level: 0,
+  lives: 3,
+  timer: 0,
+  timerInterval: null,
+  timeLimit: 0,
+  levelStartTime: 0,
+  totalTime: 0,
+  levelTimes: [],
+  attempts: [],
+  currentLevelData: null,
+  phase: 'title', // title, transition, playing, fail, win
+  inputLocked: false
+};
+
+// ===== AUDIO ENGINE =====
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playTone(freq, duration = 0.2, type = 'sine') {
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+const NOTES = {
+  C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23,
+  G4: 392.00, A4: 440.00, B4: 493.88, C5: 523.25,
+  D5: 587.33, E5: 659.25
+};
+
+function playSuccess() { playTone(NOTES.E5, 0.15); setTimeout(() => playTone(NOTES.C5, 0.3), 150); }
+function playFail() { playTone(200, 0.4, 'sawtooth'); }
+function playClick() { playTone(800, 0.05, 'square'); }
+function playLevelUp() {
+  [NOTES.C4, NOTES.E4, NOTES.G4, NOTES.C5].forEach((n, i) => {
+    setTimeout(() => playTone(n, 0.2), i * 120);
+  });
+}
+
+// ===== SCREEN MANAGEMENT =====
+function showScreen(id) {
+  ['title-screen', 'transition-screen', 'game-area', 'fail-screen', 'win-screen', 'hud'].forEach(s => {
+    document.getElementById(s).style.display = 'none';
+  });
+  document.getElementById(id).style.display = '';
+  if (id === 'game-area') document.getElementById('hud').style.display = '';
+}
+
+// ===== TIMER =====
+function startTimer(seconds) {
+  state.timeLimit = seconds;
+  state.timer = seconds;
+  updateTimerDisplay();
+  clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(() => {
+    state.timer--;
+    updateTimerDisplay();
+    if (state.timer <= 10) {
+      document.getElementById('hud-timer').classList.add('danger');
+    }
+    if (state.timer <= 0) {
+      clearInterval(state.timerInterval);
+      failLevel('Time expired.');
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  clearInterval(state.timerInterval);
+  document.getElementById('hud-timer').classList.remove('danger');
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(state.timer / 60);
+  const s = state.timer % 60;
+  document.getElementById('hud-timer').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+
+// ===== LIVES =====
+function updateLives() {
+  document.getElementById('hud-lives').textContent = '♥ '.repeat(state.lives).trim() || '💀';
+}
+
+// ===== GAME FLOW =====
+function startGame() {
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  state.level = 0;
+  state.lives = 3;
+  state.totalTime = 0;
+  state.levelTimes = [];
+  state.attempts = [];
+  nextLevel();
+}
+
+function restartGame() {
+  startGame();
+}
+
+function retryLevel() {
+  if (state.lives <= 0) {
+    alert('No lives remaining. Restarting...');
+    restartGame();
+    return;
+  }
+  showTransition(state.level);
+}
+
+function nextLevel() {
+  state.level++;
+  if (state.level > 10) {
+    winGame();
+    return;
+  }
+  showTransition(state.level);
+}
+
+function showTransition(level) {
+  state.phase = 'transition';
+  const names = [
+    '', 'NEURAL STORM', 'DUAL CORTEX', 'LOGIC WEB', 'SPATIAL HELL',
+    'MEMORY OVERLOAD', 'STROOP INFERNO', 'ATTENTION SPLIT', 'PATTERN MAZE',
+    'SYNAPSE FIRE', 'OMEGA MIND'
+  ];
+  const subs = [
+    '', 'Memory + Math under pressure', 'Two sequences, two modalities',
+    'Interconnected logic puzzles', 'Mental rotation + tracking',
+    'Remember everything. Everything.', 'Inhibit the automatic response',
+    'Your brain has two halves. Use both.', 'Decode the impossible pattern',
+    'Combine sub-problems in real-time', 'All skills. Simultaneously. No mercy.'
+  ];
+  document.getElementById('trans-level').textContent = level;
+  document.getElementById('trans-label').textContent = names[level];
+  document.getElementById('trans-sub').textContent = subs[level];
+  showScreen('transition-screen');
+
+  setTimeout(() => {
+    startLevel(level);
+  }, 2500);
+}
+
+function startLevel(level) {
+  state.phase = 'playing';
+  state.levelStartTime = Date.now();
+  state.inputLocked = false;
+  document.getElementById('hud-level').textContent = level;
+  const names = [
+    '', 'NEURAL STORM', 'DUAL CORTEX', 'LOGIC WEB', 'SPATIAL HELL',
+    'MEMORY OVERLOAD', 'STROOP INFERNO', 'ATTENTION SPLIT', 'PATTERN MAZE',
+    'SYNAPSE FIRE', 'OMEGA MIND'
+  ];
+  document.getElementById('hud-name').textContent = names[level];
+  updateLives();
+  showScreen('game-area');
+
+  const area = document.getElementById('game-area');
+  area.innerHTML = '';
+
+  const levels = [
+    null, level1, level2, level3, level4, level5,
+    level6, level7, level8, level9, level10
+  ];
+  levels[level]();
+}
+
+function failLevel(reason) {
+  state.phase = 'fail';
+  stopTimer();
+  state.lives--;
+  updateLives();
+  playFail();
+  const elapsed = Math.round((Date.now() - state.levelStartTime) / 1000);
+  document.getElementById('fail-msg').textContent = reason || 'Your mind collapsed.';
+  document.getElementById('fail-stats').textContent = `Time: ${elapsed}s | Lives: ${state.lives}`;
+  showScreen('fail-screen');
+}
+
+function completeLevel() {
+  state.phase = 'complete';
+  stopTimer();
+  playSuccess();
+  const elapsed = Math.round((Date.now() - state.levelStartTime) / 1000);
+  state.levelTimes.push(elapsed);
+  state.totalTime += elapsed;
+  nextLevel();
+}
+
+function winGame() {
+  state.phase = 'win';
+  playLevelUp();
+  const stats = document.getElementById('win-stats');
+  let html = `<div>Total time: ${state.totalTime}s</div>`;
+  state.levelTimes.forEach((t, i) => {
+    html += `<div>Level ${i+1}: ${t}s</div>`;
+  });
+  stats.innerHTML = html;
+  showScreen('win-screen');
+}
+
+// ===== UTILITY =====
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function countdown(seconds, callback) {
+  const overlay = document.createElement('div');
+  overlay.className = 'countdown-overlay';
+  overlay.textContent = seconds;
+  document.body.appendChild(overlay);
+  let count = seconds;
+  const interval = setInterval(() => {
+    count--;
+    if (count <= 0) {
+      clearInterval(interval);
+      overlay.remove();
+      callback();
+    } else {
+      overlay.textContent = count;
+      overlay.style.animation = 'none';
+      overlay.offsetHeight;
+      overlay.style.animation = 'countdownPop 0.5s ease';
+    }
+  }, 1000);
+}
+
+// ===== LEVEL 1: NEURAL STORM =====
+// Memory + Math: Memorize a grid, then solve missing cells using row/col sum constraints
+function level1() {
+  const area = document.getElementById('game-area');
+  const SIZE = 4;
+  
+  // Generate grid with unique numbers 1-16
+  const nums = shuffle(Array.from({length: 16}, (_, i) => i + 1));
+  const grid = [];
+  for (let r = 0; r < SIZE; r++) {
+    grid.push(nums.slice(r * SIZE, (r + 1) * SIZE));
+  }
+  
+  const rowSums = grid.map(row => row.reduce((a, b) => a + b, 0));
+  const colSums = Array.from({length: SIZE}, (_, c) => grid.reduce((sum, row) => sum + row[c], 0));
+  
+  // Hide some cells (6 cells)
+  const hidden = new Set();
+  while (hidden.size < 6) {
+    hidden.add(randInt(0, 15));
+  }
+  const hiddenSet = hidden;
+  const hiddenValues = {};
+  hiddenSet.forEach(idx => {
+    const r = Math.floor(idx / SIZE), c = idx % SIZE;
+    hiddenValues[idx] = grid[r][c];
+  });
+
+  area.innerHTML = `
+    <div class="level-title">NEURAL STORM</div>
+    <div class="level-desc">Memorize the grid. Cells will disappear. Fill them using row & column sum constraints.</div>
+    <div class="level-rules">You have 8 seconds to memorize. Then 90 seconds to solve.</div>
+    <div class="info-box highlight" id="l1-status">MEMORIZE NOW</div>
+    <div class="game-grid" id="l1-grid" style="grid-template-columns: repeat(${SIZE}, 50px);"></div>
+    <div style="display:flex;gap:2rem;margin-top:0.5rem;">
+      <div class="info-box" id="l1-rowsums"></div>
+      <div class="info-box" id="l1-colsums"></div>
+    </div>
+  `;
+
+  const gridEl = document.getElementById('l1-grid');
+  
+  function renderGrid(phase) {
+    gridEl.innerHTML = '';
+    for (let r = 0; r < SIZE; r++) {
+      for (let c = 0; c < SIZE; c++) {
+        const idx = r * SIZE + c;
+        const cell = document.createElement('div');
+        cell.className = 'grid-cell';
+        cell.dataset.idx = idx;
+        
+        if (phase === 'memorize') {
+          cell.textContent = grid[r][c];
+          cell.classList.add('locked');
+        } else if (phase === 'solve') {
+          if (hiddenSet.has(idx)) {
+            cell.classList.add('empty');
+            cell.textContent = '';
+            cell.addEventListener('click', () => selectCell(idx));
+          } else {
+            cell.textContent = grid[r][c];
+            cell.classList.add('locked');
+          }
+        }
+        gridEl.appendChild(cell);
+      }
+    }
+  }
+
+  // Show row/col sums
+  document.getElementById('l1-rowsums').textContent = 'Row sums: ' + rowSums.join(' | ');
+  document.getElementById('l1-colsums').textContent = 'Col sums: ' + colSums.join(' | ');
+
+  renderGrid('memorize');
+
+  let selectedCell = null;
+  const filledValues = {};
+
+  function selectCell(idx) {
+    if (state.inputLocked) return;
+    document.querySelectorAll('.grid-cell').forEach(c => c.classList.remove('active'));
+    const cell = gridEl.children[idx];
+    cell.classList.add('active');
+    selectedCell = idx;
+    document.getElementById('l1-status').textContent = `Selected cell ${Math.floor(idx/4)+1},${idx%4+1}. Enter value (1-16):`;
+  }
+
+  // After memorize phase
+  setTimeout(() => {
+    renderGrid('solve');
+    document.getElementById('l1-status').textContent = 'SOLVE: Click empty cells, then enter numbers below.';
+    
+    // Add number input
+    const inputRow = document.createElement('div');
+    inputRow.style.cssText = 'display:flex;gap:8px;margin-top:1rem;align-items:center;';
+    inputRow.innerHTML = `
+      <input type="number" class="game-input" id="l1-input" min="1" max="16" style="width:100px;">
+      <button class="btn btn-small" id="l1-submit">PLACE</button>
+    `;
+    area.appendChild(inputRow);
+
+    document.getElementById('l1-submit').addEventListener('click', () => {
+      if (selectedCell === null || state.inputLocked) return;
+      const val = parseInt(document.getElementById('l1-input').value);
+      if (isNaN(val) || val < 1 || val > 16) return;
+      
+      // Check if already used
+      if (Object.values(filledValues).includes(val)) {
+        playFail();
+        document.getElementById('l1-status').textContent = 'Number already used!';
+        return;
+      }
+      
+      filledValues[selectedCell] = val;
+      const cell = gridEl.children[selectedCell];
+      cell.textContent = val;
+      cell.classList.remove('empty', 'active');
+      playClick();
+      document.getElementById('l1-input').value = '';
+      selectedCell = null;
+
+      // Check if all filled
+      if (Object.keys(filledValues).length === hiddenSet.size) {
+        // Verify
+        let allCorrect = true;
+        hiddenSet.forEach(idx => {
+          if (filledValues[idx] !== hiddenValues[idx]) {
+            allCorrect = false;
+            gridEl.children[idx].classList.add('wrong');
+          } else {
+            gridEl.children[idx].classList.add('correct');
+          }
+        });
+        state.inputLocked = true;
+        if (allCorrect) {
+          setTimeout(() => completeLevel(), 1000);
+        } else {
+          setTimeout(() => failLevel('Incorrect cells.'), 1500);
+        }
+      }
+    });
+
+    startTimer(90);
+  }, 8000);
+}
+
+// ===== LEVEL 2: DUAL CORTEX =====
+// Remember a color sequence AND a tone sequence, reproduce both
+function level2() {
+  const area = document.getElementById('game-area');
+  const SEQ_LEN = 6;
+  const colors = ['#ff3333', '#00f0ff', '#00ff88', '#ffe600', '#ff00aa', '#ff8800'];
+  const colorNames = ['RED', 'CYAN', 'GREEN', 'YELLOW', 'PINK', 'ORANGE'];
+  const toneFreqs = [261.63, 329.63, 392, 523.25, 659.25, 783.99];
+  
+  const colorSeq = Array.from({length: SEQ_LEN}, () => randInt(0, 5));
+  const toneSeq = Array.from({length: SEQ_LEN}, () => randInt(0, 5));
+
+  area.innerHTML = `
+    <div class="level-title">DUAL CORTEX</div>
+    <div class="level-desc">Watch the colors AND listen to the tones. Then reproduce BOTH sequences.</div>
+    <div class="level-rules">Colors and tones play simultaneously. You must recall both. 60 seconds total.</div>
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-title">COLOR SEQUENCE</div>
+        <div id="l2-color-display" style="width:80px;height:80px;margin:0 auto;border-radius:12px;border:2px solid rgba(255,255,255,0.1);"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">TONE SEQUENCE</div>
+        <div id="l2-tone-display" style="font-family:Orbitron;font-size:2rem;color:var(--accent);">♪</div>
+      </div>
+    </div>
+    <div class="info-box highlight" id="l2-status">WATCH & LISTEN</div>
+    <div id="l2-input-area" style="display:none; width:100%; max-width:600px;">
+      <div class="panel-title" style="text-align:center;margin:1rem 0 0.5rem;">REPRODUCE COLOR SEQUENCE</div>
+      <div class="sequence-display" id="l2-color-btns"></div>
+      <div id="l2-color-selected" style="text-align:center;margin:0.5rem 0;font-size:0.9rem;color:var(--primary);min-height:1.5em;"></div>
+      <div class="panel-title" style="text-align:center;margin:1rem 0 0.5rem;">REPRODUCE TONE SEQUENCE</div>
+      <div class="sequence-display" id="l2-tone-btns"></div>
+      <div id="l2-tone-selected" style="text-align:center;margin:0.5rem 0;font-size:0.9rem;color:var(--accent);min-height:1.5em;"></div>
+      <div style="text-align:center;margin-top:1rem;">
+        <button class="btn btn-small" id="l2-check">VERIFY</button>
+        <button class="btn btn-small" id="l2-clear" style="margin-left:0.5rem;background:linear-gradient(135deg,#666,#333);">CLEAR</button>
+      </div>
+    </div>
+  `;
+
+  // Play sequence
+  const colorDisp = document.getElementById('l2-color-display');
+  const toneDisp = document.getElementById('l2-tone-display');
+  let seqIdx = 0;
+
+  function playNext() {
+    if (seqIdx >= SEQ_LEN) {
+      // Show input
+      document.getElementById('l2-status').textContent = 'YOUR TURN';
+      document.getElementById('l2-input-area').style.display = '';
+      setupInput();
+      startTimer(60);
+      return;
+    }
+    colorDisp.style.background = colors[colorSeq[seqIdx]];
+    colorDisp.style.boxShadow = `0 0 30px ${colors[colorSeq[seqIdx]]}`;
+    toneDisp.textContent = `♪ ${toneSeq[seqIdx] + 1}`;
+    playTone(toneFreqs[toneSeq[seqIdx]], 0.4);
+    seqIdx++;
+    setTimeout(() => {
+      colorDisp.style.background = 'transparent';
+      colorDisp.style.boxShadow = 'none';
+      toneDisp.textContent = '♪';
+      setTimeout(playNext, 300);
+    }, 800);
+  }
+
+  const userColorSeq = [];
+  const userToneSeq = [];
+
+  function setupInput() {
+    const colorBtns = document.getElementById('l2-color-btns');
+    const toneBtns = document.getElementById('l2-tone-btns');
+    
+    colors.forEach((c, i) => {
+      const btn = document.createElement('div');
+      btn.className = 'color-btn';
+      btn.style.background = c;
+      btn.addEventListener('click', () => {
+        if (userColorSeq.length < SEQ_LEN) {
+          userColorSeq.push(i);
+          playClick();
+          updateSelected();
+        }
+      });
+      colorBtns.appendChild(btn);
+    });
+
+    for (let i = 0; i < 6; i++) {
+      const btn = document.createElement('div');
+      btn.className = 'seq-item';
+      btn.style.borderColor = 'var(--accent)';
+      btn.style.color = 'var(--accent)';
+      btn.textContent = i + 1;
+      btn.addEventListener('click', () => {
+        if (userToneSeq.length < SEQ_LEN) {
+          userToneSeq.push(i);
+          playTone(toneFreqs[i], 0.2);
+          updateSelected();
+        }
+      });
+      toneBtns.appendChild(btn);
+    }
+
+    document.getElementById('l2-clear').addEventListener('click', () => {
+      userColorSeq.length = 0;
+      userToneSeq.length = 0;
+      updateSelected();
+    });
+
+    document.getElementById('l2-check').addEventListener('click', () => {
+      if (userColorSeq.length !== SEQ_LEN || userToneSeq.length !== SEQ_LEN) {
+        document.getElementById('l2-status').textContent = `Need ${SEQ_LEN} colors and ${SEQ_LEN} tones!`;
+        return;
+      }
+      state.inputLocked = true;
+      const colorOk = userColorSeq.every((v, i) => v === colorSeq[i]);
+      const toneOk = userToneSeq.every((v, i) => v === toneSeq[i]);
+      if (colorOk && toneOk) {
+        completeLevel();
+      } else {
+        let msg = 'Wrong: ';
+        if (!colorOk) msg += 'colors ';
+        if (!toneOk) msg += 'tones ';
+        failLevel(msg);
+      }
+    });
+  }
+
+  function updateSelected() {
+    document.getElementById('l2-color-selected').textContent = 
+      userColorSeq.map(i => colorNames[i]).join(' → ') + (userColorSeq.length < SEQ_LEN ? ' _'.repeat(SEQ_LEN - userColorSeq.length) : '');
+    document.getElementById('l2-tone-selected').textContent = 
+      userToneSeq.map(i => i + 1).join(' → ') + (userToneSeq.length < SEQ_LEN ? ' _'.repeat(SEQ_LEN - userToneSeq.length) : '');
+  }
+
+  setTimeout(playNext, 1000);
+}
+
+// ===== LEVEL 3: LOGIC WEB =====
+// Interconnected logic puzzles
+function level3() {
+  const area = document.getElementById('game-area');
+  
+  // Generate a logic puzzle: 4 people, 4 colors, 4 positions
+  const people = ['Alice', 'Bob', 'Carol', 'Dave'];
+  const colors = ['Red', 'Blue', 'Green', 'Yellow'];
+  const answer = shuffle([0, 1, 2, 3]); // answer[i] = color index for person i
+  
+  // Generate clues (some true, some false - deception!)
+  const clues = [];
+  
+  // Clue 1: Direct assignment
+  const p1 = randInt(0, 3);
+  clues.push({ text: `${people[p1]}'s color is ${colors[answer[p1]]}.`, type: 'direct', person: p1, value: answer[p1] });
+  
+  // Clue 2: Not assignment
+  let p2 = randInt(0, 3);
+  let wrongColor = randInt(0, 3);
+  while (wrongColor === answer[p2]) wrongColor = randInt(0, 3);
+  clues.push({ text: `${people[p2]} does NOT have ${colors[wrongColor]}.`, type: 'not', person: p2, value: wrongColor });
+  
+  // Clue 3: Relative
+  const pairs = [];
+  for (let i = 0; i < 4; i++) for (let j = i + 1; j < 4; j++) pairs.push([i, j]);
+  const pair = pairs[randInt(0, pairs.length - 1)];
+  clues.push({ text: `Either ${people[pair[0]]} or ${people[pair[1]]} has ${colors[answer[pair[0]]]}.`, type: 'either', p1: pair[0], p2: pair[1], value: answer[pair[0]] });
+  
+  // Clue 4: Count clue
+  const targetColor = randInt(0, 3);
+  const count = answer.filter(a => a === targetColor).length;
+  clues.push({ text: `Exactly ${count} people have ${colors[targetColor]}.`, type: 'count', value: targetColor, count });
+  
+  // Clue 5-6: More constraints
+  let p5 = randInt(0, 3);
+  let related = randInt(0, 3);
+  while (related === p5) related = randInt(0, 3);
+  clues.push({ text: `${people[p5]}'s color is different from ${people[related]}'s.`, type: 'diff', p1: p5, p2: related });
+
+  area.innerHTML = `
+    <div class="level-title">LOGIC WEB</div>
+    <div class="level-desc">Assign each person a color based on the clues. No guessing — pure logic.</div>
+    <div class="level-rules">Each person gets exactly one unique color. 120 seconds.</div>
+    <div id="l3-clues" style="max-width:600px;width:100%;"></div>
+    <div id="l3-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:500px;width:100%;margin-top:1rem;"></div>
+    <div style="margin-top:1rem;">
+      <button class="btn btn-small" id="l3-check">SOLVE</button>
+    </div>
+  `;
+
+  const cluesEl = document.getElementById('l3-clues');
+  clues.forEach((clue, i) => {
+    cluesEl.innerHTML += `<div class="info-box" style="margin-bottom:4px;text-align:left;">Clue ${i+1}: ${clue.text}</div>`;
+  });
+
+  const gridEl = document.getElementById('l3-grid');
+  const selections = {}; // person -> color index
+
+  // Header
+  gridEl.innerHTML = '<div></div>';
+  colors.forEach(c => {
+    gridEl.innerHTML += `<div class="panel-title" style="font-size:0.6rem;">${c}</div>`;
+  });
+
+  people.forEach((person, pi) => {
+    gridEl.innerHTML += `<div style="font-size:0.8rem;display:flex;align-items:center;">${person}</div>`;
+    selections[pi] = -1;
+    colors.forEach((_, ci) => {
+      const cell = document.createElement('div');
+      cell.className = 'choice-btn';
+      cell.style.padding = '0.5rem';
+      cell.style.fontSize = '1.2rem';
+      cell.textContent = '';
+      cell.dataset.person = pi;
+      cell.dataset.color = ci;
+      cell.addEventListener('click', () => {
+        if (state.inputLocked) return;
+        // Clear this row
+        gridEl.querySelectorAll(`[data-person="${pi}"]`).forEach(c => {
+          c.classList.remove('selected');
+          c.textContent = '';
+        });
+        cell.classList.add('selected');
+        cell.textContent = '●';
+        selections[pi] = ci;
+        playClick();
+      });
+      gridEl.appendChild(cell);
+    });
+  });
+
+  document.getElementById('l3-check').addEventListener('click', () => {
+    const vals = Object.values(selections);
+    if (vals.includes(-1)) {
+      document.querySelector('#l3-clues').children[0].style.borderColor = 'var(--danger)';
+      return;
+    }
+    // Check unique
+    if (new Set(vals).size !== 4) {
+      alert('Each person needs a unique color!');
+      return;
+    }
+    state.inputLocked = true;
+    const correct = vals.every((v, i) => v === answer[i]);
+    if (correct) completeLevel();
+    else failLevel('Incorrect logic.');
+  });
+
+  startTimer(120);
+}
+
+// ===== LEVEL 4: SPATIAL HELL =====
+// Mental rotation + object tracking
+function level4() {
+  const area = document.getElementById('game-area');
+  const SIZE = 5;
+  
+  // Create a shape on a grid, rotate it, ask which rotation is correct
+  const shapes = [
+    [[1,1,0],[0,1,0],[0,1,1]], // L
+    [[1,1],[1,1]], // Square
+    [[0,1,0],[1,1,1],[0,1,0]], // Plus
+    [[1,0],[1,1],[0,1]], // S
+    [[1,1,1],[0,1,0],[0,1,0]], // T
+  ];
+  
+  const shape = shapes[randInt(0, shapes.length - 1)];
+  
+  function rotateShape(s) {
+    const rows = s.length, cols = s[0].length;
+    const rotated = [];
+    for (let c = 0; c < cols; c++) {
+      rotated.push([]);
+      for (let r = rows - 1; r >= 0; r--) {
+        rotated[c].push(s[r][c]);
+      }
+    }
+    return rotated;
+  }
+
+  const rotations = [shape];
+  for (let i = 1; i < 4; i++) {
+    rotations.push(rotateShape(rotations[i - 1]));
+  }
+
+  const correctRotation = randInt(0, 3);
+  const shownRotation = randInt(0, 3);
+
+  function renderShape(s, container, cellSize = 30) {
+    const grid = document.createElement('div');
+    grid.style.cssText = `display:inline-grid;grid-template-columns:repeat(${s[0].length},${cellSize}px);gap:2px;`;
+    s.forEach(row => {
+      row.forEach(cell => {
+        const d = document.createElement('div');
+        d.style.cssText = `width:${cellSize}px;height:${cellSize}px;border-radius:4px;`;
+        d.style.background = cell ? 'var(--primary)' : 'transparent';
+        grid.appendChild(d);
+      });
+    });
+    container.appendChild(grid);
+  }
+
+  area.innerHTML = `
+    <div class="level-title">SPATIAL HELL</div>
+    <div class="level-desc">This shape was rotated. Which rotation matches?</div>
+    <div class="level-rules">Identify the correct rotation. 45 seconds.</div>
+    <div class="panel-title" style="margin-bottom:0.5rem;">ORIGINAL SHAPE (shown rotated ${shownRotation * 90}°)</div>
+    <div id="l4-original" style="margin-bottom:1.5rem;"></div>
+    <div class="panel-title" style="margin-bottom:0.5rem;">WHICH IS THE CORRECT 0° ROTATION?</div>
+    <div id="l4-options" style="display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;"></div>
+  `;
+
+  // Show the shape rotated
+  const origEl = document.getElementById('l4-original');
+  renderShape(rotations[shownRotation], origEl, 40);
+
+  // Show 4 options (one correct, three rotated differently)
+  const optionsEl = document.getElementById('l4-options');
+  const optionIndices = shuffle([0, 1, 2, 3]);
+
+  optionIndices.forEach((rot, i) => {
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'text-align:center;cursor:pointer;padding:0.8rem;border:1px solid var(--glass-border);transition:all 0.2s;';
+    wrapper.innerHTML = `<div style="font-family:Orbitron;font-size:0.7rem;color:rgba(255,255,255,0.4);margin-bottom:0.5rem;">${String.fromCharCode(65 + i)}</div>`;
+    renderShape(rotations[rot], wrapper, 30);
+    
+    wrapper.addEventListener('click', () => {
+      if (state.inputLocked) return;
+      state.inputLocked = true;
+      document.querySelectorAll('#l4-options > div').forEach(w => w.style.borderColor = 'var(--glass-border)');
+      
+      // The shape shown was rotations[shownRotation], and we need to find which option is the base shape (rotations[0])
+      // But actually: we show rotations[shownRotation] as the "original shown rotated"
+      // The correct answer is the one that, when rotated by shownRotation*90°, gives the shown shape
+      // Which means the answer is rotations[0] if we consider rotations[shownRotation] as the display
+      // Actually simpler: answer is the one that matches shape (rotation 0) — but the question asks "which is 0°"
+      // The displayed shape is shape rotated by shownRotation steps
+      // So the correct 0° rotation is the one where: option rotated by shownRotation = displayed
+      // Which is: rotations[(4 - shownRotation) % 4]... no
+      // Let me simplify: correct answer is option index where rot === 0 (the base shape)
+      
+      if (rot === 0) {
+        wrapper.style.borderColor = 'var(--success)';
+        playSuccess();
+        setTimeout(() => completeLevel(), 800);
+      } else {
+        wrapper.style.borderColor = 'var(--danger)';
+        playFail();
+        setTimeout(() => failLevel('Wrong rotation.'), 800);
+      }
+    });
+    
+    optionsEl.appendChild(wrapper);
+  });
+
+  startTimer(45);
+}
+
+// ===== LEVEL 5: MEMORY OVERLOAD =====
+// Remember a complex pattern, then answer questions about it
+function level5() {
+  const area = document.getElementById('game-area');
+  const GRID = 5;
+  const symbols = ['★', '◆', '●', '▲', '■', '♦', '♠', '♣', '⬟', '⬡'];
+  
+  // Generate grid
+  const grid = Array.from({length: GRID}, () => 
+    Array.from({length: GRID}, () => symbols[randInt(0, symbols.length - 1)])
+  );
+  
+  // Generate questions
+  const questions = [];
+  // Q1: What symbol is at position X,Y?
+  const q1r = randInt(0, GRID-1), q1c = randInt(0, GRID-1);
+  questions.push({
+    q: `What symbol is at row ${q1r+1}, column ${q1c+1}?`,
+    answer: grid[q1r][q1c],
+    options: shuffle([...new Set([grid[q1r][q1c], ...shuffle(symbols).slice(0, 3)])]).slice(0, 4)
+  });
+  
+  // Q2: How many of symbol X?
+  const q2sym = symbols[randInt(0, symbols.length - 1)];
+  const q2count = grid.flat().filter(s => s === q2sym).length;
+  questions.push({
+    q: `How many ${q2sym} symbols are in the grid?`,
+    answer: q2count,
+    options: shuffle([...new Set([q2count, ...[0,1,2,3,4,5].filter(n => n !== q2count).slice(0,3)])]).slice(0, 4).sort()
+  });
+  
+  // Q3: What's in the corners?
+  const corners = [grid[0][0], grid[0][GRID-1], grid[GRID-1][0], grid[GRID-1][GRID-1]];
+  const q3corner = randInt(0, 3);
+  questions.push({
+    q: `What symbol is in the ${['top-left','top-right','bottom-left','bottom-right'][q3corner]} corner?`,
+    answer: corners[q3corner],
+    options: shuffle([...new Set([corners[q3corner], ...shuffle(symbols).slice(0, 3)])]).slice(0, 4)
+  });
+
+  area.innerHTML = `
+    <div class="level-title">MEMORY OVERLOAD</div>
+    <div class="level-desc">Memorize the entire grid. Then answer 3 questions about it.</div>
+    <div class="level-rules">10 seconds to memorize. Then answer all 3 questions. 60 seconds total.</div>
+    <div class="info-box highlight" id="l5-status">MEMORIZE</div>
+    <div id="l5-grid" style="display:inline-grid;grid-template-columns:repeat(${GRID},55px);gap:4px;"></div>
+    <div id="l5-questions" style="display:none;max-width:600px;width:100%;"></div>
+  `;
+
+  const gridEl = document.getElementById('l5-grid');
+  grid.forEach(row => {
+    row.forEach(sym => {
+      const cell = document.createElement('div');
+      cell.className = 'grid-cell';
+      cell.style.fontSize = '1.5rem';
+      cell.textContent = sym;
+      cell.classList.add('locked');
+      gridEl.appendChild(cell);
+    });
+  });
+
+  setTimeout(() => {
+    gridEl.style.display = 'none';
+    document.getElementById('l5-status').textContent = 'ANSWER THE QUESTIONS';
+    document.getElementById('l5-questions').style.display = '';
+    
+    const qEl = document.getElementById('l5-questions');
+    let currentQ = 0;
+    const answers = [];
+
+    function showQuestion() {
+      if (currentQ >= questions.length) {
+        state.inputLocked = true;
+        const allCorrect = answers.every((a, i) => String(a) === String(questions[i].answer));
+        if (allCorrect) completeLevel();
+        else failLevel('Wrong answers.');
+        return;
+      }
+      const q = questions[currentQ];
+      qEl.innerHTML = `
+        <div class="panel-title">QUESTION ${currentQ + 1} OF ${questions.length}</div>
+        <div class="info-box highlight" style="margin:0.5rem 0;font-size:1rem;">${q.q}</div>
+        <div class="choices" style="margin-top:1rem;">
+          ${q.options.map((opt, i) => `<div class="choice-btn" data-val="${opt}" style="font-size:1.2rem;min-width:60px;">${opt}</div>`).join('')}
+        </div>
+      `;
+      qEl.querySelectorAll('.choice-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          answers.push(btn.dataset.val);
+          playClick();
+          currentQ++;
+          showQuestion();
+        });
+      });
+    }
+
+    showQuestion();
+    startTimer(60);
+  }, 10000);
+}
+
+// ===== LEVEL 6: STROOP INFERNO =====
+// Stroop test with twist: match color-to-word or word-to-number
+function level6() {
+  const area = document.getElementById('game-area');
+  const COLORS = [
+    { name: 'RED', hex: '#ff3333' },
+    { name: 'BLUE', hex: '#0066ff' },
+    { name: 'GREEN', hex: '#00ff88' },
+    { name: 'YELLOW', hex: '#ffe600' },
+    { name: 'PINK', hex: '#ff00aa' },
+    { name: 'ORANGE', hex: '#ff8800' }
+  ];
+  
+  const ROUNDS = 10;
+  let score = 0;
+  let round = 0;
+  
+  area.innerHTML = `
+    <div class="level-title">STROOP INFERNO</div>
+    <div class="level-desc">Name the COLOR of the text, not what it says. Then answer a math question about the word.</div>
+    <div class="level-rules">Two-part questions. ${ROUNDS} rounds. Get ${ROUNDS-2}+ correct. 90 seconds.</div>
+    <div class="info-box highlight" id="l6-status">Round 1/${ROUNDS}</div>
+    <div class="stroop-word" id="l6-word"></div>
+    <div id="l6-question" style="color:rgba(255,255,255,0.6);margin:0.5rem 0;"></div>
+    <div class="choices" id="l6-choices"></div>
+    <div class="progress-bar"><div class="progress-fill" id="l6-progress" style="width:0%"></div></div>
+  `;
+
+  function nextRound() {
+    if (round >= ROUNDS) {
+      state.inputLocked = true;
+      if (score >= ROUNDS - 2) completeLevel();
+      else failLevel(`Only ${score}/${ROUNDS} correct. Need ${ROUNDS-2}+.`);
+      return;
+    }
+    round++;
+    
+    // Pick a word and a different color
+    const wordIdx = randInt(0, COLORS.length - 1);
+    let colorIdx = randInt(0, COLORS.length - 1);
+    while (colorIdx === wordIdx) colorIdx = randInt(0, COLORS.length - 1);
+    
+    const wordEl = document.getElementById('l6-word');
+    wordEl.textContent = COLORS[wordIdx].name;
+    wordEl.style.color = COLORS[colorIdx].hex;
+    
+    // Question type: what COLOR is it? (the colorIdx)
+    document.getElementById('l6-question').textContent = 'What COLOR is the text?';
+    document.getElementById('l6-status').textContent = `Round ${round}/${ROUNDS} — Score: ${score}`;
+    
+    const choicesEl = document.getElementById('l6-choices');
+    choicesEl.innerHTML = '';
+    
+    const opts = shuffle(COLORS.map((c, i) => ({text: c.name, correct: i === colorIdx})));
+    opts.forEach(opt => {
+      const btn = document.createElement('div');
+      btn.className = 'choice-btn';
+      btn.textContent = opt.text;
+      btn.style.color = COLORS.find(c => c.name === opt.text).hex;
+      btn.addEventListener('click', () => {
+        if (state.inputLocked) return;
+        if (opt.correct) {
+          score++;
+          playClick();
+        } else {
+          playFail();
+        }
+        document.getElementById('l6-progress').style.width = `${(round/ROUNDS)*100}%`;
+        nextRound();
+      });
+      choicesEl.appendChild(btn);
+    });
+  }
+
+  nextRound();
+  startTimer(90);
+}
+
+// ===== LEVEL 7: ATTENTION SPLIT =====
+// Dual task: track moving objects while solving math
+function level7() {
+  const area = document.getElementById('game-area');
+  const TRACK_SIZE = 5;
+  const ROUNDS = 8;
+  let round = 0;
+  let score = 0;
+  
+  area.innerHTML = `
+    <div class="level-title">ATTENTION SPLIT</div>
+    <div class="level-desc">Track the highlighted cell as it moves, AND solve the math problem. Both must be correct.</div>
+    <div class="level-rules">Watch the flash, track where it moves, solve math. ${ROUNDS} rounds. 120 seconds.</div>
+    <div class="panels" style="max-width:700px;">
+      <div class="panel">
+        <div class="panel-title">TRACK THE DOT</div>
+        <div id="l7-grid" style="display:inline-grid;grid-template-columns:repeat(${TRACK_SIZE},40px);gap:3px;"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">SOLVE THE MATH</div>
+        <div id="l7-math" style="font-family:Orbitron;font-size:1.5rem;color:var(--accent);margin:1rem 0;"></div>
+        <input type="number" class="game-input" id="l7-math-input" style="width:120px;" placeholder="Answer">
+      </div>
+    </div>
+    <div class="info-box highlight" id="l7-status">Round 1/${ROUNDS}</div>
+    <div id="l7-answers" style="margin-top:0.5rem;"></div>
+  `;
+
+  let currentPos = 0;
+  let targetPos = 0;
+  let mathAnswer = 0;
+  let trackingAnswer = -1;
+  let phase = 'show'; // show, move, answer
+
+  function generateGrid() {
+    const gridEl = document.getElementById('l7-grid');
+    gridEl.innerHTML = '';
+    for (let i = 0; i < TRACK_SIZE * TRACK_SIZE; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'grid-cell';
+      cell.style.width = '40px';
+      cell.style.height = '40px';
+      cell.dataset.idx = i;
+      cell.addEventListener('click', () => {
+        if (phase !== 'answer') return;
+        document.querySelectorAll('#l7-grid .grid-cell').forEach(c => c.classList.remove('active'));
+        cell.classList.add('active');
+        trackingAnswer = i;
+      });
+      gridEl.appendChild(cell);
+    }
+    return gridEl;
+  }
+
+  function generateMath() {
+    const ops = ['+', '×'];
+    const op = ops[randInt(0, 1)];
+    let a, b;
+    if (op === '+') {
+      a = randInt(10, 99);
+      b = randInt(10, 99);
+      mathAnswer = a + b;
+    } else {
+      a = randInt(3, 12);
+      b = randInt(3, 12);
+      mathAnswer = a * b;
+    }
+    document.getElementById('l7-math').textContent = `${a} ${op} ${b} = ?`;
+    return mathAnswer;
+  }
+
+  function doRound() {
+    if (round >= ROUNDS) {
+      state.inputLocked = true;
+      if (score >= ROUNDS - 2) completeLevel();
+      else failLevel(`${score}/${ROUNDS} correct.`);
+      return;
+    }
+    round++;
+    document.getElementById('l7-status').textContent = `Round ${round}/${ROUNDS} — Score: ${score}`;
+    document.getElementById('l7-answers').textContent = '';
+    trackingAnswer = -1;
+    document.getElementById('l7-math-input').value = '';
+    
+    const gridEl = generateGrid();
+    generateMath();
+    
+    // Show starting position
+    currentPos = randInt(0, TRACK_SIZE * TRACK_SIZE - 1);
+    gridEl.children[currentPos].classList.add('active');
+    document.getElementById('l7-status').textContent = 'MEMORIZE THE DOT POSITION...';
+    phase = 'show';
+    
+    setTimeout(() => {
+      // Animate movement
+      let moves = 3 + round;
+      let pos = currentPos;
+      const moveInterval = setInterval(() => {
+        document.querySelectorAll('#l7-grid .grid-cell').forEach(c => c.classList.remove('active'));
+        const dir = randInt(0, 3); // 0=up,1=right,2=down,3=left
+        const row = Math.floor(pos / TRACK_SIZE);
+        const col = pos % TRACK_SIZE;
+        let newRow = row, newCol = col;
+        if (dir === 0 && row > 0) newRow--;
+        if (dir === 1 && col < TRACK_SIZE-1) newCol++;
+        if (dir === 2 && row < TRACK_SIZE-1) newRow++;
+        if (dir === 3 && col > 0) newCol--;
+        pos = newRow * TRACK_SIZE + newCol;
+        gridEl.children[pos].classList.add('active');
+        playTone(400 + pos * 20, 0.05, 'square');
+        moves--;
+        if (moves <= 0) {
+          clearInterval(moveInterval);
+          targetPos = pos;
+          setTimeout(() => {
+            document.querySelectorAll('#l7-grid .grid-cell').forEach(c => c.classList.remove('active'));
+            phase = 'answer';
+            document.getElementById('l7-status').textContent = 'WHERE IS THE DOT? Click the grid. Also solve the math.';
+            document.getElementById('l7-math-input').focus();
+          }, 500);
+        }
+      }, 400);
+    }, 2000);
+    
+    // Set up answer submission
+    const mathInput = document.getElementById('l7-math-input');
+    const handler = (e) => {
+      if (e.key === 'Enter' || e.type === 'click') {
+        const mathVal = parseInt(mathInput.value);
+        if (isNaN(mathVal) || trackingAnswer === -1) return;
+        
+        const mathOk = mathVal === mathAnswer;
+        const trackOk = trackingAnswer === targetPos;
+        
+        if (mathOk && trackOk) {
+          score++;
+          playClick();
+        } else {
+          playFail();
+          let msg = 'Wrong: ';
+          if (!mathOk) msg += 'math ';
+          if (!trackOk) msg += 'tracking ';
+          document.getElementById('l7-answers').textContent = msg;
+        }
+        
+        mathInput.removeEventListener('keydown', handler);
+        setTimeout(doRound, 500);
+      }
+    };
+    mathInput.addEventListener('keydown', handler);
+  }
+
+  doRound();
+  startTimer(120);
+}
+
+// ===== LEVEL 8: PATTERN MAZE =====
+// Complex number sequence with multiple rules operating simultaneously
+function level8() {
+  const area = document.getElementById('game-area');
+  
+  // Generate a sequence with a compound rule
+  // Rule: each number = prev + increment, but every 3rd position doubles the increment
+  // And every 5th position subtracts 1
+  const start = randInt(1, 5);
+  const baseInc = randInt(2, 4);
+  const seqLen = 10;
+  const showLen = 7;
+  
+  const sequence = [start];
+  for (let i = 1; i < seqLen; i++) {
+    let val = sequence[i-1] + baseInc;
+    if ((i + 1) % 3 === 0) val += baseInc; // every 3rd: double increment
+    if ((i + 1) % 5 === 0) val -= 1; // every 5th: subtract 1
+    sequence.push(val);
+  }
+  
+  // Also add a parallel sequence rule
+  const altStart = randInt(1, 3);
+  const altInc = randInt(1, 3);
+  const altSeq = Array.from({length: seqLen}, (_, i) => altStart + i * altInc);
+  
+  area.innerHTML = `
+    <div class="level-title">PATTERN MAZE</div>
+    <div class="level-desc">Two sequences run in parallel. Find the compound rule and predict the last 3 numbers of each.</div>
+    <div class="level-rules">Each sequence has a hidden rule combining addition and special positions. 120 seconds.</div>
+    <div class="panels">
+      <div class="panel">
+        <div class="panel-title">SEQUENCE A</div>
+        <div class="matrix-display" id="l8-seqA">${sequence.slice(0, showLen).map((n, i) => i === showLen - 1 ? '?' : n).join('  ')}</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">SEQUENCE B</div>
+        <div class="matrix-display" id="l8-seqB">${altSeq.slice(0, showLen).map((n, i) => i === showLen - 1 ? '?' : n).join('  ')}</div>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem;">
+      <div class="panel-title" style="margin-bottom:0.5rem;">ENTER THE NEXT 3 NUMBERS FOR EACH SEQUENCE</div>
+      <div style="display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;">
+        <div>
+          <div style="font-size:0.7rem;color:var(--primary);margin-bottom:0.3rem;">Sequence A (3 numbers)</div>
+          <div style="display:flex;gap:6px;">
+            <input type="number" class="game-input" id="l8-a1" style="width:60px;padding:0.5rem;" placeholder="?">
+            <input type="number" class="game-input" id="l8-a2" style="width:60px;padding:0.5rem;" placeholder="?">
+            <input type="number" class="game-input" id="l8-a3" style="width:60px;padding:0.5rem;" placeholder="?">
+          </div>
+        </div>
+        <div>
+          <div style="font-size:0.7rem;color:var(--accent);margin-bottom:0.3rem;">Sequence B (3 numbers)</div>
+          <div style="display:flex;gap:6px;">
+            <input type="number" class="game-input" id="l8-b1" style="width:60px;padding:0.5rem;" placeholder="?">
+            <input type="number" class="game-input" id="l8-b2" style="width:60px;padding:0.5rem;" placeholder="?">
+            <input type="number" class="game-input" id="l8-b3" style="width:60px;padding:0.5rem;" placeholder="?">
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-small" style="margin-top:1rem;" id="l8-check">VERIFY</button>
+    <div class="info-box" id="l8-hint" style="margin-top:0.5rem;">Hint: The rules involve position-based modifications.</div>
+  `;
+
+  document.getElementById('l8-check').addEventListener('click', () => {
+    const a1 = parseInt(document.getElementById('l8-a1').value);
+    const a2 = parseInt(document.getElementById('l8-a2').value);
+    const a3 = parseInt(document.getElementById('l8-a3').value);
+    const b1 = parseInt(document.getElementById('l8-b1').value);
+    const b2 = parseInt(document.getElementById('l8-b2').value);
+    const b3 = parseInt(document.getElementById('l8-b3').value);
+    
+    if ([a1,a2,a3,b1,b2,b3].some(isNaN)) {
+      document.getElementById('l8-hint').textContent = 'Fill all 6 fields!';
+      document.getElementById('l8-hint').style.borderColor = 'var(--danger)';
+      return;
+    }
+    
+    state.inputLocked = true;
+    const aCorrect = [a1,a2,a3].every((v, i) => v === sequence[showLen + i]);
+    const bCorrect = [b1,b2,b3].every((v, i) => v === altSeq[showLen + i]);
+    
+    if (aCorrect && bCorrect) completeLevel();
+    else failLevel(`Wrong. A: ${sequence.slice(showLen).join(', ')} | B: ${altSeq.slice(showLen).join(', ')}`);
+  });
+
+  startTimer(120);
+}
+
+// ===== LEVEL 9: SYNAPSE FIRE =====
+// Combine multiple sub-problems into one answer
+function level9() {
+  const area = document.getElementById('game-area');
+  
+  // 4 sub-problems that combine into one final answer
+  // Sub 1: Memory - a grid flashes, count specific symbols
+  // Sub 2: Logic - a simple deduction  
+  // Sub 3: Math - arithmetic
+  // Sub 4: Spatial - count rotations
+  
+  const gridSize = 4;
+  const symbols = ['▲', '■', '●', '◆'];
+  const grid = Array.from({length: gridSize}, () => 
+    Array.from({length: gridSize}, () => symbols[randInt(0, symbols.length - 1)])
+  );
+  
+  const targetSym = symbols[randInt(0, 3)];
+  const symCount = grid.flat().filter(s => s === targetSym).length;
+  
+  // Logic: A > B, B > C, C > D, what's the order? (always A>B>C>D, find A+D)
+  const vals = shuffle([2, 4, 6, 8]);
+  const logicAnswer = vals[0] + vals[3]; // largest + smallest
+  
+  // Math
+  const mathA = randInt(12, 25);
+  const mathB = randInt(3, 8);
+  const mathAnswer = mathA * mathB;
+  
+  // Spatial: How many triangles in a figure (simple count)
+  const triangleCount = randInt(3, 7);
+  
+  // Final answer is sum of all
+  const finalAnswer = symCount + logicAnswer + mathAnswer + triangleCount;
+
+  area.innerHTML = `
+    <div class="level-title">SYNAPSE FIRE</div>
+    <div class="level-desc">4 sub-problems. Solve each, then ADD all answers together for the final number.</div>
+    <div class="level-rules">The final answer = sum of all 4 sub-answers. 150 seconds.</div>
+    <div class="panels" style="grid-template-columns:1fr 1fr;max-width:700px;">
+      <div class="panel">
+        <div class="panel-title">① MEMORY GRID</div>
+        <div id="l9-grid" style="display:inline-grid;grid-template-columns:repeat(${gridSize},35px);gap:2px;font-size:1.2rem;"></div>
+        <div style="font-size:0.7rem;color:var(--primary);margin-top:0.5rem;">How many ${targetSym}?</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">② LOGIC</div>
+        <div style="font-size:0.8rem;line-height:1.8;">
+          A=${vals[0]}, B=${vals[1]}, C=${vals[2]}, D=${vals[3]}<br>
+          A > B > C > D<br>
+          What is A + D?
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">③ MATH</div>
+        <div style="font-family:Orbitron;font-size:1.3rem;color:var(--accent);">
+          ${mathA} × ${mathB} = ?
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">④ COUNT</div>
+        <div style="font-size:0.8rem;">
+          ▲▲▲<br>
+          How many triangles? (Count: ${triangleCount} in the figure)
+        </div>
+        <div style="font-size:2rem;margin-top:0.3rem;">${'▲'.repeat(triangleCount)}</div>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem;text-align:center;">
+      <div style="font-size:0.7rem;color:rgba(255,255,255,0.4);margin-bottom:0.3rem;">FINAL ANSWER (sum of all 4)</div>
+      <input type="number" class="game-input" id="l9-answer" style="width:150px;" placeholder="?">
+      <button class="btn btn-small" style="margin-left:0.5rem;" id="l9-check">SUBMIT</button>
+    </div>
+    <div class="info-box" id="l9-info" style="margin-top:0.5rem;"></div>
+  `;
+
+  // Show grid briefly then hide
+  const gridEl = document.getElementById('l9-grid');
+  grid.forEach(row => {
+    row.forEach(sym => {
+      const cell = document.createElement('div');
+      cell.className = 'grid-cell locked';
+      cell.style.width = '35px';
+      cell.style.height = '35px';
+      cell.textContent = sym;
+      gridEl.appendChild(cell);
+    });
+  });
+
+  setTimeout(() => {
+    gridEl.style.opacity = '0.15';
+  }, 8000);
+
+  document.getElementById('l9-check').addEventListener('click', () => {
+    const val = parseInt(document.getElementById('l9-answer').value);
+    if (isNaN(val)) return;
+    state.inputLocked = true;
+    if (val === finalAnswer) completeLevel();
+    else failLevel(`Wrong. Correct sum: ${finalAnswer} (${symCount}+${logicAnswer}+${mathAnswer}+${triangleCount})`);
+  });
+
+  startTimer(150);
+}
+
+// ===== LEVEL 10: OMEGA MIND =====
+// Everything at once - combined challenge
+function level10() {
+  const area = document.getElementById('game-area');
+  
+  // Part 1: Memory sequence (5 items to remember)
+  const memSeq = Array.from({length: 5}, () => randInt(1, 9));
+  
+  // Part 2: Stroop - color of text
+  const colors = [
+    { name: 'RED', hex: '#ff3333' },
+    { name: 'BLUE', hex: '#0066ff' },
+    { name: 'GREEN', hex: '#00ff88' },
+    { name: 'YELLOW', hex: '#ffe600' }
+  ];
+  const stroopWord = randInt(0, 3);
+  let stroopColor = randInt(0, 3);
+  while (stroopColor === stroopWord) stroopColor = randInt(0, 3);
+  
+  // Part 3: Pattern - find next in sequence
+  const patStart = randInt(1, 3);
+  const patStep = randInt(2, 4);
+  const patSeq = Array.from({length: 6}, (_, i) => patStart + i * patStep);
+  const patAnswer = patStart + 6 * patStep;
+  
+  // Part 4: Spatial - mental rotation count
+  const rotSteps = randInt(1, 3);
+
+  area.innerHTML = `
+    <div class="level-title">OMEGA MIND</div>
+    <div class="level-desc">The final test. 4 challenges, one submission. Answer = sum of ALL answers.</div>
+    <div class="level-rules">Remember, analyze, predict, rotate. Then combine. 180 seconds.</div>
+    
+    <div id="l10-phase1">
+      <div class="panel-title" style="color:var(--danger);">PHASE 1: MEMORIZE</div>
+      <div class="matrix-display" id="l10-mem">${memSeq.join('  ')}</div>
+      <div class="info-box" style="margin-top:0.5rem;">Remember these 5 numbers. They'll disappear in 6 seconds.</div>
+    </div>
+    
+    <div id="l10-phase2" style="display:none;">
+      <div class="panel-title">PHASE 2: STROOP</div>
+      <div class="stroop-word" style="color:${colors[stroopColor].hex};font-size:3rem;">${colors[stroopWord].name}</div>
+      <div style="color:rgba(255,255,255,0.6);font-size:0.8rem;">What COLOR is this text? Enter the number:</div>
+      <div class="choices" id="l10-stroop-choices">
+        ${colors.map((c, i) => `<div class="choice-btn stroop-opt" data-val="${i}" style="color:${c.hex};">${i+1}: ${c.name}</div>`).join('')}
+      </div>
+    </div>
+    
+    <div id="l10-phase3" style="display:none;">
+      <div class="panel-title">PHASE 3: PATTERN</div>
+      <div class="matrix-display">${patSeq.join('  ')}  ?</div>
+      <div style="color:rgba(255,255,255,0.6);font-size:0.8rem;margin-top:0.5rem;">What comes next?</div>
+      <input type="number" class="game-input" id="l10-pat" style="width:80px;" placeholder="?">
+    </div>
+    
+    <div id="l10-phase4" style="display:none;">
+      <div class="panel-title">PHASE 4: ROTATION</div>
+      <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);margin-bottom:0.5rem;">
+        A square is rotated ${rotSteps * 90}° clockwise. If the top-left corner was at position 1, what position is it now?<br>
+        (1=top-left, 2=top-right, 3=bottom-right, 4=bottom-left)
+      </div>
+      <div class="choices" id="l10-rot-choices">
+        ${[1,2,3,4].map(n => `<div class="choice-btn rot-opt" data-val="${n}">${n}</div>`).join('')}
+      </div>
+    </div>
+    
+    <div id="l10-final" style="display:none;">
+      <div class="panel-title" style="color:var(--danger);">FINAL SUBMISSION</div>
+      <div style="color:rgba(255,255,255,0.5);font-size:0.75rem;margin:0.5rem 0;">
+        Answer = (sum of memory sequence) + (stroop color number) + (pattern next) + (rotation position)
+      </div>
+      <div id="l10-summary" style="font-size:0.8rem;color:var(--primary);margin:0.5rem 0;"></div>
+      <input type="number" class="game-input" id="l10-answer" style="width:150px;" placeholder="Final answer">
+      <button class="btn btn-small" style="margin-left:0.5rem;" id="l10-submit">SUBMIT</button>
+    </div>
+    
+    <div class="info-box highlight" id="l10-status">PHASE 1 — MEMORIZE</div>
+  `;
+
+  let stroopVal = -1;
+  let rotVal = -1;
+  const memSum = memSeq.reduce((a, b) => a + b, 0);
+  const rotAnswer = ((0 + rotSteps) % 4) + 1; // position after rotation
+
+  // Phase 1: memorize
+  setTimeout(() => {
+    document.getElementById('l10-mem').style.opacity = '0.1';
+    document.getElementById('l10-phase2').style.display = '';
+    document.getElementById('l10-status').textContent = 'PHASE 2 — STROOP';
+    
+    // Stroop choices
+    document.querySelectorAll('.stroop-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        stroopVal = parseInt(btn.dataset.val) + 1;
+        document.querySelectorAll('.stroop-opt').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        playClick();
+        document.getElementById('l10-phase3').style.display = '';
+        document.getElementById('l10-status').textContent = 'PHASE 3 — PATTERN';
+      });
+    });
+  }, 6000);
+
+  // When pattern input gets a value, show phase 4
+  document.getElementById('l10-pat').addEventListener('input', () => {
+    if (document.getElementById('l10-pat').value) {
+      document.getElementById('l10-phase4').style.display = '';
+      document.getElementById('l10-status').textContent = 'PHASE 4 — ROTATION';
+    }
+  });
+
+  // Rotation choices
+  document.querySelectorAll('.rot-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      rotVal = parseInt(btn.dataset.val);
+      document.querySelectorAll('.rot-opt').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      playClick();
+      
+      // Show final
+      document.getElementById('l10-final').style.display = '';
+      document.getElementById('l10-status').textContent = 'FINAL — COMBINE ALL ANSWERS';
+      const patVal = parseInt(document.getElementById('l10-pat').value) || 0;
+      document.getElementById('l10-summary').textContent = 
+        `${memSum} + ${stroopVal} + ${patVal} + ${rotVal} = ?`;
+    });
+  });
+
+  // Submit
+  document.getElementById('l10-submit').addEventListener('click', () => {
+    const val = parseInt(document.getElementById('l10-answer').value);
+    const patVal = parseInt(document.getElementById('l10-pat').value);
+    if (isNaN(val) || isNaN(patVal) || stroopVal === -1 || rotVal === -1) {
+      document.getElementById('l10-status').textContent = 'Complete all phases first!';
+      return;
+    }
+    
+    const correctAnswer = memSum + stroopVal + patAnswer + rotAnswer;
+    state.inputLocked = true;
+    
+    if (val === correctAnswer) {
+      completeLevel();
+      // Override to win
+      setTimeout(winGame, 500);
+    } else {
+      failLevel(`Wrong. Answer was ${correctAnswer} (${memSum}+${stroopVal}+${patAnswer}+${rotAnswer})`);
+    }
+  });
+
+  startTimer(180);
+}
+
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && state.phase === 'playing') {
+    if (confirm('Quit current game?')) restartGame();
+  }
+});
+</script>
+</body>
+</html>
