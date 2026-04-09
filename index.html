@@ -1063,7 +1063,7 @@ body::after {
     <div class="how-to-play">
       <h2 style="font-family:Orbitron;color:var(--primary);margin-bottom:1rem;">HOW TO PLAY</h2>
       <h3>🧠 The Concept</h3>
-      <p>MIND is a 15-level brain training gauntlet that tests every cognitive function simultaneously. Memory, logic, pattern recognition, reaction speed, spatial reasoning, and math — all at once.</p>
+      <p>MIND is an 18-level brain training gauntlet that tests every cognitive function simultaneously. Memory, logic, pattern recognition, reaction speed, spatial reasoning, and math — all at once.</p>
       
       <h3>⚔️ Levels 1-10: Foundation</h3>
       <p><strong>1. Neural Storm</strong> — Memorize a grid, then fill missing cells using row/column math constraints.</p>
@@ -1661,7 +1661,7 @@ function winGame() {
   stopTimer();
   stopAmbient();
   playLevelUp();
-  unlockAchievement('BRAIN MELTER', 'Complete all 15 levels');
+  unlockAchievement('BRAIN MELTER', 'Complete all 18 levels');
   
   const board = saveToLeaderboard();
   
@@ -2927,8 +2927,6 @@ function level10() {
     
     if (val === correctAnswer) {
       completeLevel();
-      // Override to win
-      setTimeout(winGame, 500);
     } else {
       failLevel(`Wrong. Answer was ${correctAnswer} (${memSum}+${stroopVal}+${patAnswer}+${rotAnswer})`);
     }
