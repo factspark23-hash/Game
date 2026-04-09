@@ -1125,28 +1125,22 @@ body::after {
 
   <!-- Wisdom Vault - Book List -->
   <div id="wisdom-vault-screen" style="display:none">
-    <div style="max-width:700px;width:100%;text-align:center;max-height:85vh;overflow-y:auto;padding:0 1rem;">
-      <h2 style="font-family:Orbitron;color:#ff00aa;margin-bottom:0.3rem;">📚 WISDOM VAULT</h2>
-      <div style="color:rgba(255,255,255,0.4);font-size:0.75rem;margin-bottom:1.5rem;">Psychology, Power & Human Nature — Broken into levels</div>
+    <div style="max-width:680px;width:100%;text-align:center;max-height:90vh;overflow-y:auto;padding:1rem;">
+      <div style="margin-bottom:2rem;">
+        <div style="font-size:2.5rem;margin-bottom:0.5rem;">📚</div>
+        <h2 style="font-family:Orbitron;color:#fff;margin-bottom:0.3rem;font-size:1.4rem;letter-spacing:0.15em;">WISDOM VAULT</h2>
+        <div style="color:rgba(255,255,255,0.35);font-size:0.75rem;">Psychology, Power & Human Nature</div>
+      </div>
       <div id="vault-book-list"></div>
-      <button class="btn btn-small" onclick="showScreen('title-screen')" style="margin-top:1.5rem;">BACK</button>
-    </div>
-  </div>
-
-  <!-- Wisdom Vault - Book Detail -->
-  <div id="wisdom-book-screen" style="display:none">
-    <div style="max-width:700px;width:100%;text-align:center;max-height:85vh;overflow-y:auto;padding:0 1rem;">
-      <div id="wb-book-header"></div>
-      <div id="wb-levels" style="margin-top:1rem;text-align:left;"></div>
-      <button class="btn btn-small" onclick="showWisdomVault()" style="margin-top:1.5rem;">← BACK TO VAULT</button>
+      <button class="btn btn-small" onclick="showScreen('title-screen')" style="margin-top:2rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);font-size:0.7rem;">← BACK</button>
     </div>
   </div>
 
   <!-- Wisdom Vault - Level Detail -->
   <div id="wisdom-level-screen" style="display:none">
-    <div style="max-width:700px;width:100%;text-align:left;max-height:85vh;overflow-y:auto;padding:0 1rem;">
+    <div style="max-width:680px;width:100%;text-align:left;max-height:90vh;overflow-y:auto;padding:1rem;">
       <div id="wl-content"></div>
-      <div id="wl-nav" style="display:flex;gap:0.5rem;justify-content:center;margin-top:1.5rem;flex-wrap:wrap;"></div>
+      <div id="wl-nav" style="display:flex;gap:0.8rem;justify-content:center;margin-top:2rem;flex-wrap:wrap;"></div>
     </div>
   </div>
 
@@ -5112,22 +5106,31 @@ function showWisdomVault() {
   const listEl = document.getElementById('vault-book-list');
   listEl.innerHTML = WISDOM_BOOKS.map(book => `
     <div onclick="startWisdomBook('${book.id}')" style="
-      background: ${book.color}11;
-      border: 1px solid ${book.color}44;
-      padding: 1rem 1.5rem;
-      margin-bottom: 0.8rem;
+      background: linear-gradient(135deg, ${book.color}08, ${book.color}03);
+      border: 1px solid ${book.color}22;
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 0.6rem;
       cursor: pointer;
       text-align: left;
-      transition: all 0.2s;
-      border-radius: 4px;
-    " onmouseover="this.style.borderColor='${book.color}';this.style.background='${book.color}22'" onmouseout="this.style.borderColor='${book.color}44';this.style.background='${book.color}11'">
+      transition: all 0.25s ease;
+      border-radius: 8px;
+      position: relative;
+      overflow: hidden;
+    " onmouseover="this.style.borderColor='${book.color}66';this.style.background='linear-gradient(135deg,${book.color}15,${book.color}08)';this.style.transform='translateX(4px)'" onmouseout="this.style.borderColor='${book.color}22';this.style.background='linear-gradient(135deg,${book.color}08,${book.color}03)';this.style.transform='translateX(0)'">
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <div>
-          <div style="font-family:Orbitron;font-size:0.9rem;color:${book.color};">${book.icon} ${book.title}</div>
-          <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-top:0.2rem;">${book.author} — ${book.scenarios.length} scenarios</div>
-          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.3rem;">${book.desc}</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.4rem;">
+            <span style="font-size:1.3rem;">${book.icon}</span>
+            <span style="font-family:Orbitron;font-size:0.85rem;color:${book.color};letter-spacing:0.05em;">${book.title}</span>
+          </div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.35);margin-bottom:0.3rem;">${book.author}</div>
+          <div style="font-size:0.72rem;color:rgba(255,255,255,0.5);line-height:1.5;">${book.desc}</div>
+          <div style="display:flex;gap:0.8rem;margin-top:0.6rem;">
+            <span style="font-family:Orbitron;font-size:0.6rem;color:${book.color};background:${book.color}15;padding:0.2rem 0.5rem;border-radius:3px;">${book.scenarios.length} SCENARIOS</span>
+            ${book.timePerScenario?`<span style="font-family:Orbitron;font-size:0.6rem;color:var(--danger);background:rgba(255,51,51,0.1);padding:0.2rem 0.5rem;border-radius:3px;">⏱️ ${book.timePerScenario}s</span>`:'<span style="font-family:Orbitron;font-size:0.6rem;color:var(--primary);background:rgba(0,240,255,0.08);padding:0.2rem 0.5rem;border-radius:3px;">⏱️ 20s</span>'}
+          </div>
         </div>
-        <div style="font-size:1.5rem;color:${book.color};opacity:0.5;">→</div>
+        <div style="font-size:1.2rem;color:${book.color};opacity:0.3;margin-left:1rem;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='0.3'">→</div>
       </div>
     </div>
   `).join('');
@@ -5161,31 +5164,60 @@ function showWisdomScenario() {
   
   const contentEl = document.getElementById('wl-content');
   contentEl.innerHTML = `
-    <div style="text-align:center;margin-bottom:0.5rem;">
-      <span style="font-family:Orbitron;font-size:0.65rem;color:${book.color};letter-spacing:0.2em;">${book.icon} ${book.title.toUpperCase()}</span>
-      <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);margin-top:0.2rem;">SCENARIO ${idx+1} / ${book.scenarios.length}</div>
+    <!-- Header -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
+      <div>
+        <div style="font-family:Orbitron;font-size:0.7rem;color:${book.color};letter-spacing:0.15em;">${book.icon} ${book.title.toUpperCase()}</div>
+        <div style="font-size:0.65rem;color:rgba(255,255,255,0.3);margin-top:0.2rem;">Scenario ${idx+1} of ${book.scenarios.length}</div>
+      </div>
+      <div id="wisdom-timer-badge" style="display:flex;align-items:center;gap:0.4rem;background:rgba(0,240,255,0.08);border:1px solid rgba(0,240,255,0.2);padding:0.3rem 0.7rem;border-radius:20px;transition:all 0.3s;">
+        <span style="font-size:0.7rem;">⏱️</span>
+        <span id="wisdom-timer-text" style="font-family:Orbitron;font-size:0.85rem;color:var(--primary);">${timerSec}s</span>
+      </div>
     </div>
-    <div id="wisdom-timer-bar" style="position:relative;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-bottom:0.8rem;overflow:hidden;">
-      <div id="wisdom-timer-fill" style="height:100%;width:100%;background:var(--primary);border-radius:2px;transition:width 1s linear,background 0.3s;"></div>
+    
+    <!-- Timer bar -->
+    <div id="wisdom-timer-bar" style="position:relative;height:3px;background:rgba(255,255,255,0.06);border-radius:2px;margin-bottom:1.5rem;overflow:hidden;">
+      <div id="wisdom-timer-fill" style="height:100%;width:100%;background:${book.color};border-radius:2px;transition:width 1s linear,background 0.3s;"></div>
     </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;">
-      <span style="font-family:Orbitron;font-size:0.6rem;color:rgba(255,255,255,0.3);">⏱️ DECIDE</span>
-      <span id="wisdom-timer-text" style="font-family:Orbitron;font-size:0.8rem;color:var(--primary);">${timerSec}s</span>
+    
+    <!-- Situation -->
+    <div style="margin-bottom:1.5rem;">
+      <div style="font-size:0.6rem;color:rgba(255,255,255,0.25);font-family:Orbitron;letter-spacing:0.15em;margin-bottom:0.6rem;">⚡ SITUATION</div>
+      <div style="font-size:0.95rem;line-height:1.7;color:rgba(255,255,255,0.88);font-weight:400;">
+        ${scenario.situation}
+      </div>
     </div>
-    <div style="background:rgba(255,255,255,0.03);border:1px solid ${book.color}33;padding:1.2rem;margin-bottom:1.2rem;border-radius:4px;font-size:0.9rem;line-height:1.6;color:rgba(255,255,255,0.85);">
-      <div style="font-family:Orbitron;font-size:0.6rem;color:${book.color};margin-bottom:0.5rem;">⚡ SITUATION</div>
-      ${scenario.situation}
+    
+    <!-- Choices -->
+    <div style="margin-bottom:0.5rem;">
+      <div style="font-size:0.6rem;color:rgba(255,255,255,0.25);font-family:Orbitron;letter-spacing:0.15em;margin-bottom:0.7rem;">WHAT DO YOU DO?</div>
+      <div id="wisdom-choices">
+        ${scenario.choices.map((choice, i) => `
+          <div onclick="selectWisdomChoice(${i})" id="wchoice-${i}" style="
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 0.9rem 1.1rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.82rem;
+            color: rgba(255,255,255,0.8);
+            border-radius: 8px;
+            line-height: 1.5;
+          " onmouseover="if(!this.classList.contains('locked')){this.style.borderColor='${book.color}55';this.style.background='${book.color}08'}" onmouseout="if(!this.classList.contains('locked')){this.style.borderColor='rgba(255,255,255,0.08)';this.style.background='rgba(255,255,255,0.03)'}">
+            <span style="font-family:Orbitron;font-size:0.6rem;color:${book.color};opacity:0.7;margin-right:0.6rem;">${String.fromCharCode(65+i)}</span>${choice.text}
+          </div>
+        `).join('')}
+      </div>
     </div>
-    <div style="font-family:Orbitron;font-size:0.65rem;color:rgba(255,255,255,0.5);margin-bottom:0.5rem;letter-spacing:0.1em;">WHAT DO YOU DO?</div>
-    <div id="wisdom-choices">
-      ${scenario.choices.map((choice, i) => `
-        <div onclick="selectWisdomChoice(${i})" id="wchoice-${i}" style="background:var(--glass);border:1px solid var(--glass-border);padding:0.8rem 1rem;margin-bottom:6px;cursor:pointer;transition:all 0.2s;font-size:0.8rem;color:rgba(255,255,255,0.8);border-radius:4px;" onmouseover="if(!this.classList.contains('locked')){this.style.borderColor='${book.color}'}" onmouseout="if(!this.classList.contains('locked')){this.style.borderColor='var(--glass-border)'}">
-          <span style="font-family:Orbitron;font-size:0.65rem;color:${book.color};margin-right:0.5rem;">${String.fromCharCode(65+i)}.</span> ${choice.text}
-        </div>
-      `).join('')}
-    </div>
+    
     <div id="wisdom-analysis" style="display:none;"></div>
-    <div class="progress-bar" style="margin-top:1rem;"><div class="progress-fill" id="w-progress" style="width:${(idx/book.scenarios.length)*100}%;background:${book.color};"></div></div>
+    
+    <!-- Progress dots -->
+    <div style="display:flex;gap:4px;justify-content:center;margin-top:1.5rem;">
+      ${book.scenarios.map((_, i) => `<div style="width:${i===idx?'16px':'6px'};height:6px;border-radius:3px;background:${i<idx?'var(--success)':i===idx?book.color:'rgba(255,255,255,0.1)'};transition:all 0.3s;"></div>`).join('')}
+    </div>
   `;
   document.getElementById('wl-nav').innerHTML = '';
   
@@ -5193,6 +5225,7 @@ function showWisdomScenario() {
     wisdomState.timeLeft--;
     const fill = document.getElementById('wisdom-timer-fill');
     const text = document.getElementById('wisdom-timer-text');
+    const badge = document.getElementById('wisdom-timer-badge');
     if (!fill || !text) { clearInterval(wisdomState.timerInterval); return; }
     const pct = (wisdomState.timeLeft / timerSec) * 100;
     fill.style.width = pct + '%';
@@ -5200,9 +5233,11 @@ function showWisdomScenario() {
     if (wisdomState.timeLeft <= 5) {
       fill.style.background = 'var(--danger)';
       text.style.color = 'var(--danger)';
+      if (badge) { badge.style.borderColor = 'rgba(255,51,51,0.3)'; badge.style.background = 'rgba(255,51,51,0.1)'; }
     } else if (wisdomState.timeLeft <= 10) {
       fill.style.background = 'var(--accent)';
       text.style.color = 'var(--accent)';
+      if (badge) { badge.style.borderColor = 'rgba(255,230,0,0.2)'; badge.style.background = 'rgba(255,230,0,0.06)'; }
     }
     if (wisdomState.timeLeft <= 0) {
       clearInterval(wisdomState.timerInterval);
@@ -5268,44 +5303,50 @@ function selectWisdomChoice(choiceIdx) {
   analysisEl.style.display = '';
   if (timedOut) {
     analysisEl.innerHTML = `
-      <div style="background:rgba(255,51,51,0.08);border-left:3px solid var(--danger);padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
-        <div style="font-family:Orbitron;font-size:0.65rem;color:var(--danger);margin-bottom:0.5rem;letter-spacing:0.1em;">⏰ TIME'S UP — INDECISION IS A CHOICE</div>
-        <div style="color:rgba(255,255,255,0.8);font-size:0.82rem;line-height:1.7;">In real life, hesitation has consequences. While you froze, the situation moved without you. The strategic choice was <strong>${scenario.choices[scenario.correctChoice].text}</strong>. Time pressure exposes your default reaction — and your default was: do nothing.</div>
+      <div style="background:rgba(255,51,51,0.06);border:1px solid rgba(255,51,51,0.15);padding:1.2rem;margin-top:1.5rem;border-radius:10px;">
+        <div style="font-family:Orbitron;font-size:0.6rem;color:var(--danger);margin-bottom:0.6rem;letter-spacing:0.1em;">⏰ TIME'S UP — INDECISION IS A CHOICE</div>
+        <div style="color:rgba(255,255,255,0.75);font-size:0.82rem;line-height:1.7;">While you froze, the situation moved without you. The strategic choice was: <em>${scenario.choices[scenario.correctChoice].text}</em>.</div>
       </div>
-      <div style="background:rgba(0,255,136,0.05);border-left:3px solid var(--success);padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
-        <div style="font-family:Orbitron;font-size:0.65rem;color:var(--success);margin-bottom:0.5rem;letter-spacing:0.1em;">✅ STRATEGIC CHOICE</div>
-        <div style="color:rgba(255,255,255,0.8);font-size:0.82rem;line-height:1.7;">${scenario.analysis[scenario.choices[scenario.correctChoice].tag]}</div>
+      <div style="background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.12);padding:1.2rem;margin-top:0.8rem;border-radius:10px;">
+        <div style="font-family:Orbitron;font-size:0.6rem;color:var(--success);margin-bottom:0.6rem;letter-spacing:0.1em;">✅ STRATEGIC CHOICE</div>
+        <div style="color:rgba(255,255,255,0.75);font-size:0.82rem;line-height:1.7;">${scenario.analysis[scenario.choices[scenario.correctChoice].tag]}</div>
       </div>
-      <div style="background:rgba(255,0,170,0.05);border-left:3px solid ${book.color};padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
-        <div style="font-family:Orbitron;font-size:0.65rem;color:${book.color};margin-bottom:0.5rem;letter-spacing:0.1em;">📚 PRINCIPLE</div>
-        <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;line-height:1.7;font-style:italic;">"${scenario.principle}"</div>
-      </div>
-      <div style="background:rgba(0,240,255,0.05);border-left:3px solid var(--primary);padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
-        <div style="font-family:Orbitron;font-size:0.65rem;color:var(--primary);margin-bottom:0.5rem;letter-spacing:0.1em;">📖 LAW: ${scenario.law}</div>
+      <div style="background:${book.color}08;border:1px solid ${book.color}18;padding:1.2rem;margin-top:0.8rem;border-radius:10px;">
+        <div style="font-family:Orbitron;font-size:0.6rem;color:${book.color};margin-bottom:0.4rem;letter-spacing:0.1em;">📚 PRINCIPLE</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:0.82rem;line-height:1.7;font-style:italic;">"${scenario.principle}"</div>
+        <div style="font-size:0.65rem;color:rgba(255,255,255,0.25);margin-top:0.6rem;font-family:Orbitron;letter-spacing:0.05em;">📖 ${scenario.law}</div>
       </div>
     `;
   } else {
     analysisEl.innerHTML = `
-      <div style="background:${isCorrect?'rgba(0,255,136,0.05)':'rgba(255,51,51,0.05)'};border-left:3px solid ${isCorrect?'var(--success)':'var(--danger)'};padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
-        <div style="font-family:Orbitron;font-size:0.65rem;color:${isCorrect?'var(--success)':'var(--danger)'};margin-bottom:0.5rem;letter-spacing:0.1em;">${isCorrect?'✅ STRATEGIC CHOICE':'❌ YOUR CHOICE — CONSEQUENCE'}${timeBonus>0?' ⚡ +'+timeBonus+' TIME BONUS':''}</div>
-        <div style="color:rgba(255,255,255,0.8);font-size:0.82rem;line-height:1.7;">${scenario.analysis[choice.tag]}</div>
+      <div style="background:${isCorrect?'rgba(0,255,136,0.06)':'rgba(255,51,51,0.06)'};border:1px solid ${isCorrect?'rgba(0,255,136,0.15)':'rgba(255,51,51,0.15)'};padding:1.2rem;margin-top:1.5rem;border-radius:10px;">
+        <div style="font-family:Orbitron;font-size:0.6rem;color:${isCorrect?'var(--success)':'var(--danger)'};margin-bottom:0.6rem;letter-spacing:0.1em;">${isCorrect?'✅ STRATEGIC CHOICE':'❌ CONSEQUENCE'}${timeBonus>0?' ⚡ +'+timeBonus+' TIME BONUS':''}</div>
+        <div style="color:rgba(255,255,255,0.75);font-size:0.82rem;line-height:1.7;">${scenario.analysis[choice.tag]}</div>
       </div>
-      <div style="background:rgba(255,0,170,0.05);border-left:3px solid ${book.color};padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
-        <div style="font-family:Orbitron;font-size:0.65rem;color:${book.color};margin-bottom:0.5rem;letter-spacing:0.1em;">📚 PRINCIPLE</div>
-        <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;line-height:1.7;font-style:italic;">"${scenario.principle}"</div>
-      </div>
-      <div style="background:rgba(0,240,255,0.05);border-left:3px solid var(--primary);padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
-        <div style="font-family:Orbitron;font-size:0.65rem;color:var(--primary);margin-bottom:0.5rem;letter-spacing:0.1em;">📖 LAW: ${scenario.law}</div>
+      <div style="background:${book.color}08;border:1px solid ${book.color}18;padding:1.2rem;margin-top:0.8rem;border-radius:10px;">
+        <div style="font-family:Orbitron;font-size:0.6rem;color:${book.color};margin-bottom:0.4rem;letter-spacing:0.1em;">📚 PRINCIPLE</div>
+        <div style="color:rgba(255,255,255,0.7);font-size:0.82rem;line-height:1.7;font-style:italic;">"${scenario.principle}"</div>
+        <div style="font-size:0.65rem;color:rgba(255,255,255,0.25);margin-top:0.6rem;font-family:Orbitron;letter-spacing:0.05em;">📖 ${scenario.law}</div>
       </div>
     `;
   }
   
   const navEl = document.getElementById('wl-nav');
   const isLast = wisdomState.currentScenario >= book.scenarios.length - 1;
-  navEl.innerHTML = `<button class="btn btn-small" onclick="wisdomNext()" style="font-size:0.75rem;padding:0.5rem 1.5rem;background:linear-gradient(135deg,${book.color},${book.color}88);">${isLast?'📊 SEE YOUR PROFILE':'NEXT SCENARIO →'}</button>`;
+  navEl.innerHTML = `<button class="btn btn-small" onclick="wisdomNext()" style="font-size:0.75rem;padding:0.6rem 2rem;border-radius:8px;background:linear-gradient(135deg,${book.color},${book.color}88);">${isLast?'📊 SEE YOUR PROFILE':'NEXT →'}</button>`;
   
-  const prog = document.getElementById('w-progress');
-  if (prog) prog.style.width = `${((wisdomState.currentScenario+1)/book.scenarios.length)*100}%`;
+  // Update progress dots
+  const dots = document.querySelectorAll('#wl-content [style*="display:flex"][style*="gap:4px"] div');
+  dots.forEach((dot, i) => {
+    if (i < wisdomState.currentScenario + 1) {
+      dot.style.background = 'var(--success)';
+      dot.style.width = '6px';
+    }
+    if (i === wisdomState.currentScenario + 1) {
+      dot.style.width = '16px';
+      dot.style.background = book.color;
+    }
+  });
 }
 
 function wisdomNext() {
@@ -5339,34 +5380,62 @@ function showWisdomResults() {
   const trait = traits[dominant];
   
   const contentEl = document.getElementById('wl-content');
+  const gradeColor = pct>=80?'var(--success)':pct>=60?'var(--primary)':pct>=40?'var(--accent)':'var(--danger)';
+  const grade = pct>=80?'A':pct>=60?'B':pct>=40?'C':'D';
+  
   contentEl.innerHTML = `
-    <div style="text-align:center;margin-bottom:1.5rem;">
-      <div style="font-size:2rem;">${book.icon}</div>
-      <div style="font-family:Orbitron;font-size:1.2rem;color:${book.color};margin:0.5rem 0;">${book.title}</div>
-      <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);">SCENARIO ANALYSIS COMPLETE</div>
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:2rem;">
+      <div style="font-size:1.8rem;margin-bottom:0.3rem;">${book.icon}</div>
+      <div style="font-family:Orbitron;font-size:0.7rem;color:${book.color};letter-spacing:0.15em;margin-bottom:0.3rem;">${book.title.toUpperCase()}</div>
+      <div style="font-size:0.6rem;color:rgba(255,255,255,0.25);">ANALYSIS COMPLETE</div>
     </div>
-    <div style="text-align:center;margin:1.5rem 0;">
-      <div style="font-family:Orbitron;font-size:3rem;color:${pct>=70?'var(--success)':pct>=40?'var(--accent)':'var(--danger)'};">${score}/${total}</div>
-      <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);">Strategic choices</div>
-      ${timeBonus>0?`<div style="font-family:Orbitron;font-size:1.2rem;color:var(--accent);margin-top:0.5rem;">⚡ +${timeBonus} TIME BONUS</div>`:''}
-      ${timedOut>0?`<div style="font-size:0.75rem;color:var(--danger);margin-top:0.3rem;">⏰ ${timedOut} scenario${timedOut>1?'s':''} timed out — indecision costs</div>`:''}
+    
+    <!-- Score circle -->
+    <div style="text-align:center;margin-bottom:2rem;">
+      <div style="display:inline-flex;align-items:center;justify-content:center;width:100px;height:100px;border-radius:50%;border:3px solid ${gradeColor};position:relative;">
+        <div>
+          <div style="font-family:Orbitron;font-size:2.2rem;color:${gradeColor};line-height:1;">${grade}</div>
+          <div style="font-size:0.65rem;color:rgba(255,255,255,0.4);margin-top:0.2rem;">${score}/${total}</div>
+        </div>
+      </div>
+      ${timeBonus>0?`<div style="font-family:Orbitron;font-size:0.85rem;color:var(--accent);margin-top:0.8rem;">⚡ +${timeBonus} TIME BONUS</div>`:''}
+      ${timedOut>0?`<div style="font-size:0.7rem;color:var(--danger);margin-top:0.3rem;opacity:0.7;">⏰ ${timedOut} timed out</div>`:''}
     </div>
-    <div style="background:${trait.color}11;border:1px solid ${trait.color}44;padding:1.2rem;margin:1rem 0;border-radius:4px;text-align:center;">
-      <div style="font-family:Orbitron;font-size:1.3rem;color:${trait.color};margin-bottom:0.5rem;">${trait.name}</div>
-      <div style="font-size:0.8rem;color:rgba(255,255,255,0.7);line-height:1.6;">${trait.desc}</div>
+    
+    <!-- Trait card -->
+    <div style="background:${trait.color}08;border:1px solid ${trait.color}25;padding:1.5rem;margin-bottom:1.5rem;border-radius:10px;text-align:center;">
+      <div style="font-family:Orbitron;font-size:1.4rem;color:${trait.color};margin-bottom:0.6rem;letter-spacing:0.05em;">${trait.name}</div>
+      <div style="font-size:0.82rem;color:rgba(255,255,255,0.65);line-height:1.7;max-width:500px;margin:0 auto;">${trait.desc}</div>
     </div>
-    <div style="font-family:Orbitron;font-size:0.65rem;color:rgba(255,255,255,0.4);margin:1rem 0 0.5rem;letter-spacing:0.1em;">BEHAVIORAL BREAKDOWN</div>
-    ${sorted.filter(([k,v])=>v>0).map(([key,val])=>{
-      const maxV=Math.max(...Object.values(profile),1);
-      const colors={aggressive:'var(--danger)',passive:'rgba(255,255,255,0.4)',strategic:'var(--secondary)',aware:'var(--primary)',emotional:'#ff8800',rational:'var(--success)',social:'#00ff88',independent:'var(--accent)'};
-      return `<div style="display:flex;align-items:center;gap:0.5rem;margin:0.3rem 0;font-size:0.7rem;"><span style="width:80px;text-align:right;color:${colors[key]};text-transform:uppercase;">${key}</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;"><div style="width:${(val/maxV)*100}%;height:100%;background:${colors[key]};border-radius:4px;"></div></div><span style="width:20px;font-family:Orbitron;font-size:0.6rem;">${val}</span></div>`;
-    }).join('')}
-    ${sorted[1]?`<div style="background:rgba(255,230,0,0.05);border:1px solid rgba(255,230,0,0.2);padding:1rem;margin:1.5rem 0;border-radius:4px;"><div style="font-family:Orbitron;font-size:0.65rem;color:var(--accent);margin-bottom:0.5rem;letter-spacing:0.1em;">💡 YOUR WEAKNESS PATTERN</div><div style="font-size:0.8rem;color:rgba(255,255,255,0.7);line-height:1.6;">Your secondary tendency is <strong style="color:${traits[sorted[1][0]].color}">${sorted[1][0]}</strong>. Under pressure, you slip from ${dominant} → ${sorted[1][0]}. That's your blind spot. Review the scenarios you got wrong — that's where it shows.</div></div>`:''}
+    
+    <!-- Behavioral bars -->
+    <div style="margin-bottom:1.5rem;">
+      <div style="font-family:Orbitron;font-size:0.6rem;color:rgba(255,255,255,0.25);margin-bottom:0.8rem;letter-spacing:0.15em;">BEHAVIORAL BREAKDOWN</div>
+      ${sorted.filter(([k,v])=>v>0).map(([key,val],i)=>{
+        const maxV=Math.max(...Object.values(profile),1);
+        const colors={aggressive:'var(--danger)',passive:'rgba(255,255,255,0.35)',strategic:'var(--secondary)',aware:'var(--primary)',emotional:'#ff8800',rational:'var(--success)',social:'#00ff88',independent:'var(--accent)'};
+        const icons={aggressive:'⚔️',passive:'🕊️',strategic:'♟️',aware:'👁️',emotional:'💫',rational:'🧮',social:'🤝',independent:'🐺'};
+        return `<div style="display:flex;align-items:center;gap:0.6rem;margin:0.5rem 0;font-size:0.7rem;">
+          <span style="width:20px;text-align:center;font-size:0.8rem;">${icons[key]||'•'}</span>
+          <span style="width:75px;text-align:right;color:${colors[key]};text-transform:uppercase;font-family:Orbitron;font-size:0.55rem;letter-spacing:0.05em;">${key}</span>
+          <div style="flex:1;height:6px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;">
+            <div style="width:${(val/maxV)*100}%;height:100%;background:${colors[key]};border-radius:3px;transition:width 0.5s ease ${i*0.05}s;"></div>
+          </div>
+          <span style="width:16px;font-family:Orbitron;font-size:0.55rem;color:rgba(255,255,255,0.4);">${val}</span>
+        </div>`;
+      }).join('')}
+    </div>
+    
+    ${sorted[1]?`<div style="background:rgba(255,230,0,0.04);border:1px solid rgba(255,230,0,0.12);padding:1.2rem;margin-bottom:1.5rem;border-radius:8px;">
+      <div style="font-family:Orbitron;font-size:0.6rem;color:var(--accent);margin-bottom:0.5rem;letter-spacing:0.1em;">💡 BLIND SPOT</div>
+      <div style="font-size:0.8rem;color:rgba(255,255,255,0.6);line-height:1.6;">Under pressure, you slip from <strong style="color:${trait.color}">${dominant}</strong> → <strong style="color:${traits[sorted[1][0]].color}">${sorted[1][0]}</strong>. Review the scenarios you got wrong.</div>
+    </div>`:''}
   `;
   
   document.getElementById('wl-nav').innerHTML = `
-    <button class="btn btn-small" onclick="startWisdomBook('${book.id}')" style="font-size:0.7rem;padding:0.4rem 1rem;">🔄 PLAY AGAIN</button>
-    <button class="btn btn-small" onclick="showWisdomVault()" style="font-size:0.7rem;padding:0.4rem 1rem;background:linear-gradient(135deg,#444,#222);">📚 OTHER BOOKS</button>
+    <button class="btn btn-small" onclick="startWisdomBook('${book.id}')" style="font-size:0.72rem;padding:0.5rem 1.2rem;border-radius:6px;">🔄 PLAY AGAIN</button>
+    <button class="btn btn-small" onclick="showWisdomVault()" style="font-size:0.72rem;padding:0.5rem 1.2rem;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;">📚 ALL BOOKS</button>
   `;
 }
 // ===== MATRIX RAIN BACKGROUND =====
