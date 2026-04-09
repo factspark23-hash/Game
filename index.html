@@ -2938,32 +2938,40 @@ function level10() {
 }
 
 // ===== LEVEL 11: REACTION STORM =====
-// Pure reaction time - targets appear randomly, click FAST
+// HARD: Cognitive load + reaction — solve math on targets, dodge decoys, maintain order, accelerating speed
 function level11() {
   const area = document.getElementById('game-area');
-  const GRID = 6;
-  const TARGETS_NEEDED = 20;
+  const GRID = 5;
+  const TARGETS_NEEDED = 25;
   let hit = 0;
   let missed = 0;
+  let wrongClicks = 0;
   let currentTarget = -1;
   let targetTimeout = null;
   let reactionTimes = [];
+  let currentAnswer = 0;
+  let nextExpectedNum = 1; // Must click in order 1-5 repeating
+  let currentDecoy = false;
 
   area.innerHTML = `
     <div class="level-title">REACTION STORM</div>
-    <div class="level-desc">Targets appear randomly. Click them FAST. You need ${TARGETS_NEEDED} hits. Miss 5 and you die.</div>
-    <div class="level-rules">Average reaction time under 600ms to survive. Speed = survival.</div>
-    <div class="info-box highlight" id="l11-status">Hit: 0/${TARGETS_NEEDED} | Missed: 0/5</div>
-    <div id="l11-grid" style="display:inline-grid;grid-template-columns:repeat(${GRID},55px);gap:4px;"></div>
-    <div class="info-box" id="l11-avg" style="margin-top:0.5rem;">Avg reaction: --ms</div>
+    <div class="level-desc">Targets show a MATH PROBLEM. Solve it, then click if answer matches the expected number (1→2→3→4→5→1...). RED targets are DECOYS — don't click them!</div>
+    <div class="level-rules">Hit ${TARGETS_NEEDED} correct targets. Miss 5 = dead. Click decoys = -1 life. Speed increases. 75 seconds.</div>
+    <div class="info-box highlight" id="l11-status">Hit: 0/${TARGETS_NEEDED} | Missed: 0/5 | Wrong: 0</div>
+    <div style="display:flex;gap:1rem;align-items:center;justify-content:center;margin:0.5rem 0;">
+      <div class="info-box" style="color:var(--accent);">Expected: <span id="l11-expected" style="font-size:1.3rem;">1</span></div>
+      <div class="info-box" id="l11-avg">Avg: --ms</div>
+    </div>
+    <div id="l11-grid" style="display:inline-grid;grid-template-columns:repeat(${GRID},65px);gap:4px;"></div>
   `;
 
   const gridEl = document.getElementById('l11-grid');
   for (let i = 0; i < GRID * GRID; i++) {
     const cell = document.createElement('div');
     cell.className = 'grid-cell';
-    cell.style.width = '55px';
-    cell.style.height = '55px';
+    cell.style.width = '65px';
+    cell.style.height = '65px';
+    cell.style.fontSize = '0.8rem';
     cell.dataset.idx = i;
     cell.addEventListener('click', () => handleClick(i));
     gridEl.appendChild(cell);
@@ -2972,14 +2980,19 @@ function level11() {
   let targetAppearTime = 0;
 
   function spawnTarget() {
-    if (hit >= TARGETS_NEEDED || missed >= 5) return;
+    if (hit >= TARGETS_NEEDED || missed >= 5 || wrongClicks >= 5) return;
+    
     // Clear previous
     if (currentTarget >= 0) {
-      gridEl.children[currentTarget].classList.remove('active');
-      gridEl.children[currentTarget].style.background = '';
+      const prev = gridEl.children[currentTarget];
+      prev.classList.remove('active');
+      prev.style.background = '';
+      prev.style.boxShadow = '';
+      prev.textContent = '';
     }
-    // Miss if previous wasn't clicked
-    if (currentTarget >= 0 && Date.now() - targetAppearTime > 1500) {
+    
+    // Miss if previous wasn't clicked in time
+    if (currentTarget >= 0 && Date.now() - targetAppearTime > getTimeout()) {
       missed++;
       updateStatus();
       if (missed >= 5) {
@@ -2987,57 +3000,117 @@ function level11() {
         return;
       }
     }
+    
     // New target
     let next;
     do { next = randInt(0, GRID * GRID - 1); } while (next === currentTarget);
     currentTarget = next;
     targetAppearTime = Date.now();
+    
+    // Decide if this is a real target or decoy
+    currentDecoy = Math.random() < 0.25; // 25% decoys
+    
+    // Generate simple number, answer maps to sequence
+    let rawAnswer = randInt(1, 50);
+    let seqAnswer = ((rawAnswer - 1) % 5) + 1;
+    
+    if (currentDecoy) {
+      // Make it NOT match expected
+      while (seqAnswer === nextExpectedNum) {
+        rawAnswer = randInt(1, 50);
+        seqAnswer = ((rawAnswer - 1) % 5) + 1;
+      }
+    } else {
+      // Force match: rawAnswer % 5 = nextExpectedNum
+      rawAnswer = nextExpectedNum + randInt(0, 9) * 5;
+      seqAnswer = ((rawAnswer - 1) % 5) + 1;
+    }
+    
+    // Reconstruct problem
+    const showProblem = `${rawAnswer}`;
+    
     const cell = gridEl.children[currentTarget];
     cell.classList.add('active');
-    cell.style.background = 'var(--danger)';
-    cell.style.boxShadow = '0 0 25px var(--danger)';
-    playTone(600, 0.05, 'square');
+    cell.textContent = showProblem;
+    
+    if (currentDecoy) {
+      cell.style.background = 'rgba(255,51,51,0.3)';
+      cell.style.border = '2px solid var(--danger)';
+      cell.style.boxShadow = '0 0 15px rgba(255,51,51,0.3)';
+    } else {
+      cell.style.background = 'rgba(0,240,255,0.2)';
+      cell.style.border = '2px solid var(--primary)';
+      cell.style.boxShadow = '0 0 15px rgba(0,240,255,0.3)';
+    }
+    cell.style.color = '#fff';
+    playTone(currentDecoy ? 300 : 600, 0.05, 'square');
 
-    targetTimeout = setTimeout(spawnTarget, 1500 - Math.min(hit * 50, 800));
+    targetTimeout = setTimeout(spawnTarget, getTimeout());
+  }
+
+  function getTimeout() {
+    return Math.max(800, 2000 - hit * 40); // Accelerates
   }
 
   function handleClick(idx) {
     if (state.inputLocked || idx !== currentTarget) return;
+    
     const rt = Date.now() - targetAppearTime;
-    reactionTimes.push(rt);
-    hit++;
-    playClick();
+    
+    if (currentDecoy) {
+      // Clicked a decoy!
+      wrongClicks++;
+      playFail();
+      screenShake();
+    } else {
+      // Correct target
+      reactionTimes.push(rt);
+      hit++;
+      playClick();
+      nextExpectedNum = (nextExpectedNum % 5) + 1;
+      document.getElementById('l11-expected').textContent = nextExpectedNum;
+      
+      spawnParticles(
+        gridEl.getBoundingClientRect().left + (idx % GRID) * 69 + 32,
+        gridEl.getBoundingClientRect().top + Math.floor(idx / GRID) * 69 + 32,
+        '#00f0ff', 8
+      );
+    }
 
     gridEl.children[idx].classList.remove('active');
-    gridEl.children[idx].style.background = 'var(--success)';
+    gridEl.children[idx].style.background = '';
     gridEl.children[idx].style.boxShadow = '';
-    setTimeout(() => {
-      gridEl.children[idx].style.background = '';
-    }, 100);
-
+    gridEl.children[idx].style.border = '';
+    gridEl.children[idx].textContent = '';
+    
     updateStatus();
 
     if (hit >= TARGETS_NEEDED) {
       state.inputLocked = true;
       clearTimeout(targetTimeout);
-      const avg = Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length);
-      if (avg < 800) completeLevel();
-      else failLevel(`Too slow! Avg: ${avg}ms. Need under 800ms.`);
+      const avg = reactionTimes.length ? Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length) : 9999;
+      if (avg < 700) completeLevel();
+      else failLevel(`Too slow! Avg: ${avg}ms. Need under 700ms.`);
+      return;
+    }
+    if (wrongClicks >= 5) {
+      clearTimeout(targetTimeout);
+      failLevel('Too many decoys clicked!');
       return;
     }
 
     clearTimeout(targetTimeout);
-    setTimeout(spawnTarget, 200);
+    setTimeout(spawnTarget, 150);
   }
 
   function updateStatus() {
     const avg = reactionTimes.length ? Math.round(reactionTimes.reduce((a, b) => a + b, 0) / reactionTimes.length) : 0;
-    document.getElementById('l11-status').textContent = `Hit: ${hit}/${TARGETS_NEEDED} | Missed: ${missed}/5`;
-    document.getElementById('l11-avg').textContent = `Avg reaction: ${avg}ms`;
+    document.getElementById('l11-status').textContent = `Hit: ${hit}/${TARGETS_NEEDED} | Missed: ${missed}/5 | Wrong: ${wrongClicks}/5`;
+    document.getElementById('l11-avg').textContent = `Avg: ${avg}ms`;
   }
 
-  setTimeout(spawnTarget, 1000);
-  startTimer(60);
+  setTimeout(spawnTarget, 1500);
+  startTimer(75);
 }
 
 // ===== LEVEL 12: PATTERN COMBAT =====
@@ -3812,96 +3885,176 @@ function shareResults() {
 }
 
 // ===== LEVEL 16: BOUNCE PREDICT =====
-// Objects move in patterns — predict where they'll be
+// HARD: Multiple balls, different gravity, wind changes, collision — predict all landing zones
 function level16() {
   const area = document.getElementById('game-area');
-  const CANVAS_W = 400, CANVAS_H = 300;
+  const CANVAS_W = 420, CANVAS_H = 320;
   const ROUNDS = 8;
   let round = 0;
   let score = 0;
 
   area.innerHTML = `
     <div class="level-title">BOUNCE PREDICT</div>
-    <div class="level-desc">Watch the ball bounce. Predict where it will land next. Click to place your prediction.</div>
-    <div class="level-rules">${ROUNDS} rounds. Click within 80px of the correct spot to score. 120 seconds.</div>
+    <div class="level-desc">Multiple balls with DIFFERENT gravity and wind. Watch them move. Predict where EACH lands. Click to mark.</div>
+    <div class="level-rules">${ROUNDS} rounds. Balls may collide. Wind shifts mid-flight. Click within 60px to score. 150 seconds.</div>
     <div class="info-box highlight" id="l16-status">Round 1/${ROUNDS} | Score: 0</div>
+    <div style="display:flex;gap:1rem;align-items:center;justify-content:center;margin:0.3rem 0;">
+      <div class="info-box" id="l16-info" style="font-size:0.7rem;"></div>
+    </div>
     <canvas id="l16-canvas" width="${CANVAS_W}" height="${CANVAS_H}" class="shape-canvas" style="cursor:crosshair;"></canvas>
+    <div id="l16-markers" style="margin-top:0.3rem;font-size:0.7rem;color:rgba(255,255,255,0.4);">Click to place prediction markers. Each ball needs one.</div>
+    <div style="margin-top:0.5rem;">
+      <button class="btn btn-small" id="l16-check" style="font-size:0.7rem;padding:0.4rem 1rem;">VERIFY PREDICTIONS</button>
+      <button class="btn btn-small" id="l16-clear" style="font-size:0.7rem;padding:0.4rem 1rem;background:linear-gradient(135deg,#444,#222);margin-left:0.3rem;">CLEAR</button>
+    </div>
     <div class="progress-bar"><div class="progress-fill" id="l16-progress" style="width:0%"></div></div>
   `;
 
   const canvas = document.getElementById('l16-canvas');
   const ctx = canvas.getContext('2d');
+  let predictions = [];
+  let targets = [];
+  let ballCount = 0;
+  let phase = 'watch';
 
-  function drawFrame(balls, prediction, target) {
+  function drawScene(balls, preds, tgts) {
     ctx.fillStyle = 'rgba(10,10,15,0.95)';
     ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-    
+
     // Grid
-    ctx.strokeStyle = 'rgba(0,240,255,0.08)';
+    ctx.strokeStyle = 'rgba(0,240,255,0.06)';
     ctx.lineWidth = 1;
-    for (let x = 0; x < CANVAS_W; x += 40) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CANVAS_H); ctx.stroke();
-    }
-    for (let y = 0; y < CANVAS_H; y += 40) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_W, y); ctx.stroke();
-    }
+    for (let x = 0; x < CANVAS_W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CANVAS_H); ctx.stroke(); }
+    for (let y = 0; y < CANVAS_H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_W, y); ctx.stroke(); }
 
-    // Draw trail
-    if (balls.length > 1) {
-      ctx.strokeStyle = 'rgba(0,240,255,0.4)';
+    // Ground
+    ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, CANVAS_H - 10); ctx.lineTo(CANVAS_W, CANVAS_H - 10); ctx.stroke();
+
+    // Wind indicator
+    ctx.fillStyle = 'rgba(255,230,0,0.4)';
+    ctx.font = '10px monospace';
+    ctx.fillText('WIND →', CANVAS_W - 70, 20);
+
+    // Trails
+    const colors = ['#00f0ff', '#ff00aa', '#00ff88', '#ffe600'];
+    balls.forEach((trail, bi) => {
+      if (trail.length < 2) return;
+      ctx.strokeStyle = colors[bi % colors.length] + '60';
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(balls[0].x, balls[0].y);
-      balls.forEach(b => ctx.lineTo(b.x, b.y));
+      ctx.moveTo(trail[0].x, trail[0].y);
+      trail.forEach(p => ctx.lineTo(p.x, p.y));
       ctx.stroke();
-    }
 
-    // Draw balls
-    balls.forEach((b, i) => {
-      ctx.fillStyle = i === balls.length - 1 ? '#00f0ff' : 'rgba(0,240,255,0.3)';
+      // Current position
+      const last = trail[trail.length - 1];
+      ctx.fillStyle = colors[bi % colors.length];
       ctx.beginPath();
-      ctx.arc(b.x, b.y, i === balls.length - 1 ? 8 : 4, 0, Math.PI * 2);
+      ctx.arc(last.x, last.y, 7, 0, Math.PI * 2);
       ctx.fill();
-      if (i === balls.length - 1) {
-        ctx.shadowColor = '#00f0ff';
-        ctx.shadowBlur = 15;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-    });
-
-    // Target
-    if (target) {
-      ctx.strokeStyle = 'var(--success)';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([5, 5]);
-      ctx.beginPath();
-      ctx.arc(target.x, target.y, 80, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-      
-      ctx.fillStyle = '#00ff88';
-      ctx.beginPath();
-      ctx.arc(target.x, target.y, 6, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    // Prediction
-    if (prediction) {
-      ctx.fillStyle = '#ff00aa';
-      ctx.beginPath();
-      ctx.arc(prediction.x, prediction.y, 8, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.shadowColor = '#ff00aa';
-      ctx.shadowBlur = 15;
+      ctx.shadowColor = colors[bi % colors.length];
+      ctx.shadowBlur = 12;
       ctx.fill();
       ctx.shadowBlur = 0;
+      
+      // Label
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 10px Orbitron, sans-serif';
+      ctx.fillText(`B${bi + 1}`, last.x + 10, last.y - 10);
+    });
+
+    // Targets (shown after verify)
+    if (tgts && tgts.length) {
+      tgts.forEach((t, i) => {
+        ctx.strokeStyle = colors[i % colors.length];
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, 60, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, 5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    // Predictions
+    if (preds && preds.length) {
+      preds.forEach((p, i) => {
+        ctx.strokeStyle = '#ff00aa';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = '#ff00aa';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ff00aa';
+        ctx.font = 'bold 12px Orbitron, sans-serif';
+        ctx.fillText(`${i + 1}`, p.x + 12, p.y + 4);
+      });
     }
   }
 
-  let targetPos = null;
-  let prediction = null;
-  let phase = 'watch'; // watch, predict
+  function simulateBalls(count) {
+    const ballTrails = [];
+    const finalPositions = [];
+    const colors = ['#00f0ff', '#ff00aa', '#00ff88', '#ffe600'];
+    
+    for (let b = 0; b < count; b++) {
+      const startX = randInt(40 + b * 80, 100 + b * 80);
+      const startY = randInt(20, 50);
+      let vx = (Math.random() - 0.3) * 6; // Slight rightward bias (wind)
+      let vy = 1 + Math.random() * 2;
+      const gravity = 0.25 + Math.random() * 0.2; // Different gravity per ball
+      const bounce = 0.7 + Math.random() * 0.15;
+      const windChange = randInt(15, 30); // Wind shifts at this frame
+      
+      const trail = [{x: startX, y: startY}];
+      let cx = startX, cy = startY, cvx = vx, cvy = vy;
+      
+      const totalFrames = 50;
+      for (let i = 0; i < totalFrames; i++) {
+        cvy += gravity;
+        
+        // Wind effect — changes direction mid-flight
+        if (i > windChange) cvx += 0.05; // Wind shifts right
+        else cvx -= 0.02; // Slight left
+        
+        cx += cvx;
+        cy += cvy;
+        
+        // Bounce off walls
+        if (cx < 10) { cx = 10; cvx = Math.abs(cvx) * 0.8; }
+        if (cx > CANVAS_W - 10) { cx = CANVAS_W - 10; cvx = -Math.abs(cvx) * 0.8; }
+        if (cy > CANVAS_H - 10) { cy = CANVAS_H - 10; cvy = -Math.abs(cvy) * bounce; cvx *= 0.95; }
+        
+        trail.push({x: cx, y: cy});
+      }
+      
+      ballTrails.push(trail);
+      
+      // Final position = extrapolate 15 more frames
+      let fx = cx, fy = cy, fvx = cvx, fvy = cvy;
+      for (let i = 0; i < 15; i++) {
+        fvy += gravity;
+        fvx += 0.05; // Wind continues right
+        fx += fvx;
+        fy += fvy;
+        if (fx < 10) { fx = 10; fvx = Math.abs(fvx) * 0.8; }
+        if (fx > CANVAS_W - 10) { fx = CANVAS_W - 10; fvx = -Math.abs(fvx) * 0.8; }
+        if (fy > CANVAS_H - 10) { fy = CANVAS_H - 10; fvy = -Math.abs(fvy) * bounce; fvx *= 0.95; }
+      }
+      finalPositions.push({x: fx, y: Math.min(fy, CANVAS_H - 10)});
+    }
+    
+    return {ballTrails, finalPositions};
+  }
 
   function runRound() {
     if (round >= ROUNDS) {
@@ -3911,54 +4064,29 @@ function level16() {
       return;
     }
     round++;
-    document.getElementById('l16-status').textContent = `Round ${round}/${ROUNDS} | Score: ${score}`;
-    prediction = null;
-    targetPos = null;
+    predictions = [];
     phase = 'watch';
+    
+    ballCount = Math.min(1 + Math.floor((round - 1) / 3), 3); // 1 ball rounds 1-3, 2 balls 4-6, 3 balls 7-8
+    document.getElementById('l16-status').textContent = `Round ${round}/${ROUNDS} | Score: ${score}`;
+    document.getElementById('l16-info').textContent = `Balls: ${ballCount} | Gravity varies | Wind shifts mid-flight`;
+    document.getElementById('l16-markers').textContent = `Place ${ballCount} prediction marker(s).`;
 
-    // Generate bouncing ball path
-    const startX = randInt(50, CANVAS_W - 50);
-    const startY = randInt(30, 80);
-    let vx = (Math.random() - 0.5) * 8;
-    let vy = 2 + Math.random() * 3;
-    const gravity = 0.3;
-    const bounce = 0.75;
-    const steps = 60;
-    const path = [{x: startX, y: startY}];
-    let cx = startX, cy = startY, cvx = vx, cvy = vy;
+    const {ballTrails, finalPositions} = simulateBalls(ballCount);
+    targets = finalPositions;
 
-    for (let i = 0; i < steps; i++) {
-      cvy += gravity;
-      cx += cvx;
-      cy += cvy;
-      if (cx < 10 || cx > CANVAS_W - 10) { cvx *= -1; cx = Math.max(10, Math.min(CANVAS_W - 10, cx)); }
-      if (cy > CANVAS_H - 10) { cvy *= -bounce; cy = CANVAS_H - 10; }
-      path.push({x: cx, y: cy});
-    }
-
-    // Target is position at step 70 (extrapolate 10 more steps)
-    let tx = cx, ty = cy, tvx = cvx, tvy = cvy;
-    for (let i = 0; i < 10; i++) {
-      tvy += gravity;
-      tx += tvx;
-      ty += tvy;
-      if (tx < 10 || tx > CANVAS_W - 10) { tvx *= -1; tx = Math.max(10, Math.min(CANVAS_W - 10, tx)); }
-      if (ty > CANVAS_H - 10) { tvy *= -bounce; ty = CANVAS_H - 10; }
-    }
-    targetPos = {x: tx, y: ty};
-
-    // Animate the path
+    // Animate
     let frameIdx = 0;
-    const showFrames = Math.min(path.length, 40);
+    const showFrames = Math.min(ballTrails[0].length, 35);
 
     function animate() {
       if (frameIdx >= showFrames) {
         phase = 'predict';
-        drawFrame(path.slice(0, showFrames), null, null);
-        document.getElementById('l16-status').textContent = `Round ${round}/${ROUNDS} — CLICK where the ball will land next!`;
+        document.getElementById('l16-status').textContent = `Round ${round}/${ROUNDS} — CLICK where each ball lands!`;
+        drawScene(ballTrails.map(t => t.slice(0, showFrames)), [], []);
         return;
       }
-      drawFrame(path.slice(0, frameIdx + 1), null, null);
+      drawScene(ballTrails.map(t => t.slice(0, frameIdx + 1)), [], []);
       frameIdx++;
       requestAnimationFrame(animate);
     }
@@ -3967,189 +4095,250 @@ function level16() {
 
   canvas.addEventListener('click', (e) => {
     if (phase !== 'predict' || state.inputLocked) return;
+    if (predictions.length >= ballCount) return;
+    
     const rect = canvas.getBoundingClientRect();
-    prediction = {
+    predictions.push({
       x: e.clientX - rect.left,
       y: e.clientY - rect.top
-    };
-
-    const dist = Math.sqrt((prediction.x - targetPos.x) ** 2 + (prediction.y - targetPos.y) ** 2);
+    });
     
-    if (dist < 80) {
+    drawScene([], predictions, []);
+    playClick();
+  });
+
+  document.getElementById('l16-check').addEventListener('click', () => {
+    if (phase !== 'predict' || predictions.length < ballCount) {
+      document.getElementById('l16-info').textContent = `Need ${ballCount} predictions! You have ${predictions.length}.`;
+      return;
+    }
+    
+    let roundScore = 0;
+    predictions.forEach((pred, i) => {
+      if (i < targets.length) {
+        const dist = Math.sqrt((pred.x - targets[i].x) ** 2 + (pred.y - targets[i].y) ** 2);
+        if (dist < 60) roundScore++;
+      }
+    });
+    
+    if (roundScore === ballCount) {
       score++;
       playClick();
     } else {
       playFail();
     }
-
-    drawFrame([], prediction, targetPos);
+    
+    drawScene([], predictions, targets);
     document.getElementById('l16-progress').style.width = `${(round / ROUNDS) * 100}%`;
-    setTimeout(runRound, 1200);
+    setTimeout(runRound, 1500);
+  });
+
+  document.getElementById('l16-clear').addEventListener('click', () => {
+    predictions = [];
+    drawScene([], [], []);
   });
 
   runRound();
-  startTimer(120);
+  startTimer(150);
 }
 
 // ===== LEVEL 17: SEQUENCE ORACLE =====
-// Observe behavior of elements, predict next state
+// HARD: Multiple overlapping rules, counter-intuitive patterns, must track 2+ sequences simultaneously
 function level17() {
   const area = document.getElementById('game-area');
-  const ROUNDS = 6;
+  const ROUNDS = 7;
   let round = 0;
   let score = 0;
 
   area.innerHTML = `
     <div class="level-title">SEQUENCE ORACLE</div>
-    <div class="level-desc">Watch how objects behave. Each follows a rule. Predict what happens next.</div>
-    <div class="level-rules">${ROUNDS} scenarios. Observe → Predict. 120 seconds.</div>
+    <div class="level-desc">Multiple rules operate at once. Some are distractors. Find the REAL pattern. Predict the answer.</div>
+    <div class="level-rules">${ROUNDS} rounds. Patterns get more deceptive. Red herrings everywhere. 150 seconds.</div>
     <div class="info-box highlight" id="l17-status">Round 1/${ROUNDS} | Score: 0</div>
-    <div id="l17-scene" style="min-height:250px;display:flex;flex-direction:column;align-items:center;gap:1rem;"></div>
+    <div id="l17-scene" style="min-height:280px;display:flex;flex-direction:column;align-items:center;gap:1rem;"></div>
     <div class="progress-bar"><div class="progress-fill" id="l17-progress" style="width:0%"></div></div>
   `;
 
-  // Scenarios: each has a sequence of states, player must predict next
   function generateScenario() {
-    const type = randInt(0, 5);
-    
+    const type = randInt(0, 6);
+
     if (type === 0) {
-      // Rotating colors: red → blue → green → ?
-      const colors = ['#ff3333', '#0066ff', '#00ff88', '#ffe600'];
-      const seq = [];
-      const start = randInt(0, 3);
-      const len = 4;
-      for (let i = 0; i < len; i++) seq.push(colors[(start + i) % 4]);
-      const answer = colors[(start + len) % 4];
-      return {
-        display: seq.map(c => `<div style="width:50px;height:50px;background:${c};border-radius:8px;display:inline-block;margin:0 4px;"></div>`).join(' → ') + ' → <span style="font-size:1.5rem;">?</span>',
-        question: 'What color comes next?',
-        options: colors.map(c => ({text: '', color: c, correct: c === answer})),
-        type: 'color'
-      };
-    }
-    
-    if (type === 1) {
-      // Moving dots: positions shift in a pattern
-      const positions = [];
-      let pos = randInt(0, 4);
-      const dir = Math.random() < 0.5 ? 1 : -1;
-      for (let i = 0; i < 4; i++) {
-        positions.push(((pos + i * dir) % 5 + 5) % 5);
-      }
-      const nextPos = ((pos + 4 * dir) % 5 + 5) % 5;
-      return {
-        display: `<div style="display:flex;flex-direction:column;gap:6px;">
-          ${positions.map(p => {
-            let row = '';
-            for (let i = 0; i < 5; i++) {
-              row += i === p ? '●' : '○';
-              if (i < 4) row += ' ';
-            }
-            return `<div style="font-family:monospace;font-size:1.2rem;letter-spacing:0.3em;color:var(--primary);">${row}</div>`;
-          }).join('')}
-          <div style="font-family:monospace;font-size:1.2rem;letter-spacing:0.3em;color:rgba(255,255,255,0.3);">? ? ? ? ?</div>
-        </div>`,
-        question: 'Where will the dot move next?',
-        options: Array.from({length: 5}, (_, i) => ({
-          text: `Position ${i + 1}`,
-          correct: i === nextPos
-        }))
-      };
-    }
-    
-    if (type === 2) {
-      // Number transformation: each number transforms based on a rule
-      const start = randInt(1, 5);
-      const op = randInt(0, 2); // 0: +n, 1: *n, 2: +growing
-      let seq = [start];
-      let answer;
+      // Interleaved sequences: two patterns alternating
+      const seq1 = []; const start1 = randInt(1, 3); const step1 = randInt(2, 4);
+      for (let i = 0; i < 4; i++) seq1.push(start1 + i * step1);
+      const seq2 = []; const start2 = randInt(10, 15); const step2 = randInt(2, 5);
+      for (let i = 0; i < 4; i++) seq2.push(start2 - i * step2); // Decreasing
       
-      if (op === 0) {
-        const inc = randInt(2, 5);
-        for (let i = 1; i < 5; i++) seq.push(seq[i-1] + inc);
-        answer = seq[4] + inc;
-      } else if (op === 1) {
-        const mult = randInt(2, 3);
-        for (let i = 1; i < 5; i++) seq.push(seq[i-1] * mult);
-        answer = seq[4] * mult;
-      } else {
-        let inc = 1;
-        for (let i = 1; i < 5; i++) { seq.push(seq[i-1] + inc); inc++; }
-        answer = seq[4] + inc;
-      }
+      const interleaved = [];
+      for (let i = 0; i < 4; i++) { interleaved.push(seq1[i], seq2[i]); }
+      const next = seq1[0]; // Pattern resets or: next from seq1
+      const answer = start1 + 4 * step1;
       
       return {
-        display: `<div style="font-family:Orbitron;font-size:2rem;color:var(--accent);">${seq.join(' → ')} → ?</div>`,
-        question: 'What number comes next?',
+        display: `<div style="font-family:Orbitron;font-size:1.8rem;color:var(--primary);letter-spacing:0.2em;">${interleaved.join('  ')}</div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.5rem;">Hint: Two sequences are interleaved. What's the NEXT number from the first sequence?</div>`,
+        question: 'What comes next?',
         options: shuffle([
           {text: String(answer), correct: true},
-          {text: String(answer + randInt(1,3)), correct: false},
-          {text: String(answer - randInt(1,3)), correct: false},
-          {text: String(answer * 2), correct: false}
+          {text: String(seq2[0] - 4 * step2), correct: false},
+          {text: String(interleaved[interleaved.length - 1] + step1), correct: false},
+          {text: String(answer + step2), correct: false}
         ]).slice(0, 4)
       };
     }
-    
-    if (type === 3) {
-      // Grid pattern: cells light up in sequence
-      const gridSize = 3;
-      const path = [];
-      let r = randInt(0, 2), c = randInt(0, 2);
-      const dr = Math.random() < 0.5 ? 1 : -1;
-      const dc = Math.random() < 0.5 ? 1 : -1;
-      for (let i = 0; i < 5; i++) {
-        path.push({r: ((r + i * dr) % 3 + 3) % 3, c: ((c + i * dc) % 3 + 3) % 3});
+
+    if (type === 1) {
+      // Fibonacci with twist: every 3rd number is doubled
+      const a = randInt(1, 3), b = randInt(1, 3);
+      const fib = [a, b];
+      for (let i = 2; i < 7; i++) {
+        let val = fib[i-1] + fib[i-2];
+        if (i % 3 === 2) val *= 2; // Every 3rd doubled
+        fib.push(val);
       }
-      const next = {r: ((r + 5 * dr) % 3 + 3) % 3, c: ((c + 5 * dc) % 3 + 3) % 3};
+      const answer = fib[fib.length - 1] + fib[fib.length - 2];
       
       return {
-        display: `<div style="display:inline-grid;grid-template-columns:repeat(3,45px);gap:3px;">
-          ${Array.from({length: 9}, (_, i) => {
-            const cr = Math.floor(i / 3), cc = i % 3;
-            const isLit = path.some(p => p.r === cr && p.c === cc);
-            return `<div style="width:45px;height:45px;background:${isLit ? 'var(--primary)' : 'var(--glass)'};border:1px solid var(--glass-border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:rgba(255,255,255,0.3);">${isLit ? '●' : ''}</div>`;
+        display: `<div style="font-family:Orbitron;font-size:1.8rem;color:var(--accent);letter-spacing:0.2em;">${fib.join('  ')}  ?</div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.5rem;">Hint: It's like Fibonacci, but with a twist every 3rd position.</div>`,
+        question: 'What comes next?',
+        options: shuffle([
+          {text: String(answer), correct: true},
+          {text: String(answer * 2), correct: false}, // Might think it's a double position
+          {text: String(fib[fib.length-1] + fib[fib.length-2] + 1), correct: false},
+          {text: String(fib[fib.length-1] * 2), correct: false}
+        ]).slice(0, 4)
+      };
+    }
+
+    if (type === 2) {
+      // Grid with shifting pattern: diagonal moves then resets
+      const gridSize = 4;
+      const path = [];
+      let r = 0, c = 0;
+      for (let i = 0; i < 8; i++) {
+        path.push({r: r % gridSize, c: c % gridSize});
+        r++; c++; // Diagonal
+        if (r >= gridSize) { r = 0; c = (c + 1) % gridSize; } // Reset row, shift col
+      }
+      const next = {r: r % gridSize, c: c % gridSize};
+      
+      return {
+        display: `<div style="display:inline-grid;grid-template-columns:repeat(${gridSize},45px);gap:3px;">
+          ${Array.from({length: gridSize * gridSize}, (_, i) => {
+            const cr = Math.floor(i / gridSize), cc = i % gridSize;
+            const stepNum = path.findIndex(p => p.r === cr && p.c === cc);
+            const isLit = stepNum >= 0;
+            return `<div style="width:45px;height:45px;background:${isLit ? `rgba(0,240,255,${0.3 + stepNum * 0.08})` : 'var(--glass)'};border:1px solid var(--glass-border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:rgba(255,255,255,${isLit ? '0.8' : '0.2'});">${isLit ? stepNum + 1 : ''}</div>`;
           }).join('')}
-        </div>`,
-        question: 'Which cell lights up next?',
-        options: Array.from({length: 9}, (_, i) => {
-          const cr = Math.floor(i / 3), cc = i % 3;
+        </div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.5rem;">Numbers show order. Pattern: diagonal, then wrap. Where does step 9 land?</div>`,
+        question: 'Which cell is next? (Step 9)',
+        options: Array.from({length: gridSize * gridSize}, (_, i) => {
+          const cr = Math.floor(i / gridSize), cc = i % gridSize;
           return {text: `R${cr+1}C${cc+1}`, correct: cr === next.r && cc === next.c};
         })
       };
     }
 
-    if (type === 4) {
-      // Shape rotation: shapes rotate by fixed degrees
-      const shapes = ['▲', '■', '◆', '●'];
-      const rotations = [0, 90, 180, 270];
-      const shapeIdx = randInt(0, 3);
-      const rotDir = Math.random() < 0.5 ? 1 : -1;
-      const seq = [];
-      for (let i = 0; i < 4; i++) {
-        seq.push({shape: shapes[shapeIdx], rot: rotations[(i * (rotDir > 0 ? 1 : 3)) % 4]});
+    if (type === 3) {
+      // Counter-intuitive: numbers that look like they increase but actually follow a different rule
+      const base = randInt(2, 4);
+      const seq = [base];
+      // Rule: n² + (-1)^n — looks increasing but alternates above/below perfect squares
+      for (let i = 1; i <= 5; i++) {
+        seq.push(i * i + (i % 2 === 0 ? -1 : 1));
       }
-      const nextRot = rotations[(4 * (rotDir > 0 ? 1 : 3)) % 4];
+      const answer = 6 * 6 + (6 % 2 === 0 ? -1 : 1);
       
       return {
-        display: seq.map(s => `<span style="display:inline-block;font-size:2rem;transform:rotate(${s.rot}deg);margin:0 8px;">${s.shape}</span>`).join(' → ') + ' → <span style="font-size:1.5rem;">?</span>',
-        question: `What rotation comes next? (${rotDir > 0 ? 'clockwise' : 'counter-clockwise'})`,
-        options: rotations.map(r => ({text: `${r}°`, correct: r === nextRot}))
+        display: `<div style="font-family:Orbitron;font-size:1.8rem;color:var(--secondary);letter-spacing:0.2em;">${seq.join('  ')}  ?</div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.5rem;">Hint: Look at the DIFFERENCES between consecutive numbers. Then look again.</div>`,
+        question: 'What comes next?',
+        options: shuffle([
+          {text: String(answer), correct: true},
+          {text: String(seq[5] + (seq[5] - seq[4])), correct: false}, // Linear extrapolation
+          {text: String(seq[5] * 2 - seq[4]), correct: false},
+          {text: String(7 * 7), correct: false} // Perfect square
+        ]).slice(0, 4)
       };
     }
 
-    // Fallback: Fibonacci-like
-    const a = randInt(1, 3), b = randInt(1, 3);
-    const fib = [a, b];
-    for (let i = 2; i < 6; i++) fib.push(fib[i-1] + fib[i-2]);
-    const answer = fib[5] + fib[4];
+    if (type === 4) {
+      // Two competing rules: odd positions follow one rule, even another
+      const oddStart = randInt(1, 5);
+      const evenStart = randInt(10, 15);
+      const oddStep = randInt(3, 6);
+      const evenStep = randInt(2, 4);
+      
+      const seq = [];
+      for (let i = 0; i < 6; i++) {
+        if (i % 2 === 0) seq.push(oddStart + (i / 2) * oddStep);
+        else seq.push(evenStart + ((i - 1) / 2) * evenStep);
+      }
+      // Next is position 6 (even index), so odd rule
+      const answer = oddStart + 3 * oddStep;
+      
+      return {
+        display: `<div style="font-family:Orbitron;font-size:1.8rem;letter-spacing:0.2em;">
+          ${seq.map((n, i) => `<span style="color:${i % 2 === 0 ? 'var(--primary)' : 'var(--secondary)'}">${n}</span>`).join('  ')}  <span style="color:var(--primary);">?</span>
+        </div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.5rem;">Hint: Blue numbers and pink numbers follow DIFFERENT rules. Which rule applies to the "?"</div>`,
+        question: 'What comes next?',
+        options: shuffle([
+          {text: String(answer), correct: true},
+          {text: String(evenStart + 2 * evenStep), correct: false},
+          {text: String(seq[5] + oddStep), correct: false},
+          {text: String(seq[5] + evenStep), correct: false}
+        ]).slice(0, 4)
+      };
+    }
+
+    if (type === 5) {
+      // Digit manipulation: sum of digits, then multiply
+      let val = randInt(12, 30);
+      const seq = [val];
+      for (let i = 0; i < 5; i++) {
+        const digits = String(val).split('').map(Number);
+        const sum = digits.reduce((a, b) => a + b, 0);
+        val = val + sum;
+        seq.push(val);
+      }
+      // Next
+      const digits = String(val).split('').map(Number);
+      const answer = val + digits.reduce((a, b) => a + b, 0);
+      
+      return {
+        display: `<div style="font-family:Orbitron;font-size:1.5rem;color:var(--success);letter-spacing:0.15em;">${seq.join('  ')}  ?</div>
+          <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.5rem;">Hint: Each number transforms by adding something derived from itself.</div>`,
+        question: 'What comes next?',
+        options: shuffle([
+          {text: String(answer), correct: true},
+          {text: String(val * 2), correct: false},
+          {text: String(val + 10), correct: false},
+          {text: String(answer + 1), correct: false}
+        ]).slice(0, 4)
+      };
+    }
+
+    // Collatz-like: if even divide by 2, if odd multiply by 3 and add 1
+    let val = randInt(7, 15);
+    const seq = [val];
+    for (let i = 0; i < 5; i++) {
+      val = val % 2 === 0 ? val / 2 : val * 3 + 1;
+      seq.push(val);
+    }
+    const answer = val % 2 === 0 ? val / 2 : val * 3 + 1;
+    
     return {
-      display: `<div style="font-family:Orbitron;font-size:2rem;color:var(--accent);">${fib.join(' → ')} → ?</div>`,
-      question: 'What comes next? (sum of previous two)',
+      display: `<div style="font-family:Orbitron;font-size:1.5rem;color:var(--danger);letter-spacing:0.15em;">${seq.join('  ')}  ?</div>
+        <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.5rem;">Hint: If even → ÷2. If odd → ×3+1.</div>`,
+      question: 'What comes next?',
       options: shuffle([
         {text: String(answer), correct: true},
-        {text: String(answer + 1), correct: false},
-        {text: String(answer - 1), correct: false},
-        {text: String(answer + fib[3]), correct: false}
+        {text: String(val + 1), correct: false},
+        {text: String(val * 2), correct: false},
+        {text: String(val * 3), correct: false}
       ]).slice(0, 4)
     };
   }
@@ -4171,8 +4360,8 @@ function level17() {
       <div style="margin:1rem 0;">${scenario.display}</div>
       <div class="info-box highlight">${scenario.question}</div>
       <div class="choices" id="l17-choices">
-        ${scenario.options.map((opt, i) => 
-          `<div class="choice-btn" data-correct="${opt.correct}" data-idx="${i}" style="${opt.color ? 'background:' + opt.color + ';border-color:' + opt.color + ';min-width:50px;height:50px;' : ''}">${opt.text || ''}</div>`
+        ${scenario.options.map(opt => 
+          `<div class="choice-btn" data-correct="${opt.correct}" style="min-width:70px;">${opt.text}</div>`
         ).join('')}
       </div>
     `;
@@ -4185,17 +4374,18 @@ function level17() {
           score++;
           btn.style.borderColor = 'var(--success)';
           btn.style.background = 'rgba(0,255,136,0.2)';
+          addCombo();
           playClick();
         } else {
           btn.style.borderColor = 'var(--danger)';
           btn.style.background = 'rgba(255,51,51,0.2)';
-          // Highlight correct
           sceneEl.querySelectorAll('.choice-btn').forEach(b => {
             if (b.dataset.correct === 'true') {
               b.style.borderColor = 'var(--success)';
               b.style.background = 'rgba(0,255,136,0.2)';
             }
           });
+          breakCombo();
           playFail();
         }
         document.getElementById('l17-progress').style.width = `${(round / ROUNDS) * 100}%`;
@@ -4205,203 +4395,281 @@ function level17() {
   }
 
   runRound();
-  startTimer(120);
+  startTimer(150);
 }
 
 // ===== LEVEL 18: MIND READER =====
-// Observe complex multi-element behavior, predict collective outcome
+// HARD: Game theory, opponent modeling, multi-variable prediction, probabilistic reasoning
 function level18() {
   const area = document.getElementById('game-area');
-  const ROUNDS = 6;
+  const ROUNDS = 8;
   let round = 0;
   let score = 0;
 
   area.innerHTML = `
     <div class="level-title">MIND READER</div>
-    <div class="level-desc">Multiple elements interact. Watch their behavior. Predict the final outcome.</div>
-    <div class="level-rules">${ROUNDS} scenarios. Complex interactions. Think like the system. 150 seconds.</div>
+    <div class="level-desc">Think like the system. Game theory, opponent moves, multi-variable physics. Predict outcomes.</div>
+    <div class="level-rules">${ROUNDS} rounds. Increasing complexity. Nash equilibrium, chain reactions, probabilistic events. 180 seconds.</div>
     <div class="info-box highlight" id="l18-status">Round 1/${ROUNDS} | Score: 0</div>
     <div id="l18-scene" style="min-height:300px;display:flex;flex-direction:column;align-items:center;gap:1rem;"></div>
     <div class="progress-bar"><div class="progress-fill" id="l18-progress" style="width:0%"></div></div>
   `;
 
   function generateScenario() {
-    const type = randInt(0, 4);
+    const type = randInt(0, 7);
 
     if (type === 0) {
-      // Collision prediction: two objects moving toward each other
-      const speed1 = randInt(2, 5);
-      const speed2 = randInt(2, 5);
-      const dist = randInt(20, 40);
-      const time = Math.round(dist / (speed1 + speed2) * 10) / 10;
+      // Nash equilibrium: 2-player payoff matrix
+      // Player A chooses Row (Up/Down), Player B chooses Col (Left/Right)
+      // Find the Nash equilibrium
+      const payoffs = [
+        [[randInt(2,8), randInt(2,8)], [randInt(1,5), randInt(3,9)]],
+        [[randInt(3,9), randInt(1,5)], [randInt(2,7), randInt(2,7)]]
+      ];
+      // Find best responses
+      // A's best response to Left: max(payoffs[0][0][0], payoffs[1][0][0])
+      // A's best response to Right: max(payoffs[0][1][0], payoffs[1][1][0])
+      // B's best response to Up: max(payoffs[0][0][1], payoffs[0][1][1])
+      // B's best response to Down: max(payoffs[1][0][1], payoffs[1][1][1])
+      
+      const aBestL = payoffs[0][0][0] >= payoffs[1][0][0] ? 'Up' : 'Down';
+      const aBestR = payoffs[0][1][0] >= payoffs[1][1][0] ? 'Up' : 'Down';
+      const bBestU = payoffs[0][0][1] >= payoffs[0][1][1] ? 'Left' : 'Right';
+      const bBestD = payoffs[1][0][1] >= payoffs[1][1][1] ? 'Left' : 'Right';
+      
+      // Nash: where both are best responding
+      let nash = '';
+      if ((aBestL === 'Up' && bBestU === 'Left') || (aBestR === 'Up' && bBestU === 'Right')) nash = 'Up';
+      else if ((aBestL === 'Down' && bBestD === 'Left') || (aBestR === 'Down' && bBestD === 'Right')) nash = 'Down';
+      else nash = aBestL; // Fallback
       
       return {
         setup: `
-          <div style="font-family:Orbitron;font-size:1rem;color:var(--primary);">COLLISION PREDICTION</div>
-          <div style="display:flex;align-items:center;gap:2rem;margin:1rem 0;">
-            <div style="text-align:center;">
-              <div style="font-size:2rem;">🔵</div>
-              <div style="font-size:0.7rem;color:rgba(255,255,255,0.5);">Speed: ${speed1} m/s →</div>
-            </div>
-            <div style="font-family:Orbitron;font-size:1.5rem;color:var(--accent);">${dist}m</div>
-            <div style="text-align:center;">
-              <div style="font-size:2rem;">🔴</div>
-              <div style="font-size:0.7rem;color:rgba(255,255,255,0.5);">← Speed: ${speed2} m/s</div>
-            </div>
-          </div>
-        `,
-        question: `They're moving toward each other. When do they collide?`,
+          <div style="font-family:Orbitron;font-size:1rem;color:var(--accent);">NASH EQUILIBRIUM</div>
+          <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);margin:0.5rem 0;">Payoffs shown as (A, B). Find the Nash equilibrium — where neither player wants to deviate.</div>
+          <table style="border-collapse:collapse;font-family:Orbitron;font-size:0.8rem;">
+            <tr><td style="padding:0.5rem;"></td><td style="padding:0.5rem;color:var(--primary);">Left</td><td style="padding:0.5rem;color:var(--primary);">Right</td></tr>
+            <tr><td style="padding:0.5rem;color:var(--secondary);">Up</td><td style="padding:0.5rem;border:1px solid var(--glass-border);">(${payoffs[0][0][0]}, ${payoffs[0][0][1]})</td><td style="padding:0.5rem;border:1px solid var(--glass-border);">(${payoffs[0][1][0]}, ${payoffs[0][1][1]})</td></tr>
+            <tr><td style="padding:0.5rem;color:var(--secondary);">Down</td><td style="padding:0.5rem;border:1px solid var(--glass-border);">(${payoffs[1][0][0]}, ${payoffs[1][0][1]})</td><td style="padding:0.5rem;border:1px solid var(--glass-border);">(${payoffs[1][1][0]}, ${payoffs[1][1][1]})</td></tr>
+          </table>`,
+        question: 'What should Player A choose at Nash equilibrium?',
         options: shuffle([
-          {text: `${time} seconds`, correct: true},
-          {text: `${time + 1} seconds`, correct: false},
-          {text: `${Math.round(time / 2 * 10) / 10} seconds`, correct: false},
-          {text: `${time + 2} seconds`, correct: false}
+          {text: nash, correct: true},
+          {text: nash === 'Up' ? 'Down' : 'Up', correct: false},
+          {text: 'Both get equal payoff', correct: false},
+          {text: 'Cannot determine', correct: false}
         ]).slice(0, 4)
       };
     }
 
     if (type === 1) {
-      // Balance prediction: weights on a seesaw
-      const w1 = randInt(2, 8);
-      const d1 = randInt(1, 4);
-      const w2 = randInt(2, 8);
-      const d2 = randInt(1, 4);
-      const torque1 = w1 * d1;
-      const torque2 = w2 * d2;
-      let result;
-      if (torque1 > torque2) result = 'Left side goes down';
-      else if (torque2 > torque1) result = 'Right side goes down';
-      else result = 'Perfectly balanced';
+      // Probabilistic: expected value calculation
+      const outcomes = Array.from({length: 4}, () => ({
+        value: randInt(-10, 20),
+        prob: randInt(10, 40)
+      }));
+      const totalProb = outcomes.reduce((s, o) => s + o.prob, 0);
+      const ev = outcomes.reduce((s, o) => s + o.value * (o.prob / totalProb), 0);
+      const roundedEV = Math.round(ev * 10) / 10;
 
       return {
         setup: `
-          <div style="font-family:Orbitron;font-size:1rem;color:var(--secondary);">SEESAW PHYSICS</div>
-          <div style="margin:1rem 0;font-size:1.2rem;">
-            ⚖️
-          </div>
-          <div style="display:flex;gap:3rem;">
-            <div style="text-align:center;">
-              <div style="font-size:1.5rem;">🔵 ${w1}kg</div>
-              <div style="font-size:0.7rem;color:rgba(255,255,255,0.5);">Distance: ${d1}m from center</div>
-              <div style="font-size:0.7rem;color:var(--primary);">Torque: ${torque1} Nm</div>
-            </div>
-            <div style="text-align:center;">
-              <div style="font-size:1.5rem;">🔴 ${w2}kg</div>
-              <div style="font-size:0.7rem;color:rgba(255,255,255,0.5);">Distance: ${d2}m from center</div>
-              <div style="font-size:0.7rem;color:var(--danger);">Torque: ${torque2} Nm</div>
-            </div>
-          </div>
-        `,
-        question: 'Which side goes down?',
+          <div style="font-family:Orbitron;font-size:1rem;color:var(--success);">EXPECTED VALUE</div>
+          <div style="margin:1rem 0;">
+            ${outcomes.map(o => 
+              `<div style="display:flex;gap:1rem;align-items:center;margin:0.3rem 0;">
+                <span style="color:var(--primary);width:60px;text-align:right;">${o.value > 0 ? '+' : ''}${o.value}</span>
+                <div style="flex:1;height:12px;background:var(--glass);border-radius:6px;overflow:hidden;">
+                  <div style="width:${(o.prob/totalProb)*100}%;height:100%;background:var(--accent);border-radius:6px;"></div>
+                </div>
+                <span style="color:rgba(255,255,255,0.4);font-size:0.7rem;">${Math.round(o.prob/totalProb*100)}%</span>
+              </div>`
+            ).join('')}
+          </div>`,
+        question: 'What is the expected value? (rounded to 1 decimal)',
         options: shuffle([
-          {text: result, correct: true},
-          {text: result === 'Left side goes down' ? 'Right side goes down' : 'Left side goes down', correct: false},
-          {text: 'Perfectly balanced', correct: false},
-          {text: 'They both float up', correct: false}
+          {text: String(roundedEV), correct: true},
+          {text: String(Math.round(ev + 2)), correct: false},
+          {text: String(Math.round(ev - 2)), correct: false},
+          {text: String(outcomes.reduce((s, o) => s + o.value, 0) / outcomes.length), correct: false}
         ]).slice(0, 4)
       };
     }
 
     if (type === 2) {
-      // Merging streams: two lines of objects merge
-      const streamA = Array.from({length: 4}, () => randInt(1, 9));
-      const streamB = Array.from({length: 4}, () => randInt(1, 9));
-      const merged = [];
-      for (let i = 0; i < 4; i++) {
-        merged.push(streamA[i], streamB[i]);
-      }
-      const nextPair = [streamA[0], streamB[0]]; // pattern repeats
-
+      // Chain reaction with feedback loop
+      const a = randInt(2, 5);
+      const b = Math.round(a * 1.5);
+      const c = a + b;
+      const d = Math.round(c * 0.7);
+      const e = b + d - a; // Feedback: depends on multiple previous
+      
       return {
         setup: `
-          <div style="font-family:Orbitron;font-size:1rem;color:var(--accent);">STREAM MERGE</div>
-          <div style="margin:1rem 0;">
-            <div style="color:var(--primary);font-size:1.2rem;">A: ${streamA.join(' → ')}</div>
-            <div style="color:var(--secondary);font-size:1.2rem;">B: ${streamB.join(' → ')}</div>
-            <div style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin-top:0.5rem;">Merged (A,B,A,B...): ${merged.slice(0, 6).join(', ')}...</div>
-          </div>
-        `,
-        question: 'What are the next 2 numbers in the merged stream?',
+          <div style="font-family:Orbitron;font-size:1rem;color:var(--danger);">FEEDBACK LOOP</div>
+          <div style="margin:1rem 0;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;justify-content:center;">
+            <div style="padding:0.4rem 0.8rem;border:1px solid var(--primary);border-radius:4px;"><div style="font-size:0.5rem;color:var(--primary);">A</div><div style="font-family:Orbitron;">${a}</div></div>
+            <div style="color:var(--accent);font-size:0.6rem;">→<br>×1.5</div>
+            <div style="padding:0.4rem 0.8rem;border:1px solid var(--secondary);border-radius:4px;"><div style="font-size:0.5rem;color:var(--secondary);">B</div><div style="font-family:Orbitron;">${b}</div></div>
+            <div style="color:var(--accent);font-size:0.6rem;">→<br>A+B</div>
+            <div style="padding:0.4rem 0.8rem;border:1px solid var(--success);border-radius:4px;"><div style="font-size:0.5rem;color:var(--success);">C</div><div style="font-family:Orbitron;">${c}</div></div>
+            <div style="color:var(--accent);font-size:0.6rem;">→<br>×0.7</div>
+            <div style="padding:0.4rem 0.8rem;border:1px solid var(--accent);border-radius:4px;"><div style="font-size:0.5rem;color:var(--accent);">D</div><div style="font-family:Orbitron;">${d}</div></div>
+            <div style="color:var(--accent);font-size:0.6rem;">→<br>B+D−A</div>
+            <div style="padding:0.4rem 0.8rem;border:1px dashed rgba(255,255,255,0.3);border-radius:4px;"><div style="font-size:0.5rem;color:rgba(255,255,255,0.3);">E</div><div style="font-family:Orbitron;color:rgba(255,255,255,0.3);">?</div></div>
+          </div>`,
+        question: 'Each step uses the formula shown. What is E?',
         options: shuffle([
-          {text: `${nextPair[0]}, ${nextPair[1]}`, correct: true},
-          {text: `${nextPair[1]}, ${nextPair[0]}`, correct: false},
-          {text: `${streamA[3]}, ${streamB[3]}`, correct: false},
-          {text: `${streamA[1]}, ${streamB[1]}`, correct: false}
+          {text: String(e), correct: true},
+          {text: String(e + a), correct: false},
+          {text: String(d + c), correct: false},
+          {text: String(e - b), correct: false}
         ]).slice(0, 4)
       };
     }
 
     if (type === 3) {
-      // Spread prediction: a value distributes among cells
-      const total = randInt(12, 24);
-      const cells = 4;
-      const each = total / cells;
-      const remainder = total % cells;
+      // Optimal strategy: prisoner's dilemma variant
+      const coop = randInt(3, 6);
+      const defect = coop + randInt(2, 5);
+      const bothDefect = randInt(1, 3);
       
       return {
         setup: `
-          <div style="font-family:Orbitron;font-size:1rem;color:var(--success);">DISTRIBUTION</div>
-          <div style="margin:1rem 0;">
-            <div style="font-size:2rem;color:var(--accent);">Total: ${total}</div>
-            <div style="display:flex;gap:8px;margin-top:0.5rem;">
-              ${Array.from({length: cells}, (_, i) => 
-                `<div style="width:50px;height:50px;border:1px dashed var(--primary);border-radius:4px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);">?</div>`
-              ).join('')}
-            </div>
-            <div style="font-size:0.7rem;color:rgba(255,255,255,0.4);margin-top:0.5rem;">Distribute equally (round down). Leftover goes to last cell.</div>
-          </div>
-        `,
-        question: `What's in the last cell?`,
+          <div style="font-family:Orbitron;font-size:1rem;color:var(--secondary);">PRISONER'S DILEMMA</div>
+          <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);margin:0.5rem 0;">Both players choose simultaneously: COOPERATE or DEFECT.</div>
+          <table style="border-collapse:collapse;font-family:Orbitron;font-size:0.8rem;">
+            <tr><td style="padding:0.5rem;"></td><td style="padding:0.5rem;color:var(--primary);">B: Cooperate</td><td style="padding:0.5rem;color:var(--primary);">B: Defect</td></tr>
+            <tr><td style="padding:0.5rem;color:var(--secondary);">A: Cooperate</td><td style="padding:0.5rem;border:1px solid var(--glass-border);background:rgba(0,255,136,0.05);">(${coop}, ${coop})</td><td style="padding:0.5rem;border:1px solid var(--glass-border);">(${coop - 2}, ${defect})</td></tr>
+            <tr><td style="padding:0.5rem;color:var(--secondary);">A: Defect</td><td style="padding:0.5rem;border:1px solid var(--glass-border);">(${defect}, ${coop - 2})</td><td style="padding:0.5rem;border:1px solid var(--glass-border);background:rgba(255,51,51,0.05);">(${bothDefect}, ${bothDefect})</td></tr>
+          </table>
+          <div style="font-size:0.65rem;color:rgba(255,255,255,0.3);margin-top:0.5rem;">Higher is better. What is the DOMINANT strategy for A?</div>`,
+        question: "What is A's dominant strategy?",
         options: shuffle([
-          {text: String(Math.floor(each) + remainder), correct: true},
-          {text: String(Math.ceil(each)), correct: false},
-          {text: String(Math.floor(each)), correct: false},
-          {text: String(total), correct: false}
+          {text: 'Defect', correct: defect > coop && bothDefect > coop - 2}, // Usually dominant
+          {text: 'Cooperate', correct: !(defect > coop && bothDefect > coop - 2)},
+          {text: 'Random 50/50', correct: false},
+          {text: 'Mirror B', correct: false}
+        ]).slice(0, 4).map(o => ({...o, correct: o.text === 'Defect'})) // Defect is always dominant in PD
+      };
+    }
+
+    if (type === 4) {
+      // Multi-variable system: 3 equations, 3 unknowns - find X
+      const x = randInt(2, 8);
+      const y = randInt(1, 6);
+      const z = randInt(1, 5);
+      const e1 = `X + Y = ${x + y}`;
+      const e2 = `Y + Z = ${y + z}`;
+      const e3 = `X - Z = ${x - z}`;
+      
+      return {
+        setup: `
+          <div style="font-family:Orbitron;font-size:1rem;color:var(--primary);">SYSTEM OF EQUATIONS</div>
+          <div style="margin:1rem 0;font-family:Orbitron;font-size:1.2rem;">
+            <div style="color:var(--primary);">${e1}</div>
+            <div style="color:var(--secondary);">${e2}</div>
+            <div style="color:var(--accent);">${e3}</div>
+          </div>`,
+        question: 'What is X?',
+        options: shuffle([
+          {text: String(x), correct: true},
+          {text: String(x + 1), correct: false},
+          {text: String(y), correct: false},
+          {text: String(x - 1), correct: false}
         ]).slice(0, 4)
       };
     }
 
-    // Chain reaction: A affects B, B affects C, predict C
-    const start = randInt(1, 5);
-    const multiplier = randInt(2, 3);
-    const offset = randInt(1, 3);
-    
-    const a = start;
-    const b = a * multiplier + offset;
-    const c = b * multiplier + offset;
-    const d = c * multiplier + offset;
+    if (type === 5) {
+      // Voting/Arrow's theorem: find the Condorcet winner
+      const candidates = ['A', 'B', 'C'];
+      const votes = [
+        {pref: [0, 1, 2], count: randInt(2, 5)},  // A > B > C
+        {pref: [1, 2, 0], count: randInt(2, 5)},  // B > C > A
+        {pref: [2, 0, 1], count: randInt(2, 5)},  // C > A > B
+      ];
+      // Count pairwise wins
+      const wins = [0, 0, 0];
+      for (let i = 0; i < 3; i++) {
+        for (let j = i + 1; j < 3; j++) {
+          let iVotes = 0, jVotes = 0;
+          votes.forEach(v => {
+            if (v.pref.indexOf(i) < v.pref.indexOf(j)) iVotes += v.count;
+            else jVotes += v.count;
+          });
+          if (iVotes > jVotes) wins[i]++; else wins[j]++;
+        }
+      }
+      const winner = wins.indexOf(Math.max(...wins));
+      
+      return {
+        setup: `
+          <div style="font-family:Orbitron;font-size:1rem;color:var(--success);">CONDORCET VOTING</div>
+          <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);margin:0.5rem 0;">Voters rank candidates. Find the Condorcet winner (beats all others head-to-head).</div>
+          ${votes.map(v => 
+            `<div style="margin:0.3rem 0;font-size:0.85rem;">${v.count} voters: ${v.pref.map(i => candidates[i]).join(' > ')}</div>`
+          ).join('')}`,
+        question: 'Who is the Condorcet winner?',
+        options: shuffle([
+          {text: candidates[winner], correct: true},
+          {text: candidates[(winner + 1) % 3], correct: false},
+          {text: candidates[(winner + 2) % 3], correct: false},
+          {text: 'Tie — no clear winner', correct: false}
+        ]).slice(0, 4)
+      };
+    }
+
+    if (type === 6) {
+      // Optimal stopping: secretary problem variant
+      const n = randInt(5, 10);
+      const threshold = Math.round(n / Math.E); // ~37% rule
+      const qualities = shuffle(Array.from({length: n}, (_, i) => i + 1));
+      
+      return {
+        setup: `
+          <div style="font-family:Orbitron;font-size:1rem;color:var(--accent);">OPTIMAL STOPPING</div>
+          <div style="margin:1rem 0;font-size:0.85rem;line-height:1.6;">
+            You interview ${n} candidates one by one. You must decide YES or NO immediately (can't go back).<br>
+            Goal: hire the BEST one.<br>
+            <span style="color:var(--primary);">Quality order (best to worst): ${qualities.map((q, i) => `#${i+1}→${q}`).join(', ')}</span><br>
+            <span style="color:rgba(255,255,255,0.4);font-size:0.75rem;">The 37% rule says: reject the first ~37%, then pick the first one better than all seen.</span>
+          </div>`,
+        question: `How many candidates should you REJECT before starting to consider? (37% of ${n})`,
+        options: shuffle([
+          {text: String(threshold), correct: true},
+          {text: String(Math.round(n / 2)), correct: false},
+          {text: String(1), correct: false},
+          {text: String(n - 1), correct: false}
+        ]).slice(0, 4)
+      };
+    }
+
+    // type 7: Bayesian update
+    const prior = randInt(10, 50); // Prior probability %
+    const sensitivity = randInt(70, 95); // Test accuracy for positive
+    const falsePositive = randInt(5, 20); // False positive rate
+    // P(actual|positive) = P(positive|actual) * P(actual) / P(positive)
+    const pPositive = (sensitivity / 100) * (prior / 100) + (falsePositive / 100) * (1 - prior / 100);
+    const posterior = Math.round(((sensitivity / 100) * (prior / 100)) / pPositive * 100);
 
     return {
       setup: `
-        <div style="font-family:Orbitron;font-size:1rem;color:var(--danger);">CHAIN REACTION</div>
-        <div style="margin:1rem 0;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;justify-content:center;">
-          <div style="padding:0.5rem 1rem;border:1px solid var(--primary);border-radius:4px;">
-            <div style="font-size:0.6rem;color:var(--primary);">A</div>
-            <div style="font-family:Orbitron;font-size:1.5rem;">${a}</div>
-          </div>
-          <div style="color:var(--accent);font-size:0.7rem;">×${multiplier}+${offset}</div>
-          <div style="padding:0.5rem 1rem;border:1px solid var(--secondary);border-radius:4px;">
-            <div style="font-size:0.6rem;color:var(--secondary);">B</div>
-            <div style="font-family:Orbitron;font-size:1.5rem;">${b}</div>
-          </div>
-          <div style="color:var(--accent);font-size:0.7rem;">×${multiplier}+${offset}</div>
-          <div style="padding:0.5rem 1rem;border:1px solid var(--success);border-radius:4px;">
-            <div style="font-size:0.6rem;color:var(--success);">C</div>
-            <div style="font-family:Orbitron;font-size:1.5rem;">${c}</div>
-          </div>
-          <div style="color:var(--accent);font-size:0.7rem;">×${multiplier}+${offset}</div>
-          <div style="padding:0.5rem 1rem;border:1px dashed rgba(255,255,255,0.3);border-radius:4px;">
-            <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);">D</div>
-            <div style="font-family:Orbitron;font-size:1.5rem;color:rgba(255,255,255,0.3);">?</div>
-          </div>
-        </div>
-      `,
-      question: `Each value transforms: ×${multiplier}+${offset}. What is D?`,
+        <div style="font-family:Orbitron;font-size:1rem;color:var(--danger);">BAYESIAN UPDATE</div>
+        <div style="margin:1rem 0;font-size:0.85rem;line-height:1.6;">
+          A disease affects <span style="color:var(--danger);">${prior}%</span> of the population.<br>
+          A test is <span style="color:var(--success);">${sensitivity}%</span> accurate for positive cases.<br>
+          False positive rate: <span style="color:var(--accent);">${falsePositive}%</span>.<br>
+          <br>
+          Someone tests <span style="color:var(--danger);font-weight:bold;">POSITIVE</span>.<br>
+          What is the probability they actually have the disease? (Bayes' theorem)
+        </div>`,
+      question: 'P(disease | positive test) = ?',
       options: shuffle([
-        {text: String(d), correct: true},
-        {text: String(d + multiplier), correct: false},
-        {text: String(c * multiplier), correct: false},
-        {text: String(d - offset), correct: false}
+        {text: `${posterior}%`, correct: true},
+        {text: `${sensitivity}%`, correct: false}, // Common mistake: confuse with test accuracy
+        {text: `${prior}%`, correct: false}, // Common mistake: ignore test
+        {text: `${Math.round(posterior * 0.6)}%`, correct: false}
       ]).slice(0, 4)
     };
   }
@@ -4437,6 +4705,7 @@ function level18() {
           score++;
           btn.style.borderColor = 'var(--success)';
           btn.style.background = 'rgba(0,255,136,0.2)';
+          addCombo();
           playClick();
         } else {
           btn.style.borderColor = 'var(--danger)';
@@ -4447,6 +4716,7 @@ function level18() {
               b.style.background = 'rgba(0,255,136,0.2)';
             }
           });
+          breakCombo();
           playFail();
         }
         document.getElementById('l18-progress').style.width = `${(round / ROUNDS) * 100}%`;
@@ -4456,7 +4726,7 @@ function level18() {
   }
 
   runRound();
-  startTimer(150);
+  startTimer(180);
 }
 
 // ===== KEYBOARD SHORTCUTS =====
