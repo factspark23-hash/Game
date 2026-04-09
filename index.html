@@ -1045,10 +1045,10 @@ body::after {
   <!-- Title Screen -->
   <div id="title-screen">
     <h1>MIND</h1>
-    <div class="subtitle">the brain melter — 15 levels</div>
+    <div class="subtitle">the brain melter — 18 levels</div>
     <div class="warning">
       ⚠️ WARNING: This game activates multiple cognitive functions simultaneously.<br>
-      15 levels. Brutal from level 1. Less than 1% will finish.<br>
+      18 levels. Brutal from level 1. Less than 1% will finish.<br>
       You have been warned.
     </div>
     <div style="margin-top:1.5rem;">
@@ -1084,6 +1084,11 @@ body::after {
       <p><strong>14. Reflex Duel</strong> — Combat signals vs decoys. HIT ⚔️ or SKIP 🌸 in milliseconds.</p>
       <p><strong>15. Final Boss</strong> — 3 mini-challenges per round. Reaction + Pattern + Math + Stroop + Memory combos.</p>
       
+      <h3>🧠 Levels 16-18: Prediction</h3>
+      <p><strong>16. Bounce Predict</strong> — Watch a ball bounce with physics. Predict where it will land. Click to place your guess.</p>
+      <p><strong>17. Sequence Oracle</strong> — Observe patterns in colors, numbers, positions, rotations. Predict what comes next.</p>
+      <p><strong>18. Mind Reader</strong> — Complex multi-element interactions. Collisions, distributions, chain reactions. Think like the system.</p>
+      
       <h3>⚡ Scoring</h3>
       <p><strong>Combo System:</strong> Consecutive correct answers build a combo multiplier (x2, x3, x4, x5). Wrong answers reset it.</p>
       <p><strong>Lives:</strong> You get 3 lives. Lose all = restart. Retrying costs a life.</p>
@@ -1109,7 +1114,7 @@ body::after {
   <!-- Game HUD -->
   <div id="hud" style="display:none">
     <div>
-      <span class="level-info">LEVEL <span id="hud-level">1</span>/15</span>
+      <span class="level-info">LEVEL <span id="hud-level">1</span>/18</span>
       <span class="level-name" id="hud-name"></span>
     </div>
     <div class="timer" id="hud-timer">--:--</div>
@@ -1382,10 +1387,10 @@ const ACHIEVEMENTS = [
   { id: 'combo_20', name: 'UNSTOPPABLE', desc: '20 hit combo' },
   { id: 'speed_demon', name: 'SPEED DEMON', desc: 'Complete a level in under 10 seconds' },
   { id: 'no_damage', name: 'UNTOUCHABLE', desc: 'Complete a level without mistakes' },
-  { id: 'halfway', name: 'HALFWAY HERO', desc: 'Reach Level 8' },
+  { id: 'halfway', name: 'HALFWAY HERO', desc: 'Reach Level 9' },
   { id: 'combat_ready', name: 'COMBAT READY', desc: 'Reach Level 11' },
   { id: 'survivor', name: 'SURVIVOR', desc: 'Complete a level with 1 life left' },
-  { id: 'brain_melter', name: 'BRAIN MELTER', desc: 'Complete all 15 levels' },
+  { id: 'brain_melter', name: 'BRAIN MELTER', desc: 'Complete all 18 levels' },
   { id: 'speed_score', name: 'LIGHTNING', desc: 'Score over 5000 points' },
   { id: 'perfect_level', name: 'PERFECTIONIST', desc: 'Complete 3 levels perfectly' },
   { id: 'reaction_master', name: 'REFLEX GOD', desc: 'Average reaction under 400ms' },
@@ -1539,7 +1544,7 @@ function retryLevel() {
 
 function nextLevel() {
   state.level++;
-  if (state.level > 15) {
+  if (state.level > 18) {
     winGame();
     return;
   }
@@ -1552,7 +1557,8 @@ function showTransition(level) {
     '', 'NEURAL STORM', 'DUAL CORTEX', 'LOGIC WEB', 'SPATIAL HELL',
     'MEMORY OVERLOAD', 'STROOP INFERNO', 'ATTENTION SPLIT', 'PATTERN MAZE',
     'SYNAPSE FIRE', 'OMEGA MIND', 'REACTION STORM', 'PATTERN COMBAT',
-    'SPEED DEMON', 'REFLEX DUEL', 'FINAL BOSS'
+    'SPEED DEMON', 'REFLEX DUEL', 'FINAL BOSS', 'BOUNCE PREDICT',
+    'SEQUENCE ORACLE', 'MIND READER'
   ];
   const subs = [
     '', 'Memory + Math under pressure', 'Two sequences, two modalities',
@@ -1562,7 +1568,10 @@ function showTransition(level) {
     'Combine sub-problems in real-time', 'All skills. Simultaneously. No mercy.',
     'Pure reaction speed. Life or death.', 'Recognize patterns at lightning speed.',
     'Everything accelerates. No mercy.', 'Distinguish real from fake in milliseconds.',
-    'All combat skills. Maximum speed. No forgiveness.'
+    'All combat skills. Maximum speed. No forgiveness.',
+    'Predict where objects will land. Physics + intuition.',
+    'Observe behavior, predict the next move.',
+    'Read the mind. Anticipate the pattern.'
   ];
   document.getElementById('trans-level').textContent = level;
   document.getElementById('trans-label').textContent = names[level];
@@ -1583,7 +1592,8 @@ function startLevel(level) {
     '', 'NEURAL STORM', 'DUAL CORTEX', 'LOGIC WEB', 'SPATIAL HELL',
     'MEMORY OVERLOAD', 'STROOP INFERNO', 'ATTENTION SPLIT', 'PATTERN MAZE',
     'SYNAPSE FIRE', 'OMEGA MIND', 'REACTION STORM', 'PATTERN COMBAT',
-    'SPEED DEMON', 'REFLEX DUEL', 'FINAL BOSS'
+    'SPEED DEMON', 'REFLEX DUEL', 'FINAL BOSS', 'BOUNCE PREDICT',
+    'SEQUENCE ORACLE', 'MIND READER'
   ];
   document.getElementById('hud-name').textContent = names[level];
   updateLives();
@@ -1596,7 +1606,8 @@ function startLevel(level) {
   const levels = [
     null, level1, level2, level3, level4, level5,
     level6, level7, level8, level9, level10,
-    level11, level12, level13, level14, level15
+    level11, level12, level13, level14, level15,
+    level16, level17, level18
   ];
   levels[level]();
 }
@@ -1637,7 +1648,7 @@ function completeLevel() {
   // Achievements
   if (state.level === 1) unlockAchievement('FIRST BLOOD', 'Complete Level 1');
   if (elapsed < 10) unlockAchievement('SPEED DEMON', 'Complete a level in under 10 seconds');
-  if (state.level === 8) unlockAchievement('HALFWAY HERO', 'Reach Level 8');
+  if (state.level === 9) unlockAchievement('HALFWAY HERO', 'Reach Level 9');
   if (state.level === 11) unlockAchievement('COMBAT READY', 'Reach Level 11');
   if (state.lives === 1) unlockAchievement('SURVIVOR', 'Complete a level with 1 life left');
   if (state.score > 5000) unlockAchievement('LIGHTNING', 'Score over 5000 points');
@@ -1740,9 +1751,11 @@ function level1() {
       <div class="info-box" id="l1-rowsums"></div>
       <div class="info-box" id="l1-colsums"></div>
     </div>
+    <div id="l1-numpad" style="display:none;margin-top:1rem;"></div>
   `;
 
   const gridEl = document.getElementById('l1-grid');
+  const numpadEl = document.getElementById('l1-numpad');
   
   function renderGrid(phase) {
     gridEl.innerHTML = '';
@@ -1760,7 +1773,7 @@ function level1() {
           if (hiddenSet.has(idx)) {
             cell.classList.add('empty');
             cell.textContent = '';
-            cell.addEventListener('click', () => selectCell(idx));
+            cell.addEventListener('click', () => showNumpad(idx));
           } else {
             cell.textContent = grid[r][c];
             cell.classList.add('locked');
@@ -1780,70 +1793,106 @@ function level1() {
   let selectedCell = null;
   const filledValues = {};
 
-  function selectCell(idx) {
+  function showNumpad(idx) {
     if (state.inputLocked) return;
+    
+    // Highlight selected cell
     document.querySelectorAll('.grid-cell').forEach(c => c.classList.remove('active'));
-    const cell = gridEl.children[idx];
-    cell.classList.add('active');
+    gridEl.children[idx].classList.add('active');
     selectedCell = idx;
-    document.getElementById('l1-status').textContent = `Selected cell ${Math.floor(idx/4)+1},${idx%4+1}. Enter value (1-16):`;
+    
+    // Show inline number pad
+    numpadEl.style.display = '';
+    numpadEl.innerHTML = `
+      <div style="font-family:Orbitron;font-size:0.7rem;color:var(--primary);margin-bottom:0.5rem;">
+        Cell ${Math.floor(idx/4)+1},${idx%4+1} — Pick a number:
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:4px;max-width:400px;">
+        ${Array.from({length: 16}, (_, i) => i + 1).map(n => {
+          const used = Object.values(filledValues).includes(n);
+          return `<div class="numpad-btn" data-val="${n}" style="
+            opacity: ${used ? '0.2' : '1'};
+            cursor: ${used ? 'not-allowed' : 'pointer'};
+            ${used ? 'pointer-events:none;' : ''}
+          ">${n}</div>`;
+        }).join('')}
+      </div>
+      <div style="margin-top:0.5rem;">
+        <button class="btn btn-small" id="l1-clear-cell" style="background:linear-gradient(135deg,#444,#222);font-size:0.65rem;padding:0.3rem 0.8rem;">CLEAR CELL</button>
+      </div>
+    `;
+    
+    // Number click handlers
+    numpadEl.querySelectorAll('.numpad-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const val = parseInt(btn.dataset.val);
+        placeNumber(idx, val);
+      });
+    });
+    
+    document.getElementById('l1-clear-cell').addEventListener('click', () => {
+      if (filledValues[idx] !== undefined) {
+        delete filledValues[idx];
+        gridEl.children[idx].textContent = '';
+        gridEl.children[idx].classList.add('empty');
+        gridEl.children[idx].classList.remove('correct', 'wrong');
+        playClick();
+        updateNumpad();
+      }
+    });
+  }
+
+  function updateNumpad() {
+    if (selectedCell === null) return;
+    numpadEl.querySelectorAll('.numpad-btn').forEach(btn => {
+      const n = parseInt(btn.dataset.val);
+      const used = Object.values(filledValues).includes(n);
+      btn.style.opacity = used ? '0.2' : '1';
+      btn.style.cursor = used ? 'not-allowed' : 'pointer';
+      btn.style.pointerEvents = used ? 'none' : 'auto';
+    });
+  }
+
+  function placeNumber(idx, val) {
+    // Remove old value if cell already had one
+    if (filledValues[idx] !== undefined) {
+      delete filledValues[idx];
+    }
+    
+    filledValues[idx] = val;
+    const cell = gridEl.children[idx];
+    cell.textContent = val;
+    cell.classList.remove('empty', 'active');
+    cell.classList.add('correct');
+    playClick();
+    
+    // Hide numpad
+    numpadEl.style.display = 'none';
+    selectedCell = null;
+
+    // Check if all filled
+    if (Object.keys(filledValues).length === hiddenSet.size) {
+      state.inputLocked = true;
+      let allCorrect = true;
+      hiddenSet.forEach(idx2 => {
+        if (filledValues[idx2] !== hiddenValues[idx2]) {
+          allCorrect = false;
+          gridEl.children[idx2].classList.remove('correct');
+          gridEl.children[idx2].classList.add('wrong');
+        }
+      });
+      if (allCorrect) {
+        setTimeout(() => completeLevel(), 1000);
+      } else {
+        setTimeout(() => failLevel('Incorrect cells.'), 1500);
+      }
+    }
   }
 
   // After memorize phase
   setTimeout(() => {
     renderGrid('solve');
-    document.getElementById('l1-status').textContent = 'SOLVE: Click empty cells, then enter numbers below.';
-    
-    // Add number input
-    const inputRow = document.createElement('div');
-    inputRow.style.cssText = 'display:flex;gap:8px;margin-top:1rem;align-items:center;';
-    inputRow.innerHTML = `
-      <input type="number" class="game-input" id="l1-input" min="1" max="16" style="width:100px;">
-      <button class="btn btn-small" id="l1-submit">PLACE</button>
-    `;
-    area.appendChild(inputRow);
-
-    document.getElementById('l1-submit').addEventListener('click', () => {
-      if (selectedCell === null || state.inputLocked) return;
-      const val = parseInt(document.getElementById('l1-input').value);
-      if (isNaN(val) || val < 1 || val > 16) return;
-      
-      // Check if already used
-      if (Object.values(filledValues).includes(val)) {
-        playFail();
-        document.getElementById('l1-status').textContent = 'Number already used!';
-        return;
-      }
-      
-      filledValues[selectedCell] = val;
-      const cell = gridEl.children[selectedCell];
-      cell.textContent = val;
-      cell.classList.remove('empty', 'active');
-      playClick();
-      document.getElementById('l1-input').value = '';
-      selectedCell = null;
-
-      // Check if all filled
-      if (Object.keys(filledValues).length === hiddenSet.size) {
-        // Verify
-        let allCorrect = true;
-        hiddenSet.forEach(idx => {
-          if (filledValues[idx] !== hiddenValues[idx]) {
-            allCorrect = false;
-            gridEl.children[idx].classList.add('wrong');
-          } else {
-            gridEl.children[idx].classList.add('correct');
-          }
-        });
-        state.inputLocked = true;
-        if (allCorrect) {
-          setTimeout(() => completeLevel(), 1000);
-        } else {
-          setTimeout(() => failLevel('Incorrect cells.'), 1500);
-        }
-      }
-    });
-
+    document.getElementById('l1-status').textContent = 'SOLVE: Click any empty cell → pick a number from the pad!';
     startTimer(90);
   }, 8000);
 }
@@ -2722,7 +2771,7 @@ function level9() {
   });
 
   setTimeout(() => {
-    gridEl.style.opacity = '0.15';
+    gridEl.style.opacity = '0.25';
   }, 8000);
 
   document.getElementById('l9-check').addEventListener('click', () => {
@@ -3650,7 +3699,7 @@ function initProgressBar() {
   bar.style.display = '';
   dots.innerHTML = '';
   
-  for (let i = 1; i <= 15; i++) {
+  for (let i = 1; i <= 18; i++) {
     const dot = document.createElement('div');
     dot.className = 'progress-dot';
     dot.id = `progress-dot-${i}`;
@@ -3661,9 +3710,9 @@ function initProgressBar() {
 
 function updateProgressBar(level, status) {
   const fill = document.getElementById('level-progress-fill');
-  fill.style.width = `${((level - 1) / 15) * 100}%`;
+  fill.style.width = `${((level - 1) / 18) * 100}%`;
   
-  for (let i = 1; i <= 15; i++) {
+  for (let i = 1; i <= 18; i++) {
     const dot = document.getElementById(`progress-dot-${i}`);
     if (!dot) continue;
     dot.classList.remove('current', 'completed', 'failed');
@@ -3746,7 +3795,7 @@ function renderSkillRating(containerId) {
 function shareResults() {
   const { iq, label } = calculateSkillRating();
   const text = `🧠 MIND — The Brain Melter\n` +
-    `Score: ${state.score} | Level: ${state.level}/15\n` +
+    `Score: ${state.score} | Level: ${state.level}/18\n` +
     `IQ Rating: ${iq} (${label})\n` +
     `Max Combo: x${state.maxCombo}\n` +
     `Achievements: ${state.achievements.size}/12\n\n` +
@@ -3760,6 +3809,654 @@ function shareResults() {
   } else {
     prompt('Copy your results:', text);
   }
+}
+
+// ===== LEVEL 16: BOUNCE PREDICT =====
+// Objects move in patterns — predict where they'll be
+function level16() {
+  const area = document.getElementById('game-area');
+  const CANVAS_W = 400, CANVAS_H = 300;
+  const ROUNDS = 8;
+  let round = 0;
+  let score = 0;
+
+  area.innerHTML = `
+    <div class="level-title">BOUNCE PREDICT</div>
+    <div class="level-desc">Watch the ball bounce. Predict where it will land next. Click to place your prediction.</div>
+    <div class="level-rules">${ROUNDS} rounds. Click within 80px of the correct spot to score. 120 seconds.</div>
+    <div class="info-box highlight" id="l16-status">Round 1/${ROUNDS} | Score: 0</div>
+    <canvas id="l16-canvas" width="${CANVAS_W}" height="${CANVAS_H}" class="shape-canvas" style="cursor:crosshair;"></canvas>
+    <div class="progress-bar"><div class="progress-fill" id="l16-progress" style="width:0%"></div></div>
+  `;
+
+  const canvas = document.getElementById('l16-canvas');
+  const ctx = canvas.getContext('2d');
+
+  function drawFrame(balls, prediction, target) {
+    ctx.fillStyle = 'rgba(10,10,15,0.95)';
+    ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+    
+    // Grid
+    ctx.strokeStyle = 'rgba(0,240,255,0.08)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < CANVAS_W; x += 40) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, CANVAS_H); ctx.stroke();
+    }
+    for (let y = 0; y < CANVAS_H; y += 40) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(CANVAS_W, y); ctx.stroke();
+    }
+
+    // Draw trail
+    if (balls.length > 1) {
+      ctx.strokeStyle = 'rgba(0,240,255,0.4)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(balls[0].x, balls[0].y);
+      balls.forEach(b => ctx.lineTo(b.x, b.y));
+      ctx.stroke();
+    }
+
+    // Draw balls
+    balls.forEach((b, i) => {
+      ctx.fillStyle = i === balls.length - 1 ? '#00f0ff' : 'rgba(0,240,255,0.3)';
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, i === balls.length - 1 ? 8 : 4, 0, Math.PI * 2);
+      ctx.fill();
+      if (i === balls.length - 1) {
+        ctx.shadowColor = '#00f0ff';
+        ctx.shadowBlur = 15;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    });
+
+    // Target
+    if (target) {
+      ctx.strokeStyle = 'var(--success)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.arc(target.x, target.y, 80, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      
+      ctx.fillStyle = '#00ff88';
+      ctx.beginPath();
+      ctx.arc(target.x, target.y, 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Prediction
+    if (prediction) {
+      ctx.fillStyle = '#ff00aa';
+      ctx.beginPath();
+      ctx.arc(prediction.x, prediction.y, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowColor = '#ff00aa';
+      ctx.shadowBlur = 15;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  let targetPos = null;
+  let prediction = null;
+  let phase = 'watch'; // watch, predict
+
+  function runRound() {
+    if (round >= ROUNDS) {
+      state.inputLocked = true;
+      if (score >= ROUNDS - 3) completeLevel();
+      else failLevel(`${score}/${ROUNDS} correct. Need ${ROUNDS - 3}+.`);
+      return;
+    }
+    round++;
+    document.getElementById('l16-status').textContent = `Round ${round}/${ROUNDS} | Score: ${score}`;
+    prediction = null;
+    targetPos = null;
+    phase = 'watch';
+
+    // Generate bouncing ball path
+    const startX = randInt(50, CANVAS_W - 50);
+    const startY = randInt(30, 80);
+    let vx = (Math.random() - 0.5) * 8;
+    let vy = 2 + Math.random() * 3;
+    const gravity = 0.3;
+    const bounce = 0.75;
+    const steps = 60;
+    const path = [{x: startX, y: startY}];
+    let cx = startX, cy = startY, cvx = vx, cvy = vy;
+
+    for (let i = 0; i < steps; i++) {
+      cvy += gravity;
+      cx += cvx;
+      cy += cvy;
+      if (cx < 10 || cx > CANVAS_W - 10) { cvx *= -1; cx = Math.max(10, Math.min(CANVAS_W - 10, cx)); }
+      if (cy > CANVAS_H - 10) { cvy *= -bounce; cy = CANVAS_H - 10; }
+      path.push({x: cx, y: cy});
+    }
+
+    // Target is position at step 70 (extrapolate 10 more steps)
+    let tx = cx, ty = cy, tvx = cvx, tvy = cvy;
+    for (let i = 0; i < 10; i++) {
+      tvy += gravity;
+      tx += tvx;
+      ty += tvy;
+      if (tx < 10 || tx > CANVAS_W - 10) { tvx *= -1; tx = Math.max(10, Math.min(CANVAS_W - 10, tx)); }
+      if (ty > CANVAS_H - 10) { tvy *= -bounce; ty = CANVAS_H - 10; }
+    }
+    targetPos = {x: tx, y: ty};
+
+    // Animate the path
+    let frameIdx = 0;
+    const showFrames = Math.min(path.length, 40);
+
+    function animate() {
+      if (frameIdx >= showFrames) {
+        phase = 'predict';
+        drawFrame(path.slice(0, showFrames), null, null);
+        document.getElementById('l16-status').textContent = `Round ${round}/${ROUNDS} — CLICK where the ball will land next!`;
+        return;
+      }
+      drawFrame(path.slice(0, frameIdx + 1), null, null);
+      frameIdx++;
+      requestAnimationFrame(animate);
+    }
+    animate();
+  }
+
+  canvas.addEventListener('click', (e) => {
+    if (phase !== 'predict' || state.inputLocked) return;
+    const rect = canvas.getBoundingClientRect();
+    prediction = {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+
+    const dist = Math.sqrt((prediction.x - targetPos.x) ** 2 + (prediction.y - targetPos.y) ** 2);
+    
+    if (dist < 80) {
+      score++;
+      playClick();
+    } else {
+      playFail();
+    }
+
+    drawFrame([], prediction, targetPos);
+    document.getElementById('l16-progress').style.width = `${(round / ROUNDS) * 100}%`;
+    setTimeout(runRound, 1200);
+  });
+
+  runRound();
+  startTimer(120);
+}
+
+// ===== LEVEL 17: SEQUENCE ORACLE =====
+// Observe behavior of elements, predict next state
+function level17() {
+  const area = document.getElementById('game-area');
+  const ROUNDS = 6;
+  let round = 0;
+  let score = 0;
+
+  area.innerHTML = `
+    <div class="level-title">SEQUENCE ORACLE</div>
+    <div class="level-desc">Watch how objects behave. Each follows a rule. Predict what happens next.</div>
+    <div class="level-rules">${ROUNDS} scenarios. Observe → Predict. 120 seconds.</div>
+    <div class="info-box highlight" id="l17-status">Round 1/${ROUNDS} | Score: 0</div>
+    <div id="l17-scene" style="min-height:250px;display:flex;flex-direction:column;align-items:center;gap:1rem;"></div>
+    <div class="progress-bar"><div class="progress-fill" id="l17-progress" style="width:0%"></div></div>
+  `;
+
+  // Scenarios: each has a sequence of states, player must predict next
+  function generateScenario() {
+    const type = randInt(0, 5);
+    
+    if (type === 0) {
+      // Rotating colors: red → blue → green → ?
+      const colors = ['#ff3333', '#0066ff', '#00ff88', '#ffe600'];
+      const seq = [];
+      const start = randInt(0, 3);
+      const len = 4;
+      for (let i = 0; i < len; i++) seq.push(colors[(start + i) % 4]);
+      const answer = colors[(start + len) % 4];
+      return {
+        display: seq.map(c => `<div style="width:50px;height:50px;background:${c};border-radius:8px;display:inline-block;margin:0 4px;"></div>`).join(' → ') + ' → <span style="font-size:1.5rem;">?</span>',
+        question: 'What color comes next?',
+        options: colors.map(c => ({text: '', color: c, correct: c === answer})),
+        type: 'color'
+      };
+    }
+    
+    if (type === 1) {
+      // Moving dots: positions shift in a pattern
+      const positions = [];
+      let pos = randInt(0, 4);
+      const dir = Math.random() < 0.5 ? 1 : -1;
+      for (let i = 0; i < 4; i++) {
+        positions.push(((pos + i * dir) % 5 + 5) % 5);
+      }
+      const nextPos = ((pos + 4 * dir) % 5 + 5) % 5;
+      return {
+        display: `<div style="display:flex;flex-direction:column;gap:6px;">
+          ${positions.map(p => {
+            let row = '';
+            for (let i = 0; i < 5; i++) {
+              row += i === p ? '●' : '○';
+              if (i < 4) row += ' ';
+            }
+            return `<div style="font-family:monospace;font-size:1.2rem;letter-spacing:0.3em;color:var(--primary);">${row}</div>`;
+          }).join('')}
+          <div style="font-family:monospace;font-size:1.2rem;letter-spacing:0.3em;color:rgba(255,255,255,0.3);">? ? ? ? ?</div>
+        </div>`,
+        question: 'Where will the dot move next?',
+        options: Array.from({length: 5}, (_, i) => ({
+          text: `Position ${i + 1}`,
+          correct: i === nextPos
+        }))
+      };
+    }
+    
+    if (type === 2) {
+      // Number transformation: each number transforms based on a rule
+      const start = randInt(1, 5);
+      const op = randInt(0, 2); // 0: +n, 1: *n, 2: +growing
+      let seq = [start];
+      let answer;
+      
+      if (op === 0) {
+        const inc = randInt(2, 5);
+        for (let i = 1; i < 5; i++) seq.push(seq[i-1] + inc);
+        answer = seq[4] + inc;
+      } else if (op === 1) {
+        const mult = randInt(2, 3);
+        for (let i = 1; i < 5; i++) seq.push(seq[i-1] * mult);
+        answer = seq[4] * mult;
+      } else {
+        let inc = 1;
+        for (let i = 1; i < 5; i++) { seq.push(seq[i-1] + inc); inc++; }
+        answer = seq[4] + inc;
+      }
+      
+      return {
+        display: `<div style="font-family:Orbitron;font-size:2rem;color:var(--accent);">${seq.join(' → ')} → ?</div>`,
+        question: 'What number comes next?',
+        options: shuffle([
+          {text: String(answer), correct: true},
+          {text: String(answer + randInt(1,3)), correct: false},
+          {text: String(answer - randInt(1,3)), correct: false},
+          {text: String(answer * 2), correct: false}
+        ]).slice(0, 4)
+      };
+    }
+    
+    if (type === 3) {
+      // Grid pattern: cells light up in sequence
+      const gridSize = 3;
+      const path = [];
+      let r = randInt(0, 2), c = randInt(0, 2);
+      const dr = Math.random() < 0.5 ? 1 : -1;
+      const dc = Math.random() < 0.5 ? 1 : -1;
+      for (let i = 0; i < 5; i++) {
+        path.push({r: ((r + i * dr) % 3 + 3) % 3, c: ((c + i * dc) % 3 + 3) % 3});
+      }
+      const next = {r: ((r + 5 * dr) % 3 + 3) % 3, c: ((c + 5 * dc) % 3 + 3) % 3};
+      
+      return {
+        display: `<div style="display:inline-grid;grid-template-columns:repeat(3,45px);gap:3px;">
+          ${Array.from({length: 9}, (_, i) => {
+            const cr = Math.floor(i / 3), cc = i % 3;
+            const isLit = path.some(p => p.r === cr && p.c === cc);
+            return `<div style="width:45px;height:45px;background:${isLit ? 'var(--primary)' : 'var(--glass)'};border:1px solid var(--glass-border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:rgba(255,255,255,0.3);">${isLit ? '●' : ''}</div>`;
+          }).join('')}
+        </div>`,
+        question: 'Which cell lights up next?',
+        options: Array.from({length: 9}, (_, i) => {
+          const cr = Math.floor(i / 3), cc = i % 3;
+          return {text: `R${cr+1}C${cc+1}`, correct: cr === next.r && cc === next.c};
+        })
+      };
+    }
+
+    if (type === 4) {
+      // Shape rotation: shapes rotate by fixed degrees
+      const shapes = ['▲', '■', '◆', '●'];
+      const rotations = [0, 90, 180, 270];
+      const shapeIdx = randInt(0, 3);
+      const rotDir = Math.random() < 0.5 ? 1 : -1;
+      const seq = [];
+      for (let i = 0; i < 4; i++) {
+        seq.push({shape: shapes[shapeIdx], rot: rotations[(i * (rotDir > 0 ? 1 : 3)) % 4]});
+      }
+      const nextRot = rotations[(4 * (rotDir > 0 ? 1 : 3)) % 4];
+      
+      return {
+        display: seq.map(s => `<span style="display:inline-block;font-size:2rem;transform:rotate(${s.rot}deg);margin:0 8px;">${s.shape}</span>`).join(' → ') + ' → <span style="font-size:1.5rem;">?</span>',
+        question: `What rotation comes next? (${rotDir > 0 ? 'clockwise' : 'counter-clockwise'})`,
+        options: rotations.map(r => ({text: `${r}°`, correct: r === nextRot}))
+      };
+    }
+
+    // Fallback: Fibonacci-like
+    const a = randInt(1, 3), b = randInt(1, 3);
+    const fib = [a, b];
+    for (let i = 2; i < 6; i++) fib.push(fib[i-1] + fib[i-2]);
+    const answer = fib[5] + fib[4];
+    return {
+      display: `<div style="font-family:Orbitron;font-size:2rem;color:var(--accent);">${fib.join(' → ')} → ?</div>`,
+      question: 'What comes next? (sum of previous two)',
+      options: shuffle([
+        {text: String(answer), correct: true},
+        {text: String(answer + 1), correct: false},
+        {text: String(answer - 1), correct: false},
+        {text: String(answer + fib[3]), correct: false}
+      ]).slice(0, 4)
+    };
+  }
+
+  function runRound() {
+    if (round >= ROUNDS) {
+      state.inputLocked = true;
+      if (score >= ROUNDS - 2) completeLevel();
+      else failLevel(`${score}/${ROUNDS} correct.`);
+      return;
+    }
+    round++;
+    document.getElementById('l17-status').textContent = `Round ${round}/${ROUNDS} | Score: ${score}`;
+
+    const scenario = generateScenario();
+    const sceneEl = document.getElementById('l17-scene');
+    
+    sceneEl.innerHTML = `
+      <div style="margin:1rem 0;">${scenario.display}</div>
+      <div class="info-box highlight">${scenario.question}</div>
+      <div class="choices" id="l17-choices">
+        ${scenario.options.map((opt, i) => 
+          `<div class="choice-btn" data-correct="${opt.correct}" data-idx="${i}" style="${opt.color ? 'background:' + opt.color + ';border-color:' + opt.color + ';min-width:50px;height:50px;' : ''}">${opt.text || ''}</div>`
+        ).join('')}
+      </div>
+    `;
+
+    sceneEl.querySelectorAll('.choice-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (state.inputLocked) return;
+        const isCorrect = btn.dataset.correct === 'true';
+        if (isCorrect) {
+          score++;
+          btn.style.borderColor = 'var(--success)';
+          btn.style.background = 'rgba(0,255,136,0.2)';
+          playClick();
+        } else {
+          btn.style.borderColor = 'var(--danger)';
+          btn.style.background = 'rgba(255,51,51,0.2)';
+          // Highlight correct
+          sceneEl.querySelectorAll('.choice-btn').forEach(b => {
+            if (b.dataset.correct === 'true') {
+              b.style.borderColor = 'var(--success)';
+              b.style.background = 'rgba(0,255,136,0.2)';
+            }
+          });
+          playFail();
+        }
+        document.getElementById('l17-progress').style.width = `${(round / ROUNDS) * 100}%`;
+        setTimeout(runRound, 800);
+      });
+    });
+  }
+
+  runRound();
+  startTimer(120);
+}
+
+// ===== LEVEL 18: MIND READER =====
+// Observe complex multi-element behavior, predict collective outcome
+function level18() {
+  const area = document.getElementById('game-area');
+  const ROUNDS = 6;
+  let round = 0;
+  let score = 0;
+
+  area.innerHTML = `
+    <div class="level-title">MIND READER</div>
+    <div class="level-desc">Multiple elements interact. Watch their behavior. Predict the final outcome.</div>
+    <div class="level-rules">${ROUNDS} scenarios. Complex interactions. Think like the system. 150 seconds.</div>
+    <div class="info-box highlight" id="l18-status">Round 1/${ROUNDS} | Score: 0</div>
+    <div id="l18-scene" style="min-height:300px;display:flex;flex-direction:column;align-items:center;gap:1rem;"></div>
+    <div class="progress-bar"><div class="progress-fill" id="l18-progress" style="width:0%"></div></div>
+  `;
+
+  function generateScenario() {
+    const type = randInt(0, 4);
+
+    if (type === 0) {
+      // Collision prediction: two objects moving toward each other
+      const speed1 = randInt(2, 5);
+      const speed2 = randInt(2, 5);
+      const dist = randInt(20, 40);
+      const time = Math.round(dist / (speed1 + speed2) * 10) / 10;
+      
+      return {
+        setup: `
+          <div style="font-family:Orbitron;font-size:1rem;color:var(--primary);">COLLISION PREDICTION</div>
+          <div style="display:flex;align-items:center;gap:2rem;margin:1rem 0;">
+            <div style="text-align:center;">
+              <div style="font-size:2rem;">🔵</div>
+              <div style="font-size:0.7rem;color:rgba(255,255,255,0.5);">Speed: ${speed1} m/s →</div>
+            </div>
+            <div style="font-family:Orbitron;font-size:1.5rem;color:var(--accent);">${dist}m</div>
+            <div style="text-align:center;">
+              <div style="font-size:2rem;">🔴</div>
+              <div style="font-size:0.7rem;color:rgba(255,255,255,0.5);">← Speed: ${speed2} m/s</div>
+            </div>
+          </div>
+        `,
+        question: `They're moving toward each other. When do they collide?`,
+        options: shuffle([
+          {text: `${time} seconds`, correct: true},
+          {text: `${time + 1} seconds`, correct: false},
+          {text: `${Math.round(time / 2 * 10) / 10} seconds`, correct: false},
+          {text: `${time + 2} seconds`, correct: false}
+        ]).slice(0, 4)
+      };
+    }
+
+    if (type === 1) {
+      // Balance prediction: weights on a seesaw
+      const w1 = randInt(2, 8);
+      const d1 = randInt(1, 4);
+      const w2 = randInt(2, 8);
+      const d2 = randInt(1, 4);
+      const torque1 = w1 * d1;
+      const torque2 = w2 * d2;
+      let result;
+      if (torque1 > torque2) result = 'Left side goes down';
+      else if (torque2 > torque1) result = 'Right side goes down';
+      else result = 'Perfectly balanced';
+
+      return {
+        setup: `
+          <div style="font-family:Orbitron;font-size:1rem;color:var(--secondary);">SEESAW PHYSICS</div>
+          <div style="margin:1rem 0;font-size:1.2rem;">
+            ⚖️
+          </div>
+          <div style="display:flex;gap:3rem;">
+            <div style="text-align:center;">
+              <div style="font-size:1.5rem;">🔵 ${w1}kg</div>
+              <div style="font-size:0.7rem;color:rgba(255,255,255,0.5);">Distance: ${d1}m from center</div>
+              <div style="font-size:0.7rem;color:var(--primary);">Torque: ${torque1} Nm</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:1.5rem;">🔴 ${w2}kg</div>
+              <div style="font-size:0.7rem;color:rgba(255,255,255,0.5);">Distance: ${d2}m from center</div>
+              <div style="font-size:0.7rem;color:var(--danger);">Torque: ${torque2} Nm</div>
+            </div>
+          </div>
+        `,
+        question: 'Which side goes down?',
+        options: shuffle([
+          {text: result, correct: true},
+          {text: result === 'Left side goes down' ? 'Right side goes down' : 'Left side goes down', correct: false},
+          {text: 'Perfectly balanced', correct: false},
+          {text: 'They both float up', correct: false}
+        ]).slice(0, 4)
+      };
+    }
+
+    if (type === 2) {
+      // Merging streams: two lines of objects merge
+      const streamA = Array.from({length: 4}, () => randInt(1, 9));
+      const streamB = Array.from({length: 4}, () => randInt(1, 9));
+      const merged = [];
+      for (let i = 0; i < 4; i++) {
+        merged.push(streamA[i], streamB[i]);
+      }
+      const nextPair = [streamA[0], streamB[0]]; // pattern repeats
+
+      return {
+        setup: `
+          <div style="font-family:Orbitron;font-size:1rem;color:var(--accent);">STREAM MERGE</div>
+          <div style="margin:1rem 0;">
+            <div style="color:var(--primary);font-size:1.2rem;">A: ${streamA.join(' → ')}</div>
+            <div style="color:var(--secondary);font-size:1.2rem;">B: ${streamB.join(' → ')}</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:0.8rem;margin-top:0.5rem;">Merged (A,B,A,B...): ${merged.slice(0, 6).join(', ')}...</div>
+          </div>
+        `,
+        question: 'What are the next 2 numbers in the merged stream?',
+        options: shuffle([
+          {text: `${nextPair[0]}, ${nextPair[1]}`, correct: true},
+          {text: `${nextPair[1]}, ${nextPair[0]}`, correct: false},
+          {text: `${streamA[3]}, ${streamB[3]}`, correct: false},
+          {text: `${streamA[1]}, ${streamB[1]}`, correct: false}
+        ]).slice(0, 4)
+      };
+    }
+
+    if (type === 3) {
+      // Spread prediction: a value distributes among cells
+      const total = randInt(12, 24);
+      const cells = 4;
+      const each = total / cells;
+      const remainder = total % cells;
+      
+      return {
+        setup: `
+          <div style="font-family:Orbitron;font-size:1rem;color:var(--success);">DISTRIBUTION</div>
+          <div style="margin:1rem 0;">
+            <div style="font-size:2rem;color:var(--accent);">Total: ${total}</div>
+            <div style="display:flex;gap:8px;margin-top:0.5rem;">
+              ${Array.from({length: cells}, (_, i) => 
+                `<div style="width:50px;height:50px;border:1px dashed var(--primary);border-radius:4px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);">?</div>`
+              ).join('')}
+            </div>
+            <div style="font-size:0.7rem;color:rgba(255,255,255,0.4);margin-top:0.5rem;">Distribute equally (round down). Leftover goes to last cell.</div>
+          </div>
+        `,
+        question: `What's in the last cell?`,
+        options: shuffle([
+          {text: String(Math.floor(each) + remainder), correct: true},
+          {text: String(Math.ceil(each)), correct: false},
+          {text: String(Math.floor(each)), correct: false},
+          {text: String(total), correct: false}
+        ]).slice(0, 4)
+      };
+    }
+
+    // Chain reaction: A affects B, B affects C, predict C
+    const start = randInt(1, 5);
+    const multiplier = randInt(2, 3);
+    const offset = randInt(1, 3);
+    
+    const a = start;
+    const b = a * multiplier + offset;
+    const c = b * multiplier + offset;
+    const d = c * multiplier + offset;
+
+    return {
+      setup: `
+        <div style="font-family:Orbitron;font-size:1rem;color:var(--danger);">CHAIN REACTION</div>
+        <div style="margin:1rem 0;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;justify-content:center;">
+          <div style="padding:0.5rem 1rem;border:1px solid var(--primary);border-radius:4px;">
+            <div style="font-size:0.6rem;color:var(--primary);">A</div>
+            <div style="font-family:Orbitron;font-size:1.5rem;">${a}</div>
+          </div>
+          <div style="color:var(--accent);font-size:0.7rem;">×${multiplier}+${offset}</div>
+          <div style="padding:0.5rem 1rem;border:1px solid var(--secondary);border-radius:4px;">
+            <div style="font-size:0.6rem;color:var(--secondary);">B</div>
+            <div style="font-family:Orbitron;font-size:1.5rem;">${b}</div>
+          </div>
+          <div style="color:var(--accent);font-size:0.7rem;">×${multiplier}+${offset}</div>
+          <div style="padding:0.5rem 1rem;border:1px solid var(--success);border-radius:4px;">
+            <div style="font-size:0.6rem;color:var(--success);">C</div>
+            <div style="font-family:Orbitron;font-size:1.5rem;">${c}</div>
+          </div>
+          <div style="color:var(--accent);font-size:0.7rem;">×${multiplier}+${offset}</div>
+          <div style="padding:0.5rem 1rem;border:1px dashed rgba(255,255,255,0.3);border-radius:4px;">
+            <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);">D</div>
+            <div style="font-family:Orbitron;font-size:1.5rem;color:rgba(255,255,255,0.3);">?</div>
+          </div>
+        </div>
+      `,
+      question: `Each value transforms: ×${multiplier}+${offset}. What is D?`,
+      options: shuffle([
+        {text: String(d), correct: true},
+        {text: String(d + multiplier), correct: false},
+        {text: String(c * multiplier), correct: false},
+        {text: String(d - offset), correct: false}
+      ]).slice(0, 4)
+    };
+  }
+
+  function runRound() {
+    if (round >= ROUNDS) {
+      state.inputLocked = true;
+      if (score >= ROUNDS - 2) completeLevel();
+      else failLevel(`${score}/${ROUNDS} correct.`);
+      return;
+    }
+    round++;
+    document.getElementById('l18-status').textContent = `Round ${round}/${ROUNDS} | Score: ${score}`;
+
+    const scenario = generateScenario();
+    const sceneEl = document.getElementById('l18-scene');
+    
+    sceneEl.innerHTML = `
+      ${scenario.setup}
+      <div class="info-box highlight" style="margin-top:0.5rem;">${scenario.question}</div>
+      <div class="choices" id="l18-choices">
+        ${scenario.options.map(opt => 
+          `<div class="choice-btn" data-correct="${opt.correct}" style="min-width:80px;">${opt.text}</div>`
+        ).join('')}
+      </div>
+    `;
+
+    sceneEl.querySelectorAll('.choice-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (state.inputLocked) return;
+        const isCorrect = btn.dataset.correct === 'true';
+        if (isCorrect) {
+          score++;
+          btn.style.borderColor = 'var(--success)';
+          btn.style.background = 'rgba(0,255,136,0.2)';
+          playClick();
+        } else {
+          btn.style.borderColor = 'var(--danger)';
+          btn.style.background = 'rgba(255,51,51,0.2)';
+          sceneEl.querySelectorAll('.choice-btn').forEach(b => {
+            if (b.dataset.correct === 'true') {
+              b.style.borderColor = 'var(--success)';
+              b.style.background = 'rgba(0,255,136,0.2)';
+            }
+          });
+          playFail();
+        }
+        document.getElementById('l18-progress').style.width = `${(round / ROUNDS) * 100}%`;
+        setTimeout(runRound, 1000);
+      });
+    });
+  }
+
+  runRound();
+  startTimer(150);
 }
 
 // ===== KEYBOARD SHORTCUTS =====
