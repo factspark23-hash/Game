@@ -4969,6 +4969,125 @@ const WISDOM_BOOKS = [
         principle: "One slip isn't failure — it's data. The 'what-the-hell effect' is your brain giving itself permission to abandon progress. See the trick, refuse the trick."
       }
     ]
+  },
+  {
+    id: 'greyzone',
+    title: 'The Grey Zone — No Right Answers',
+    author: 'Custom Scenarios',
+    color: '#8800ff',
+    icon: '⚫',
+    desc: 'Moral dilemmas where every choice has a cost. The clock is 12 seconds. Good luck.',
+    timePerScenario: 12,
+    scenarios: [
+      {
+        situation: "Your best friend's partner flirts with you when your friend isn't around. They haven't crossed a line — yet. But the energy is unmistakable. Your friend would be devastated. What do you do?",
+        choices: [
+          { text: "Tell your friend immediately — loyalty comes first", tag: "loyal" },
+          { text: "Confront the partner privately — 'This stops now or I tell them myself'", tag: "assertive" },
+          { text: "Say nothing and distance yourself from both — not your problem", tag: "avoidant" },
+          { text: "Flirt back slightly to see how far they'll go — gather evidence first", tag: "rogue" }
+        ],
+        law: "Loyalty vs Evidence vs Self-Preservation",
+        analysis: {
+          "loyal": "You chose your friend. Noble. But what did you actually TELL them? 'Your partner flirts with me' — based on what? Vibes? Your friend now has anxiety, their relationship cracks, and if the partner denies it, YOU look like the one causing drama. Loyalty without evidence is a grenade with no pin.",
+          "assertive": "The power move. You handled it DIRECTLY with the source. They now know: boundary set, consequences clear. If they stop, the friendship survives. If they don't, you have cause to escalate. You gave them a chance to self-correct — that's fair. RISK: They could spin it as YOU making a move.",
+          "avoidant": "You protected yourself but abandoned your friend. Distancing creates a vacuum — your friend wonders what THEY did wrong. Meanwhile, the partner continues with someone else. Your silence enabled whatever comes next. SAFETY ≠ RIGHTEOUSNESS.",
+          "rogue": "Dangerous game. 'Gathering evidence' through flirting is what people tell themselves when they want permission to flirt. If your friend finds out YOU were flirting back, the betrayal is YOURS, not the partner's. The road to hell is paved with 'I was just gathering evidence.'"
+        },
+        correctChoice: 1,
+        principle: "When loyalty conflicts with evidence, handle it at the SOURCE first. Give the person a chance to correct themselves before escalating."
+      },
+      {
+        situation: "You discover your company is dumping toxic waste illegally. Reporting it will shut down the factory — 200 people lose their jobs in a small town. Including your neighbor who just had a baby. What do you do?",
+        choices: [
+          { text: "Report it immediately — people's health matters more than jobs", tag: "moral" },
+          { text: "Anonymous tip to the press — let it become public without your name", tag: "strategic" },
+          { text: "Confront management internally first — give them a chance to fix it quietly", tag: "diplomatic" },
+          { text: "Say nothing — 200 families depend on this factory", tag: "sacrifice" }
+        ],
+        law: "Utilitarian vs Deontological Ethics",
+        analysis: {
+          "moral": "The 'right' answer — ethically. But real ethics includes consequences. 200 jobs gone in a small town means: mortgages defaulted, kids hungry, divorces, suicides. You saved invisible health while destroying visible lives. The right thing CAN be the worst thing. Welcome to the grey zone.",
+          "strategic": "Anonymous press tip = the issue surfaces but you stay protected. Smart self-preservation. But the factory still shuts down, 200 still lose jobs, and YOU didn't take responsibility. You lit the match but won't admit to holding it. Courage without skin in the game is cowardice with a shield.",
+          "diplomatic": "The 'reasonable' choice. But if management KNEW about the waste and CHOSE to continue, your 'chance to fix it' gives them time to cover up, destroy evidence, or fire the whistleblower. Good faith only works when the other side HAS good faith. PSYCHOLOGY: Appealing to conscience assumes they have one.",
+          "sacrifice": "You saved 200 jobs today. Tomorrow, someone's kid gets cancer from the water. Your neighbor's baby? Growing up near a toxic dump. The jobs are VISIBLE, the harm is INVISIBLE — so your brain defaults to protecting what it can see. This is how systemic harm survives: it's always someone else's future problem."
+        },
+        correctChoice: 1,
+        principle: "In impossible dilemmas, there's no clean answer — only clean PROCESS. Anonymous reporting protects you while ensuring the truth surfaces."
+      },
+      {
+        situation: "You're a therapist. Your client confesses they're planning to leave their spouse — but they ask you not to tell their partner, who is ALSO your client. Both trust you. What do you do?",
+        choices: [
+          { text: "Maintain confidentiality — your duty is to the client who told you", tag: "professional" },
+          { text: "Encourage the client to tell their partner themselves — with your support", tag: "ethical" },
+          { text: "Terminate one of the therapeutic relationships — you can't serve both anymore", tag: "boundary" },
+          { text: "Drop hints to the other client without revealing specifics", tag: "covert" }
+        ],
+        law: "Dual Relationships & Confidentiality Conflicts",
+        analysis: {
+          "professional": "You upheld professional ethics. But you're now an active participant in a deception. Your other client is coming to therapy, building trust with you, while you KNOW their life is about to implode. Your 'professionalism' has become complicity. ETHICS: Confidentiality protects the client, not the therapist's comfort.",
+          "ethical": "You maintained the therapeutic alliance while pushing for honesty. The client who told you gets SUPPORT for doing the hard thing. Their partner finds out THROUGH THEM, not through betrayal. You kept your integrity without breaking confidentiality. SUBTLE: You didn't disclose — you empowered disclosure.",
+          "boundary": "The cleanest professional solution. You recognized the dual relationship has become untenable and removed yourself. But: who does the departing client get referred to? How does the remaining client feel about being 'abandoned'? Clean on paper, messy in practice. PROFESSIONALISM vs HUMANITY.",
+          "covert": "The worst option. 'Dropping hints' is manipulation disguised as concern. If either client discovers what you did, you lose BOTH — and your license. You compromised your ethics while pretending to uphold them. The therapist who manipulates clients has become the problem."
+        },
+        correctChoice: 1,
+        principle: "In dual-client conflicts, empower honesty without breaking confidentiality. Help the person who confided in you do the right thing WITH your support."
+      },
+      {
+        situation: "Your younger sibling confides that they're using hard drugs. They beg you not to tell your parents — who would overreact catastrophically. You know your parents WOULD overreact. But you also know the drugs are dangerous. What do you do?",
+        choices: [
+          { text: "Tell your parents immediately — safety over trust", tag: "protective" },
+          { text: "Keep their secret but set conditions: 'I won't tell if you let me help you stop'", tag: "conditional" },
+          { text: "Research, connect them with a counselor, and monitor closely yourself", tag: "hands-on" },
+          { text: "Respect their autonomy — they're their own person, even if it's risky", tag: "autonomy" }
+        ],
+        law: "Protection vs Autonomy vs Trust",
+        analysis: {
+          "protective": "You chose safety. Your parents will overreact (as predicted), your sibling will never trust you again, and the drugs will continue in SECRET now. You traded their trust for your peace of mind. PARADOX: Telling parents often makes the situation WORSE because the person stops asking for help entirely.",
+          "conditional": "The most human solution. You: 1) Honored their trust (didn't tell), 2) Set a boundary (I'll help, but this changes), 3) Took responsibility (I'm in this WITH you). They're not alone, but they're accountable. PSYCHOLOGY: People change more when supported than when punished.",
+          "hands-on": "Ambitious but dangerous. You're not a counselor. 'Monitoring' someone's drug use is a full-time job that will consume YOUR life. What if they overdose on your watch? What if you CAN'T help? Good intentions without professional backup can become codependency. KNOW YOUR LIMITS.",
+          "autonomy": "'Respecting autonomy' sounds enlightened. In practice, it's watching someone you love self-destruct while saying 'their choice.' Autonomy is a principle for adults making informed decisions — not for someone in the grip of addiction making choices their brain chemistry is distorting."
+        },
+        correctChoice: 1,
+        principle: "Between betrayal and abandonment, there's a third path: CONDITIONAL support. Honor the trust, set boundaries, take responsibility together."
+      },
+      {
+        situation: "You're at a restaurant. The waiter is clearly new, overwhelmed, and makes multiple mistakes. Your food is cold. The table next to you is complaining loudly and the waiter is about to cry. What do you do?",
+        choices: [
+          { text: "Complain too — you're paying for a service, emotions aren't your problem", tag: "transactional" },
+          { text: "Stay quiet, eat the cold food, tip well — avoid making it worse", tag: "passive" },
+          { text: "Quietly flag the manager: 'Your new waiter needs support, not punishment'", tag: "strategic" },
+          { text: "Smile at the waiter, say 'Take your time, no rush' — be the calm in their chaos", tag: "social" }
+        ],
+        law: "Punching Down vs Lateral Kindness",
+        analysis: {
+          "transactional": "You're technically right. You DID pay for a service. But 'emotions aren't my problem' is how people justify cruelty. This waiter will remember your complaint alongside the other table's. Two people piling on someone who's already drowning. YOUR frustration is valid. Your TARGET is not.",
+          "passive": "You didn't make it worse. But cold food IS a problem, and avoiding all confrontation isn't kindness — it's conflict-avoidance wearing a kindness costume. You ate bad food, tipped for bad service, and left resentful. KINDNESS WITHOUT HONESTY IS PEOPLE-PLEASING.",
+          "strategic": "The most EFFECTIVE kindness. You: 1) Didn't embarrass the waiter publicly, 2) Addressed the real problem (lack of support, not lack of effort), 3) Gave management information to actually FIX things. You changed the SYSTEM, not just the moment. PSYCHOLOGY: The best interventions address root causes, not symptoms.",
+          "social": "Beautiful in the moment. Your kindness probably saved their shift emotionally. But the systemic problem remains: they're untrained, unsupported, and will face this again tomorrow. Emotional support without structural change is a band-aid. COMBINE with option C for maximum impact."
+        },
+        correctChoice: 2,
+        principle: "Real kindness isn't just being nice — it's addressing the SYSTEM that creates suffering, not just comforting the person suffering in it."
+      },
+      {
+        situation: "You're a team lead. Your best performer is toxic — they bully junior members but deliver incredible results. The team is afraid of them. Your boss only cares about numbers. What do you do?",
+        choices: [
+          { text: "Protect the team — confront the performer, set consequences, even if they leave", tag: "courageous" },
+          { text: "Keep them — results matter, and the juniors will toughen up", tag: "pragmatic" },
+          { text: "Document everything, build a case, then present it to your boss with data", tag: "calculated" },
+          { text: "Move the bully to solo work — isolate the problem without confrontation", tag: "avoidant" }
+        ],
+        law: "Performance vs Culture — The Toxic Star Problem",
+        analysis: {
+          "courageous": "Courageous leadership. You chose PEOPLE over NUMBERS. The bully may leave and your short-term metrics drop. But research shows: ONE toxic performer destroys more value than 5 great ones create. Your remaining team will breathe, grow, and eventually outperform. PSYCHOLOGY: Psychological safety is the #1 predictor of team performance (Google Project Aristotle).",
+          "pragmatic": "Short-term gain, long-term cancer. The juniors don't 'toughen up' — they leave. Your best people are the first to go because they HAVE options. You'll be left with the bully and whoever can't find another job. THE PARADOX: Keeping the toxic star slowly destroys the conditions that let stars emerge.",
+          "calculated": "Smart but slow. While you build your case, the team suffers. Every week of delay = another junior crushed. And if your boss truly 'only cares about numbers,' data won't change their mind. They already KNOW the bully is toxic — they're choosing to tolerate it. You need to change the COST-BENEFIT, not just present facts.",
+          "avoidant": "Solo work doesn't solve bullying — it hides it. The bully still exists in the culture, still intimidates in meetings, still poisons morale. You moved the problem, you didn't solve it. And now your best performer has zero collaboration, which limits their growth AND the team's learning."
+        },
+        correctChoice: 0,
+        principle: "Toxic high-performers are the most expensive employees. They cost more in turnover, morale, and culture damage than they produce in output. The bravest leadership says: 'We don't tolerate this, regardless of your numbers.'"
+      }
+    ]
   }
 ];
 
@@ -4979,6 +5098,10 @@ let wisdomState = {
   choices: [],
   score: 0,
   totalScenarios: 0,
+  timeBonus: 0,
+  timerInterval: null,
+  timeLeft: 0,
+  timePerScenario: 20,
   behavioralProfile: {
     aggressive: 0, passive: 0, strategic: 0, aware: 0,
     emotional: 0, rational: 0, social: 0, independent: 0
@@ -5014,10 +5137,13 @@ function showWisdomVault() {
 function startWisdomBook(bookId) {
   const book = WISDOM_BOOKS.find(b => b.id === bookId);
   if (!book) return;
+  clearInterval(wisdomState.timerInterval);
   wisdomState.currentBook = book;
   wisdomState.currentScenario = 0;
   wisdomState.choices = [];
   wisdomState.score = 0;
+  wisdomState.timeBonus = 0;
+  wisdomState.timePerScenario = book.timePerScenario || 20;
   wisdomState.totalScenarios = book.scenarios.length;
   wisdomState.behavioralProfile = { aggressive:0, passive:0, strategic:0, aware:0, emotional:0, rational:0, social:0, independent:0 };
   showWisdomScenario();
@@ -5029,11 +5155,22 @@ function showWisdomScenario() {
   const scenario = book.scenarios[idx];
   if (!scenario) { showWisdomResults(); return; }
   
+  clearInterval(wisdomState.timerInterval);
+  const timerSec = wisdomState.timePerScenario;
+  wisdomState.timeLeft = timerSec;
+  
   const contentEl = document.getElementById('wl-content');
   contentEl.innerHTML = `
     <div style="text-align:center;margin-bottom:0.5rem;">
       <span style="font-family:Orbitron;font-size:0.65rem;color:${book.color};letter-spacing:0.2em;">${book.icon} ${book.title.toUpperCase()}</span>
       <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);margin-top:0.2rem;">SCENARIO ${idx+1} / ${book.scenarios.length}</div>
+    </div>
+    <div id="wisdom-timer-bar" style="position:relative;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;margin-bottom:0.8rem;overflow:hidden;">
+      <div id="wisdom-timer-fill" style="height:100%;width:100%;background:var(--primary);border-radius:2px;transition:width 1s linear,background 0.3s;"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;">
+      <span style="font-family:Orbitron;font-size:0.6rem;color:rgba(255,255,255,0.3);">⏱️ DECIDE</span>
+      <span id="wisdom-timer-text" style="font-family:Orbitron;font-size:0.8rem;color:var(--primary);">${timerSec}s</span>
     </div>
     <div style="background:rgba(255,255,255,0.03);border:1px solid ${book.color}33;padding:1.2rem;margin-bottom:1.2rem;border-radius:4px;font-size:0.9rem;line-height:1.6;color:rgba(255,255,255,0.85);">
       <div style="font-family:Orbitron;font-size:0.6rem;color:${book.color};margin-bottom:0.5rem;">⚡ SITUATION</div>
@@ -5051,13 +5188,39 @@ function showWisdomScenario() {
     <div class="progress-bar" style="margin-top:1rem;"><div class="progress-fill" id="w-progress" style="width:${(idx/book.scenarios.length)*100}%;background:${book.color};"></div></div>
   `;
   document.getElementById('wl-nav').innerHTML = '';
+  
+  wisdomState.timerInterval = setInterval(() => {
+    wisdomState.timeLeft--;
+    const fill = document.getElementById('wisdom-timer-fill');
+    const text = document.getElementById('wisdom-timer-text');
+    if (!fill || !text) { clearInterval(wisdomState.timerInterval); return; }
+    const pct = (wisdomState.timeLeft / timerSec) * 100;
+    fill.style.width = pct + '%';
+    text.textContent = wisdomState.timeLeft + 's';
+    if (wisdomState.timeLeft <= 5) {
+      fill.style.background = 'var(--danger)';
+      text.style.color = 'var(--danger)';
+    } else if (wisdomState.timeLeft <= 10) {
+      fill.style.background = 'var(--accent)';
+      text.style.color = 'var(--accent)';
+    }
+    if (wisdomState.timeLeft <= 0) {
+      clearInterval(wisdomState.timerInterval);
+      selectWisdomChoice(-1);
+    }
+  }, 1000);
 }
 
 function selectWisdomChoice(choiceIdx) {
+  clearInterval(wisdomState.timerInterval);
   const book = wisdomState.currentBook;
   const scenario = book.scenarios[wisdomState.currentScenario];
-  const choice = scenario.choices[choiceIdx];
-  const isCorrect = choiceIdx === scenario.correctChoice;
+  const timedOut = choiceIdx === -1;
+  const choice = timedOut ? scenario.choices[0] : scenario.choices[choiceIdx];
+  const isCorrect = !timedOut && choiceIdx === scenario.correctChoice;
+  const timeLeft = wisdomState.timeLeft;
+  const timeBonus = isCorrect && timeLeft > 10 ? Math.floor(timeLeft * 5) : 0;
+  if (timeBonus > 0) wisdomState.timeBonus += timeBonus;
   
   document.querySelectorAll('#wisdom-choices > div').forEach(el => {
     el.classList.add('locked');
@@ -5065,46 +5228,77 @@ function selectWisdomChoice(choiceIdx) {
     el.style.pointerEvents = 'none';
   });
   
-  const selectedEl = document.getElementById('wchoice-'+choiceIdx);
-  selectedEl.style.borderColor = isCorrect ? 'var(--success)' : 'var(--danger)';
-  selectedEl.style.background = isCorrect ? 'rgba(0,255,136,0.1)' : 'rgba(255,51,51,0.1)';
-  
-  if (!isCorrect) {
+  if (timedOut) {
+    playFail();
     const correctEl = document.getElementById('wchoice-'+scenario.correctChoice);
-    correctEl.style.borderColor = 'var(--success)';
-    correctEl.style.background = 'rgba(0,255,136,0.1)';
+    if (correctEl) {
+      correctEl.style.borderColor = 'var(--success)';
+      correctEl.style.background = 'rgba(0,255,136,0.1)';
+    }
+    document.querySelectorAll('#wisdom-choices > div').forEach(el => {
+      el.style.opacity = '0.4';
+    });
+    if (correctEl) correctEl.style.opacity = '1';
+  } else {
+    const selectedEl = document.getElementById('wchoice-'+choiceIdx);
+    selectedEl.style.borderColor = isCorrect ? 'var(--success)' : 'var(--danger)';
+    selectedEl.style.background = isCorrect ? 'rgba(0,255,136,0.1)' : 'rgba(255,51,51,0.1)';
+    if (!isCorrect) {
+      const correctEl = document.getElementById('wchoice-'+scenario.correctChoice);
+      correctEl.style.borderColor = 'var(--success)';
+      correctEl.style.background = 'rgba(0,255,136,0.1)';
+    }
+    if (isCorrect) playClick(); else playFail();
   }
   
   if (isCorrect) wisdomState.score++;
-  wisdomState.choices.push({ scenario: wisdomState.currentScenario, choice: choiceIdx, tag: choice.tag, correct: isCorrect });
+  wisdomState.choices.push({ scenario: wisdomState.currentScenario, choice: timedOut ? -1 : choiceIdx, tag: choice.tag, correct: isCorrect, timedOut });
   
   const tag = choice.tag;
-  if (['aggressive','confrontational','competitive','revolutionary','blunt','assertive','compete','loyalist'].includes(tag)) wisdomState.behavioralProfile.aggressive++;
-  if (['passive','passive-aggressive','people-pleaser','avoidant','neutral','imitator','silent','herd','reciprocated','deferential','procrastinator','sunk-cost','compliant','overthink','isolated'].includes(tag)) wisdomState.behavioralProfile.passive++;
-  if (['strategic','calculated','machiavellian','behind-scenes','long-game','master','cautious'].includes(tag)) wisdomState.behavioralProfile.strategic++;
-  if (['aware','skeptical','immune','probing','analytical','rational','testing','system2','honest'].includes(tag)) wisdomState.behavioralProfile.aware++;
-  if (['emotional','triggered','infected','flattered','confused','naive','availability','system1','doubtful','compromised','manipulated'].includes(tag)) wisdomState.behavioralProfile.emotional++;
-  if (['decisive','direct','boundary','independent','statistical','pivot'].includes(tag)) wisdomState.behavioralProfile.rational++;
-  if (['supportive','loyal','generous','charmer','charismatic','mediator','democratic','diplomatic','penetrating','resistant'].includes(tag)) wisdomState.behavioralProfile.social++;
-  if (['rogue','opportunistic','double-agent','shadow','star','coquette','informant','escalator','dismiss','loud','humor','exit'].includes(tag)) wisdomState.behavioralProfile.independent++;
-  
-  if (isCorrect) playClick(); else playFail();
+  if (['aggressive','confrontational','competitive','revolutionary','blunt','assertive','compete','loyalist','protective','transactional','pragmatic','reactive','compensate'].includes(tag)) wisdomState.behavioralProfile.aggressive++;
+  if (['passive','passive-aggressive','people-pleaser','avoidant','neutral','imitator','silent','herd','reciprocated','deferential','procrastinator','sunk-cost','compliant','overthink','isolated','suppressed','avoidance','co-dependent','perfectionist','anxious','fawn','toxic-positive','literal','risk-averse','natural'].includes(tag)) wisdomState.behavioralProfile.passive++;
+  if (['strategic','calculated','machiavellian','behind-scenes','long-game','master','cautious','covert','conditional','hands-on','diplomatic'].includes(tag)) wisdomState.behavioralProfile.strategic++;
+  if (['aware','skeptical','immune','probing','analytical','rational','testing','system2','honest','psychological','ethical','boundaried','professional'].includes(tag)) wisdomState.behavioralProfile.aware++;
+  if (['emotional','triggered','infected','flattered','confused','naive','availability','system1','doubtful','compromised','manipulated','emotional','doubt','rationalizing','rumination','defensive','blame'].includes(tag)) wisdomState.behavioralProfile.emotional++;
+  if (['decisive','direct','boundary','independent','statistical','pivot','moral','autonomy'].includes(tag)) wisdomState.behavioralProfile.rational++;
+  if (['supportive','loyal','generous','charmer','charismatic','mediator','democratic','diplomatic','penetrating','resistant','social','emotional-intelligence','courageous'].includes(tag)) wisdomState.behavioralProfile.social++;
+  if (['rogue','opportunistic','double-agent','shadow','star','coquette','informant','escalator','dismiss','loud','humor','exit','sacrifice'].includes(tag)) wisdomState.behavioralProfile.independent++;
   
   const analysisEl = document.getElementById('wisdom-analysis');
   analysisEl.style.display = '';
-  analysisEl.innerHTML = `
-    <div style="background:${isCorrect?'rgba(0,255,136,0.05)':'rgba(255,51,51,0.05)'};border-left:3px solid ${isCorrect?'var(--success)':'var(--danger)'};padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
-      <div style="font-family:Orbitron;font-size:0.65rem;color:${isCorrect?'var(--success)':'var(--danger)'};margin-bottom:0.5rem;letter-spacing:0.1em;">${isCorrect?'✅ STRATEGIC CHOICE':'❌ YOUR CHOICE — CONSEQUENCE'}</div>
-      <div style="color:rgba(255,255,255,0.8);font-size:0.82rem;line-height:1.7;">${scenario.analysis[choice.tag]}</div>
-    </div>
-    <div style="background:rgba(255,0,170,0.05);border-left:3px solid ${book.color};padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
-      <div style="font-family:Orbitron;font-size:0.65rem;color:${book.color};margin-bottom:0.5rem;letter-spacing:0.1em;">📚 PRINCIPLE</div>
-      <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;line-height:1.7;font-style:italic;">"${scenario.principle}"</div>
-    </div>
-    <div style="background:rgba(0,240,255,0.05);border-left:3px solid var(--primary);padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
-      <div style="font-family:Orbitron;font-size:0.65rem;color:var(--primary);margin-bottom:0.5rem;letter-spacing:0.1em;">📖 LAW: ${scenario.law}</div>
-    </div>
-  `;
+  if (timedOut) {
+    analysisEl.innerHTML = `
+      <div style="background:rgba(255,51,51,0.08);border-left:3px solid var(--danger);padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
+        <div style="font-family:Orbitron;font-size:0.65rem;color:var(--danger);margin-bottom:0.5rem;letter-spacing:0.1em;">⏰ TIME'S UP — INDECISION IS A CHOICE</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:0.82rem;line-height:1.7;">In real life, hesitation has consequences. While you froze, the situation moved without you. The strategic choice was <strong>${scenario.choices[scenario.correctChoice].text}</strong>. Time pressure exposes your default reaction — and your default was: do nothing.</div>
+      </div>
+      <div style="background:rgba(0,255,136,0.05);border-left:3px solid var(--success);padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
+        <div style="font-family:Orbitron;font-size:0.65rem;color:var(--success);margin-bottom:0.5rem;letter-spacing:0.1em;">✅ STRATEGIC CHOICE</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:0.82rem;line-height:1.7;">${scenario.analysis[scenario.choices[scenario.correctChoice].tag]}</div>
+      </div>
+      <div style="background:rgba(255,0,170,0.05);border-left:3px solid ${book.color};padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
+        <div style="font-family:Orbitron;font-size:0.65rem;color:${book.color};margin-bottom:0.5rem;letter-spacing:0.1em;">📚 PRINCIPLE</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;line-height:1.7;font-style:italic;">"${scenario.principle}"</div>
+      </div>
+      <div style="background:rgba(0,240,255,0.05);border-left:3px solid var(--primary);padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
+        <div style="font-family:Orbitron;font-size:0.65rem;color:var(--primary);margin-bottom:0.5rem;letter-spacing:0.1em;">📖 LAW: ${scenario.law}</div>
+      </div>
+    `;
+  } else {
+    analysisEl.innerHTML = `
+      <div style="background:${isCorrect?'rgba(0,255,136,0.05)':'rgba(255,51,51,0.05)'};border-left:3px solid ${isCorrect?'var(--success)':'var(--danger)'};padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
+        <div style="font-family:Orbitron;font-size:0.65rem;color:${isCorrect?'var(--success)':'var(--danger)'};margin-bottom:0.5rem;letter-spacing:0.1em;">${isCorrect?'✅ STRATEGIC CHOICE':'❌ YOUR CHOICE — CONSEQUENCE'}${timeBonus>0?' ⚡ +'+timeBonus+' TIME BONUS':''}</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:0.82rem;line-height:1.7;">${scenario.analysis[choice.tag]}</div>
+      </div>
+      <div style="background:rgba(255,0,170,0.05);border-left:3px solid ${book.color};padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
+        <div style="font-family:Orbitron;font-size:0.65rem;color:${book.color};margin-bottom:0.5rem;letter-spacing:0.1em;">📚 PRINCIPLE</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;line-height:1.7;font-style:italic;">"${scenario.principle}"</div>
+      </div>
+      <div style="background:rgba(0,240,255,0.05);border-left:3px solid var(--primary);padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
+        <div style="font-family:Orbitron;font-size:0.65rem;color:var(--primary);margin-bottom:0.5rem;letter-spacing:0.1em;">📖 LAW: ${scenario.law}</div>
+      </div>
+    `;
+  }
   
   const navEl = document.getElementById('wl-nav');
   const isLast = wisdomState.currentScenario >= book.scenarios.length - 1;
@@ -5121,6 +5315,7 @@ function wisdomNext() {
 }
 
 function showWisdomResults() {
+  clearInterval(wisdomState.timerInterval);
   const book = wisdomState.currentBook;
   const score = wisdomState.score;
   const total = book.scenarios.length;
@@ -5128,6 +5323,8 @@ function showWisdomResults() {
   const profile = wisdomState.behavioralProfile;
   const sorted = Object.entries(profile).sort((a,b) => b[1]-a[1]);
   const dominant = sorted[0][0];
+  const timedOut = wisdomState.choices.filter(c => c.timedOut).length;
+  const timeBonus = wisdomState.timeBonus;
   
   const traits = {
     aggressive: { name:'THE WARRIOR', desc:'You confront head-on. Powerful but dangerous — you create as many enemies as victories. Work on timing and diplomacy.', color:'var(--danger)' },
@@ -5151,6 +5348,8 @@ function showWisdomResults() {
     <div style="text-align:center;margin:1.5rem 0;">
       <div style="font-family:Orbitron;font-size:3rem;color:${pct>=70?'var(--success)':pct>=40?'var(--accent)':'var(--danger)'};">${score}/${total}</div>
       <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);">Strategic choices</div>
+      ${timeBonus>0?`<div style="font-family:Orbitron;font-size:1.2rem;color:var(--accent);margin-top:0.5rem;">⚡ +${timeBonus} TIME BONUS</div>`:''}
+      ${timedOut>0?`<div style="font-size:0.75rem;color:var(--danger);margin-top:0.3rem;">⏰ ${timedOut} scenario${timedOut>1?'s':''} timed out — indecision costs</div>`:''}
     </div>
     <div style="background:${trait.color}11;border:1px solid ${trait.color}44;padding:1.2rem;margin:1rem 0;border-radius:4px;text-align:center;">
       <div style="font-family:Orbitron;font-size:1.3rem;color:${trait.color};margin-bottom:0.5rem;">${trait.name}</div>
