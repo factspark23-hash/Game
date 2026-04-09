@@ -4641,6 +4641,334 @@ const WISDOM_BOOKS = [
         principle: "The secret to being interesting is being INTERESTED. Make others feel fascinating."
       }
     ]
+  },
+  {
+    id: 'darkpsych',
+    title: 'Dark Psychology in Daily Life',
+    author: 'Custom Scenarios',
+    color: '#aa0033',
+    icon: '🕷️',
+    desc: 'Recognize everyday manipulation tactics used on you without you knowing.',
+    scenarios: [
+      {
+        situation: "Your friend says 'If you really cared about me, you'd cancel your plans and help me move today.' You already have important plans. What do you do?",
+        choices: [
+          { text: "Cancel your plans — they need me and I'd feel guilty saying no", tag: "people-pleaser" },
+          { text: "Say 'That's emotional blackmail. I can help Sunday but not today'", tag: "aware" },
+          { text: "Help them but resent it the whole time", tag: "passive-aggressive" },
+          { text: "Make up a lie about why you can't come", tag: "avoidant" }
+        ],
+        law: "Emotional Blackmail",
+        analysis: {
+          "people-pleaser": "You just rewarded manipulation. 'If you really cared' is a guilt weapon. They tied your LOVE to your COMPLIANCE. Every time you give in, they learn this works. Next time: bigger demand. You've trained them to manipulate you.",
+          "aware": "You named the weapon. When you label manipulation OUT LOUD, it loses power. 'That's emotional blackmail' forces them to either admit it or back off. Either way, YOU control the dynamic now. BONUS: 'I can help Sunday' shows you care WITHOUT surrendering.",
+          "passive-aggressive": "You helped but poisoned the experience for both of you. They sense your resentment. The move gets done, but the friendship takes damage. Passive aggression is what happens when people can't say no directly.",
+          "avoidant": "The lie protects you short-term but erodes trust long-term. And it doesn't address the real issue: your friend uses guilt as a weapon. They'll do it again because you never confronted it."
+        },
+        correctChoice: 1,
+        principle: "Name the manipulation tactic out loud. Once labeled, it loses its power over you."
+      },
+      {
+        situation: "A coworker constantly 'jokes' about your appearance in front of others. 'Nice shirt... if you're going to a funeral lol.' Everyone laughs. How do you respond?",
+        choices: [
+          { text: "Laugh along — don't be oversensitive", tag: "passive" },
+          { text: "Fire back with an insult of your own", tag: "aggressive" },
+          { text: "Look them dead in the eye: 'Why do you say things like that?' — no anger, just curiosity", tag: "strategic" },
+          { text: "Avoid them entirely from now on", tag: "isolated" }
+        ],
+        law: "Plausible Deniability Bullying",
+        analysis: {
+          "passive": "You just gave permission. 'Just a joke' is the shield all bullies hide behind. By laughing, you told the group this is acceptable. It will ESCALATE. Today: shirt comment. Next month: something deeper. You're being tested.",
+          "aggressive": "Now YOU look like the aggressor. They said 'just a joke,' you went full attack. The group sees you as the problem. This is EXACTLY what plausible deniability is designed to do — make the victim look crazy.",
+          "strategic": "Devastating. No anger, no aggression — just a calm question that forces them to EXPLAIN their cruelty. They can't. The room goes quiet. Everyone now sees what they were doing. You didn't fight — you EXPOSED. PSYCHOLOGY: Questions are more powerful than statements.",
+          "isolated": "You removed yourself but let them win. They still have the group, the platform, and the power. Avoidance protects you but doesn't change anything."
+        },
+        correctChoice: 2,
+        principle: "Plausible deniability ('it's just a joke') is a weapon. Counter it by calmly asking them to EXPLAIN the joke."
+      },
+      {
+        situation: "You're in a group chat. Someone shares your private conversation screenshot — something embarrassing you said in confidence. Everyone sees it. What do you do?",
+        choices: [
+          { text: "Leave the group immediately — humiliation is too much", tag: "emotional" },
+          { text: "Act like it doesn't bother you — 'lol that's old'", tag: "passive" },
+          { text: "Privately confront the person who shared it: 'That was between us. Why did you do that?'", tag: "strategic" },
+          { text: "Share something equally embarrassing about them publicly", tag: "aggressive" }
+        ],
+        law: "Privacy as Currency",
+        analysis: {
+          "emotional": "Leaving = confirmation that it hurt. They wanted a reaction and got the biggest one possible. Now the group talks about WHY you left. Your absence becomes the story. RULE: Never let them see you retreat in pain.",
+          "passive": "Your 'lol' fools nobody. Everyone in that group knows you're hurt. Fake indifference is transparent. Worse: you've shown them they can betray your trust with zero consequences. It'll happen again.",
+          "strategic": "This is the power move. Private confrontation preserves your dignity while holding them accountable. 'Why did you do that?' forces introspection. They either apologize (relationship saved) or reveal they're not a real friend (you know now). EITHER WAY: you win.",
+          "aggressive": "Now there's a war. Two people sharing private info, escalating. The group watches both of you destroy each other. Mutual assured destruction. Nobody wins. The original betrayal gets buried under your revenge."
+        },
+        correctChoice: 2,
+        principle: "When someone betrays your trust, confront them PRIVATEALLY. Public revenge makes YOU the villain."
+      },
+      {
+        situation: "Your partner says 'I'm FINE' with a tone that clearly means they're NOT fine. What do you do?",
+        choices: [
+          { text: "Take them at their word — if they say fine, they're fine", tag: "literal" },
+          { text: "Keep asking 'What's wrong? Tell me. Please tell me'", tag: "anxious" },
+          { text: "Say 'You seem upset. I'm here when you're ready to talk' — then give space", tag: "emotional-intelligence" },
+          { text: "Ignore it and wait for them to bring it up later", tag: "passive" }
+        ],
+        law: "Passive Communication & Emotional Safety",
+        analysis: {
+          "literal": "Playing dumb or actually missing the signal? Either way, they feel unheard. 'Fine' is often a test: 'Do you care enough to push through my walls?' Taking it literally feels like indifference to them.",
+          "anxious": "Anxiety-driven pursuit. 'Tell me. PLEASE tell me' is about YOUR need to fix the discomfort, not their need to process. This feels suffocating to them. They retreat further. PSYCHOLOGY: Pursuing someone who's withdrawing triggers more withdrawal.",
+          "emotional-intelligence": "The gold standard. You: 1) Named what you see ('you seem upset'), 2) Showed availability ('I'm here'), 3) Gave autonomy ('when YOU'RE ready'), 4) Respected their space. This creates safety. When they feel safe, they'll open up.",
+          "passive": "Indifference disguised as respect. If something IS wrong, you just signaled you don't care enough to notice. They wanted you to see through 'fine.' Your silence confirmed their fear: 'They don't really care.'"
+        },
+        correctChoice: 2,
+        principle: "'I'm fine' usually means 'I'm not fine but I don't feel safe enough to say it.' Create safety, not pressure."
+      },
+      {
+        situation: "At a family gathering, a relative says 'When are you getting married? You're not getting any younger.' Everyone stares at you. What do you do?",
+        choices: [
+          { text: "Get defensive — 'That's none of your business'", tag: "aggressive" },
+          { text: "Laugh it off awkwardly and change the subject", tag: "avoidant" },
+          { text: "Say 'I'll let you know when there's news!' with a smile, then ask THEM a question", tag: "strategic" },
+          { text: "Actually explain your life choices to justify yourself", tag: "defensive" }
+        ],
+        law: "Social Pressure & Boundary Setting",
+        analysis: {
+          "aggressive": "You escalated a casual (if annoying) comment into conflict. The relative plays victim: 'I was just asking!' Now the family sees YOU as the problem. You turned a minor annoyance into a war.",
+          "avoidant": "The awkward laugh signals discomfort. They know they hit a nerve. The subject changes but everyone noted your reaction. At the NEXT gathering: same question. You showed no boundary.",
+          "strategic": "Masterclass deflection. You: 1) Didn't lie, 2) Didn't get defensive, 3) Redirected attention to THEM. 'Let you know' is a promise to nothing. Asking them a question flips the spotlight. Everyone moves on. ZERO damage.",
+          "defensive": "Justifying yourself = playing THEIR game. You don't owe anyone an explanation for your life choices. The moment you justify, you've accepted their premise that your choices need justification. Don't."
+        },
+        correctChoice: 2,
+        principle: "You don't owe explanations for your life choices. Deflect with warmth, redirect with questions."
+      }
+    ]
+  },
+  {
+    id: 'eqreallife',
+    title: 'Emotional Intelligence — Real Life',
+    author: 'Custom Scenarios',
+    color: '#4488ff',
+    icon: '💫',
+    desc: 'Master the emotions that control your decisions, relationships, and success.',
+    scenarios: [
+      {
+        situation: "You're driving and someone cuts you off aggressively. Your heart races, hands grip the wheel. You want to honk, chase them, show your anger. What do you ACTUALLY do?",
+        choices: [
+          { text: "Honk aggressively and flash lights — they need to learn", tag: "aggressive" },
+          { text: "Take a deep breath. 'They might be rushing to a hospital. Their action is about them, not me'", tag: "emotional-intelligence" },
+          { text: "Suppress the anger completely — pretend it didn't happen", tag: "suppressed" },
+          { text: "Get angry internally but let it go after a few minutes", tag: "natural" }
+        ],
+        law: "Emotional Regulation — The 6-Second Rule",
+        analysis: {
+          "aggressive": "Road rage is rage with a 2-ton weapon. You escalated a traffic incident into a potential accident. Your amygdala hijacked your prefrontal cortex. That anger? It lasted 6 seconds neurologically. You risked your LIFE over 6 seconds of chemical reaction.",
+          "emotional-intelligence": "Cognitive reappraisal — you REFRAMED the situation. 'They might be going to a hospital' doesn't have to be true. It just has to redirect your amygdala. The anger still RISES, but you don't ACT on it. This is emotional intelligence: feeling everything, being controlled by nothing.",
+          "suppressed": "Suppression isn't regulation — it's compression. That anger sits in your body. Tight shoulders, clenched jaw, elevated cortisol. You didn't process it, you buried it. It comes out later at someone who doesn't deserve it. PSYCHOLOGY: Suppressed emotions find weaker targets.",
+          "natural": "Better than aggression, worse than regulation. Letting anger 'fade' means you carried it for minutes. During those minutes, your body was in fight mode — cortisol, adrenaline, raised blood pressure. The goal isn't 'anger goes away eventually.' It's 'anger rises, I choose not to feed it.'"
+        },
+        correctChoice: 1,
+        principle: "You can't control what you FEEL. You can control what you DO with what you feel. That gap between feeling and action IS emotional intelligence."
+      },
+      {
+        situation: "Your best friend just got the promotion you wanted. Same company, same team. You're genuinely happy for them... but also feel a sharp pang of jealousy. What do you do with that feeling?",
+        choices: [
+          { text: "Push the jealousy down — real friends don't feel jealous", tag: "suppressed" },
+          { text: "Congratulate them warmly, then privately journal about your jealousy without judgment", tag: "emotional-intelligence" },
+          { text: "Distance yourself — being around them now feels bad", tag: "avoidant" },
+          { text: "Compare yourself internally: 'Why them and not me? What do they have that I don't?'", tag: "rumination" }
+        ],
+        law: "Holding Contradictory Emotions",
+        analysis: {
+          "suppressed": "'Real friends don't feel jealous' is a myth. You're human. Your brain AUTOMATICALLY compares. Trying to not feel jealousy creates SHAME about the jealousy. Now you feel TWO bad things instead of one. PSYCHOLOGY: You can't delete emotions. You can only choose what to do with them.",
+          "emotional-intelligence": "THIS is emotional maturity. You: 1) Congratulated them (external behavior you chose), 2) Felt jealous (internal reality you accepted), 3) Journaled (processed without judgment). Two things are true: you love your friend AND you wanted that promotion. Both can exist.",
+          "avoidant": "You're punishing them for your feeling. They didn't DO anything wrong. But your withdrawal makes them feel guilty for succeeding. You're slowly destroying a friendship because you can't face a normal human emotion.",
+          "rumination": "'Why them and not me' is comparison disguised as analysis. There's no productive answer. It only breeds resentment. Your brain will cherry-pick evidence: 'They're not even that good.' Now you're undermining your friend in your own mind. Toxic spiral."
+        },
+        correctChoice: 1,
+        principle: "Emotional intelligence isn't 'not feeling negative emotions.' It's feeling EVERYTHING honestly and choosing your RESPONSE wisely."
+      },
+      {
+        situation: "You made a mistake at work that cost the company money. Your boss calls you in. Before you even sit down, your chest tightens and you start rehearsing excuses. What's happening?",
+        choices: [
+          { text: "Fight response — prepare to defend yourself with explanations", tag: "defensive" },
+          { text: "Recognize the stress response: 'My body thinks I'm in danger. I'm not. This is a conversation, not a fight.'", tag: "aware" },
+          { text: "Freeze — go blank and just nod whatever your boss says", tag: "fawn" },
+          { text: "Pre-emptively apologize profusely to soften the blow", tag: "people-pleaser" }
+        ],
+        law: "Amygdala Hijack — Recognizing It",
+        analysis: {
+          "defensive": "Your amygdala fired. It sees BOSS + MISTAKE + CONFRONTATION = THREAT. Your prefrontal cortex (rational brain) is being pushed aside. Excuses are your brain's fight mode: 'I must WIN this interaction.' But this isn't a fight. It's a problem to solve.",
+          "aware": "You just did what 90% of people can't: OBSERVE your own stress response IN REAL TIME. 'My body thinks I'm in danger' — that's meta-cognition. You stepped OUTSIDE the emotion to SEE it. This instantly reduces cortisol. Now you can respond, not react.",
+          "fawn": "Freeze/fawn = your nervous system chose 'play dead.' You'll agree to anything, take all blame, lose all leverage. This feels safe but it's surrender. Your boss needs a conversation partner, not a doormat.",
+          "people-pleaser": "Over-apologizing signals: 'I know this was terrible, please don't be mad.' It shifts focus from SOLUTION to your EMOTION. Your boss now has to manage YOUR feelings while trying to fix a business problem. Be direct: own it, fix it, move on."
+        },
+        correctChoice: 1,
+        principle: "The moment you OBSERVE your emotion ('I notice I'm feeling defensive'), you've stepped outside it. Observer ≠ reactor."
+      },
+      {
+        situation: "You've been working on a project for 6 months. It gets cancelled. All that work — gone. How do you process this?",
+        choices: [
+          { text: "'Everything happens for a reason' — move on quickly", tag: "toxic-positive" },
+          { text: "Allow yourself to grieve it. It WAS important. The loss is real. Feel it, THEN move forward", tag: "emotional-intelligence" },
+          { text: "Get angry at management — 'They wasted my time'", tag: "blame" },
+          { text: "Numb out — binge Netflix, eat junk, avoid thinking about it", tag: "avoidance" }
+        ],
+        law: "Processing Loss — Toxic Positivity vs Genuine Processing",
+        analysis: {
+          "toxic-positive": "'Everything happens for a reason' is what people say to SKIP grief. You didn't process the loss — you BYPASSED it. Months later, you'll feel unmotivated without knowing why. The unprocessed grief is still there, draining energy silently.",
+          "emotional-intelligence": "Grief isn't weakness — it's how your brain marks something as IMPORTANT. 6 months of work MATTERED. Honoring that by feeling the loss is HEALTHY. The people who 'move on fast' haven't moved on — they've just stopped looking at it. PSYCHOLOGY: What you resist, persists.",
+          "blame": "Anger at management feels empowering but it's externalizing. The cancellation happened. Your anger won't undo it. What it WILL do: poison your relationship with leadership, mark you as someone who can't handle setbacks, and waste energy you could spend on what's NEXT.",
+          "avoidance": "Numbing is the most common response and the most destructive. Netflix, food, scrolling — they all provide short-term relief and long-term emptiness. The loss sits unprocessed. It leaks out as cynicism, low motivation, and a vague feeling that 'nothing matters.'"
+        },
+        correctChoice: 1,
+        principle: "Grief is how your brain honors what mattered. Skip it, and the loss follows you. Feel it, and you can genuinely move forward."
+      },
+      {
+        situation: "Someone in your life constantly plays the victim. Every problem is someone else's fault. They drain your energy but you feel guilty thinking about distancing yourself. What do you do?",
+        choices: [
+          { text: "Keep supporting them — they need me and I'd be a bad person to leave", tag: "co-dependent" },
+          { text: "Cut them off completely — life's too short for energy vampires", tag: "decisive" },
+          { text: "Set limits: 'I care about you, but I can't be your only support system. Have you considered therapy?'", tag: "boundaried" },
+          { text: "Slowly reduce contact without explaining why", tag: "avoidant" }
+        ],
+        law: "Compassion Fatigue & Boundaries",
+        analysis: {
+          "co-dependent": "You've become their emotional crutch. They don't solve problems because YOU absorb the consequences. This isn't compassion — it's enabling. And it's destroying YOU. PSYCHOLOGY: Co-dependency feels like love but it's actually a control pattern. You need to be needed.",
+          "decisive": "Clean but costly. Some people genuinely need help. Cutting them off may remove someone who just needs the RIGHT support. Also: if this is family or a close friend, 'cut off' creates guilt that haunts you. Boundaries > walls.",
+          "boundaried": "The healthiest response. You: 1) Acknowledged their pain (validation), 2) Set a clear limit (boundary), 3) Redirected to professional help (solution). 'I care about you AND I have limits' — both things true. This is emotional maturity. PSYCHOLOGY: Boundaries aren't selfish. They're what make sustainable compassion possible.",
+          "avoidant": "Ghosting with extra steps. They'll eventually notice and play victim about THAT too: 'Even YOU abandoned me!' Now you're the villain in their story. Clear boundaries > slow fade."
+        },
+        correctChoice: 2,
+        principle: "Compassion without boundaries is self-destruction. Setting limits isn't abandoning someone — it's choosing to help SUSTAINABLY."
+      }
+    ]
+  },
+  {
+    id: 'bodylang',
+    title: 'Body Language & Non-Verbal Power',
+    author: 'Custom Scenarios',
+    color: '#00ccaa',
+    icon: '👁️',
+    desc: 'Read the signals people send without words — and control the ones YOU send.',
+    scenarios: [
+      {
+        situation: "In a job interview, the interviewer leans back, crosses arms, and barely makes eye contact. What are they communicating?",
+        choices: [
+          { text: "They don't like me — this interview is going badly", tag: "emotional" },
+          { text: "Arms crossed = defensive. Maybe they're cold, tired, or had a bad day. Don't personalize it", tag: "aware" },
+          { text: "Mirror their posture to build rapport", tag: "naive" },
+          { text: "Increase your energy and enthusiasm to win them over", tag: "compensate" }
+        ],
+        law: "Reading vs Projecting",
+        analysis: {
+          "emotional": "You read their body language through YOUR insecurity. Arms crossed + no eye contact = 'they hate me' is YOUR interpretation, not their reality. Maybe they're cold. Maybe they always sit like that. Maybe they had bad news this morning. PSYCHOLOGY: We project our fears onto ambiguous signals.",
+          "aware": "Body language is DATA, not VERDICT. Arms crossed COULD mean defensive — or cold, or comfortable, or habitual. The smart read: collect multiple signals before concluding. One gesture = nothing. A PATTERN of gestures = something real.",
+          "naive": "Mirroring crossed arms builds RAPPORT? No. Mirroring a closed posture CONFIRMS the barrier. Smart mirroring: match their ENERGY level, not their specific posture. If they're low energy, don't bounce in your seat. If they lean back, lean back slightly — but keep your arms open.",
+          "compensate": "Overcompensating with energy when someone is closed off feels DESPERATE. It creates a mismatch: you're at 9, they're at 3. Instead: match their energy, then SLOWLY raise it. Gradual warmth > sudden blast."
+        },
+        correctChoice: 1,
+        principle: "Body language is evidence, not verdict. Collect multiple signals before drawing conclusions. And never read others through YOUR insecurities."
+      },
+      {
+        situation: "You're presenting to a group. One person in the back keeps checking their phone, sighing, looking at the clock. Others are engaged. What do you do?",
+        choices: [
+          { text: "Call them out — 'Am I boring you?'", tag: "aggressive" },
+          { text: "Ignore them — focus on the engaged people", tag: "strategic" },
+          { text: "Move closer to them physically — proximity changes behavior", tag: "psychological" },
+          { text: "Speed up to finish quickly — they want this to end", tag: "reactive" }
+        ],
+        law: "Proximity & Attention Control",
+        analysis: {
+          "aggressive": "Public shaming. Now EVERYONE is uncomfortable. The disengaged person gets defensive, the engaged people wonder if THEY'LL be called out next. You turned one person's boredom into a room-wide tension. Also: maybe they have an emergency at home.",
+          "strategic": "Good instinct. But ignoring it means the behavior continues. Other people notice the disengagement and their own attention drifts. One bored person can infect a room. Better: handle it without confrontation.",
+          "psychological": "The POWER move. Walk toward them while continuing to talk. Proximity is the strongest non-verbal influence. When a speaker moves close to a disengaged person, their brain triggers SOCIAL ALERTNESS. They put the phone away WITHOUT you saying a word. No confrontation. No embarrassment. Just physics. PSYCHOLOGY: Personal space triggers automatic social compliance.",
+          "reactive": "Speeding up = surrender. You're letting one person's disengagement control YOUR delivery. Rushed presentations feel panicked. The disengaged person won't care, and the engaged people get a worse experience."
+        },
+        correctChoice: 2,
+        principle: "Proximity is the most powerful non-verbal tool. Move closer to change behavior without saying a word."
+      },
+      {
+        situation: "You're negotiating a deal. The other person says 'This is my final offer' but their voice slightly rises at the end and they touch their neck. What's really happening?",
+        choices: [
+          { text: "Take it at face value — they said final, it's final", tag: "literal" },
+          { text: "Voice rising = question, not statement. Neck touch = discomfort. They're bluffing — there's more room", tag: "aware" },
+          { text: "Call their bluff immediately — 'No it isn't'", tag: "aggressive" },
+          { text: "Accept it to avoid losing the deal entirely", tag: "risk-averse" }
+        ],
+        law: "Incongruence — When Words and Body Disagree",
+        analysis: {
+          "literal": "You listened to WORDS and missed the SIGNALS. 'Final offer' with a rising inflection is literally a QUESTION disguised as a statement. They're ASKING if you'll accept, not TELLING you. The neck touch is a self-soothing gesture — they're nervous. They have room to negotiate.",
+          "aware": "Textbook read. Rising voice = uncertainty (linguistically, it's a question). Neck touch = self-soothing gesture indicating anxiety. These two signals together scream: 'I want this to be final but I'm not sure it is.' You now know you have leverage. PSYCHOLOGY: The body rarely lies. Words always can.",
+          "aggressive": "Calling a bluff works in movies. In real negotiations, it creates adversarial dynamics. Better: acknowledge their position ('I understand this is important to you') while gently testing ('Could we explore one more option?'). You get the same result without the hostility.",
+          "risk-averse": "Fear-based decision. You accepted because you were afraid of losing, not because the deal was good. When someone says 'final' and their body says 'maybe,' walking away or countering carries minimal risk — because THEY don't want to lose you either."
+        },
+        correctChoice: 1,
+        principle: "When words and body disagree, ALWAYS trust the body. Incongruence reveals the truth the words are trying to hide."
+      }
+    ]
+  },
+  {
+    id: 'selfsabotage',
+    title: 'Self-Sabotage — Your Own Worst Enemy',
+    author: 'Custom Scenarios',
+    color: '#cc6600',
+    icon: '🪤',
+    desc: 'Recognize the traps your own mind sets for you — and escape them.',
+    scenarios: [
+      {
+        situation: "You have a great business idea. You research it for 3 months, make plans, talk about it with friends. But you never actually START. Why?",
+        choices: [
+          { text: "I'm still preparing — I need more research before I'm ready", tag: "perfectionist" },
+          { text: "I'm scared of failing, so my brain disguises fear as 'preparation'", tag: "aware" },
+          { text: "I'm waiting for the right moment — timing matters", tag: "procrastinator" },
+          { text: "Maybe the idea isn't that good — I should think of something better", tag: "doubt" }
+        ],
+        law: "Analysis Paralysis — The Perfectionist Trap",
+        analysis: {
+          "perfectionist": "You'll NEVER be ready. 'One more month of research' is your brain's way of avoiding risk. Perfectionism isn't about quality — it's about FEAR. If you're always preparing, you never have to face the terror of actually TRYING. PSYCHOLOGY: Preparation without action is sophisticated procrastination.",
+          "aware": "You caught it. 'Research' was your brain's clever disguise for avoidance. Your amygdala knows that starting = risk of failure. So it offers you a comfortable alternative: PLAN more. Feels productive, costs nothing, risks nothing. The brain is brilliant at self-deception.",
+          "procrastinator": "There is no 'right moment.' Every successful person started when conditions were imperfect. Waiting for perfect timing is waiting for courage — and courage doesn't arrive on schedule. It's built THROUGH action, not before it.",
+          "doubt": "The sabotage cycle: idea → excitement → research → doubt → new idea → excitement → research → doubt. You'll cycle through 50 ideas in 5 years and start NONE. The idea was fine. Your doubt isn't about the idea — it's about yourself."
+        },
+        correctChoice: 1,
+        principle: "Your brain will disguise fear as preparation. The antidote: start BEFORE you're ready. Perfection is the enemy of done."
+      },
+      {
+        situation: "You meet someone amazing. Things are going great. Then you start picking fights over tiny things, pulling away, finding flaws. You've done this before. What's happening?",
+        choices: [
+          { text: "I'm noticing real incompatibilities — better to end it now", tag: "rationalizing" },
+          { text: "I'm scared of getting hurt, so I'm creating distance before they can", tag: "aware" },
+          { text: "Maybe I'm just not ready for a relationship right now", tag: "avoidant" },
+          { text: "They're probably not as good as I think — I should keep looking", tag: "doubt" }
+        ],
+        law: "Attachment Avoidance — Sabotaging Love",
+        analysis: {
+          "rationalizing": "Classic avoidance disguised as logic. You're 'finding flaws' because closeness triggers your fear of abandonment. The flaws were always there — you only notice them when things get REAL. PSYCHOLOGY: We don't find flaws in people. We FIND flaws when we're scared of intimacy.",
+          "aware": "You saw the pattern. Pulling away when things are good is textbook avoidant attachment. Your brain learned long ago that love = eventual pain. So it 'protects' you by creating distance NOW — before the imagined hurt. But the hurt you're avoiding doesn't exist. The hurt you're CREATING does.",
+          "avoidant": "'Not ready' is what avoidant attachment SOUNDS like from the inside. There's never a magical moment when you become 'ready.' Readiness is built THROUGH relationship, not before it. You're waiting for a feeling that only comes from doing the thing you're avoiding.",
+          "doubt": "The search for the 'perfect person' is actually the search for someone who won't trigger your attachment wounds. That person doesn't exist. Everyone will eventually get close enough to trigger your fear. The work isn't finding the right person — it's healing the wound that makes closeness scary."
+        },
+        correctChoice: 1,
+        principle: "When you sabotage good things, your brain is replaying an old wound. The pattern isn't about THEM — it's about your unprocessed fear of being hurt."
+      },
+      {
+        situation: "You've been eating healthy for 2 weeks. Today you had one cookie. Your brain says 'Well, the diet is RUINED. Might as well eat the whole box.' What just happened?",
+        choices: [
+          { text: "The diet IS ruined — I have no willpower", tag: "all-or-nothing" },
+          { text: "My brain is using the 'what-the-hell effect' — one slip doesn't erase 2 weeks of progress", tag: "aware" },
+          { text: "I deserve a cheat day — I've been good", tag: "rationalization" },
+          { text: "Skip tomorrow's meals to make up for it", tag: "compensate" }
+        ],
+        law: "The What-The-Hell Effect",
+        analysis: {
+          "all-or-nothing": "THIS is the sabotage. One cookie = diet ruined is like saying one typo = delete the whole essay. Your brain uses all-or-nothing thinking to give itself PERMISSION to fail completely. It WANTS the whole box. The cookie was just the excuse. PSYCHOLOGY: Perfectionism creates the conditions for total failure.",
+          "aware": "You named the trap. The 'what-the-hell effect' (actual psychological term: counter-regulatory eating) is when one small violation triggers total abandon. Your brain creates a false binary: perfect or failure. ONE cookie ≠ failure. But your brain NEEDS it to be failure so it can eat the box guilt-free.",
+          "rationalization": "'I deserve it' is your brain negotiating with itself. You DIDN'T earn 20 cookies by eating 2 weeks of salad. But the framing feels true because your brain wants permission. Be honest: is this a planned reward or a rationalized slip?",
+          "compensate": "Starving tomorrow = binge-restrict cycle. This is how eating disorders develop. One extreme (overeating) triggers the opposite extreme (starving). Neither is healthy. The correct response to one cookie: eat your next normal meal. No punishment. No compensation. Just continue."
+        },
+        correctChoice: 1,
+        principle: "One slip isn't failure — it's data. The 'what-the-hell effect' is your brain giving itself permission to abandon progress. See the trick, refuse the trick."
+      }
+    ]
   }
 ];
 
@@ -4751,12 +5079,12 @@ function selectWisdomChoice(choiceIdx) {
   wisdomState.choices.push({ scenario: wisdomState.currentScenario, choice: choiceIdx, tag: choice.tag, correct: isCorrect });
   
   const tag = choice.tag;
-  if (['aggressive','confrontational','competitive','revolutionary','blunt','assertive','compete'].includes(tag)) wisdomState.behavioralProfile.aggressive++;
-  if (['passive','passive-aggressive','people-pleaser','avoidant','neutral','imitator','silent','herd','reciprocated','deferential','procrastinator','sunk-cost','passive','compliant'].includes(tag)) wisdomState.behavioralProfile.passive++;
-  if (['strategic','calculated','machiavellian','behind-scenes','long-game','master'].includes(tag)) wisdomState.behavioralProfile.strategic++;
-  if (['aware','skeptical','immune','probing','analytical','rational','testing','system2'].includes(tag)) wisdomState.behavioralProfile.aware++;
-  if (['emotional','triggered','infected','flattered','confused','naive','availability','system1','doubtful','compromised'].includes(tag)) wisdomState.behavioralProfile.emotional++;
-  if (['decisive','direct','boundary','independent','statistical'].includes(tag)) wisdomState.behavioralProfile.rational++;
+  if (['aggressive','confrontational','competitive','revolutionary','blunt','assertive','compete','loyalist'].includes(tag)) wisdomState.behavioralProfile.aggressive++;
+  if (['passive','passive-aggressive','people-pleaser','avoidant','neutral','imitator','silent','herd','reciprocated','deferential','procrastinator','sunk-cost','compliant','overthink','isolated'].includes(tag)) wisdomState.behavioralProfile.passive++;
+  if (['strategic','calculated','machiavellian','behind-scenes','long-game','master','cautious'].includes(tag)) wisdomState.behavioralProfile.strategic++;
+  if (['aware','skeptical','immune','probing','analytical','rational','testing','system2','honest'].includes(tag)) wisdomState.behavioralProfile.aware++;
+  if (['emotional','triggered','infected','flattered','confused','naive','availability','system1','doubtful','compromised','manipulated'].includes(tag)) wisdomState.behavioralProfile.emotional++;
+  if (['decisive','direct','boundary','independent','statistical','pivot'].includes(tag)) wisdomState.behavioralProfile.rational++;
   if (['supportive','loyal','generous','charmer','charismatic','mediator','democratic','diplomatic','penetrating','resistant'].includes(tag)) wisdomState.behavioralProfile.social++;
   if (['rogue','opportunistic','double-agent','shadow','star','coquette','informant','escalator','dismiss','loud','humor','exit'].includes(tag)) wisdomState.behavioralProfile.independent++;
   
