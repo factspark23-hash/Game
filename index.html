@@ -1053,9 +1053,12 @@ body::after {
     </div>
     <div style="margin-top:1.5rem;">
       <button class="btn" onclick="startGame()">BEGIN</button>
+      <button class="btn btn-small" onclick="startDailyTraining()" style="margin-left:0.5rem;background:linear-gradient(135deg,#00ff88,#008844);">🏋️ DAILY TRAIN</button>
       <button class="btn btn-small" onclick="showHowToPlay()" style="margin-left:0.5rem;background:linear-gradient(135deg,#333,#666);">HOW TO PLAY</button>
     </div>
-    <div id="title-leaderboard" style="margin-top:2rem;"></div>
+    <div id="daily-reminder" style="margin-top:0.8rem;font-size:0.7rem;display:none;"></div>
+    <div id="title-brain-stats" style="margin-top:1.5rem;"></div>
+    <div id="title-leaderboard" style="margin-top:1rem;"></div>
   </div>
 
   <!-- How To Play Screen -->
@@ -1102,6 +1105,19 @@ body::after {
       <p>• Speed levels: anticipate. Don't react — predict.</p>
     </div>
     <button class="btn btn-small" onclick="hideHowToPlay()" style="margin-top:1rem;">BACK</button>
+  </div>
+
+  <!-- Brain Progress Screen -->
+  <div id="brain-progress-screen" style="display:none">
+    <div style="max-width:600px;width:100%;text-align:center;">
+      <h2 style="font-family:Orbitron;color:var(--primary);margin-bottom:1rem;">🧠 BRAIN TRACKER</h2>
+      <div id="bp-streak" style="font-size:0.8rem;color:var(--accent);margin-bottom:1rem;"></div>
+      <div id="bp-chart" style="margin:1.5rem 0;"></div>
+      <div id="bp-skills" style="margin:1.5rem 0;"></div>
+      <div id="bp-weak" style="margin:1rem 0;"></div>
+      <div id="bp-sessions" style="margin:1rem 0;max-height:200px;overflow-y:auto;"></div>
+      <button class="btn btn-small" onclick="showScreen('title-screen')" style="margin-top:1rem;">BACK</button>
+    </div>
   </div>
 
   <!-- Transition Screen -->
@@ -1196,7 +1212,483 @@ const state = {
   maxCombo: 0,
   achievements: new Set(),
   totalCorrect: 0,
-  totalWrong: 0
+  totalWrong: 0,
+  // Daily training mode
+  dailyMode: false,
+  dailyStartTime: 0,
+  dailyTimeLimit: 0,
+  dailyLevelsCompleted: [],
+  dailyScore: 0,
+  dailyLevelOrder: [],
+  dailyCurrentIdx: 0
+};
+
+// ===== BRAIN TRAINING SYSTEM =====
+// Daily sessions, adaptive difficulty, progress tracking, rest day logic
+
+const BRAIN_KEY = 'mind_brain_data';
+
+function getBrainData() {
+  const raw = localStorage.getItem(BRAIN_KEY);
+  if (raw) return JSON.parse(raw);
+  return {
+    sessions: [],       // {date, level, score, correct, wrong, time, weakAreas[]}
+    skillHistory: { memory: [], logic: [], speed: [], focus: [], combat: [] },
+    weakAreas: {},      // {levelType: failCount}
+    dailyStreak: 0,
+    lastPlayDate: null,
+    totalDays: 0,
+    restDaysTaken: 0
+  };
+}
+
+function saveBrainData(data) {
+  localStorage.setItem(BRAIN_KEY, JSON.stringify(data));
+}
+
+function recordSession(result) {
+  const data = getBrainData();
+  const today = new Date().toLocaleDateString();
+  
+  // Track weak areas (levels failed)
+  if (result.failedLevel) {
+    const lvl = result.failedLevel;
+    data.weakAreas[lvl] = (data.weakAreas[lvl] || 0) + 1;
+  }
+  
+  // Record session
+  data.sessions.push({
+    date: today,
+    timestamp: Date.now(),
+    level: result.level,
+    score: result.score,
+    correct: result.correct,
+    wrong: result.wrong,
+    time: result.time,
+    maxCombo: result.maxCombo,
+    failedLevel: result.failedLevel || null,
+    mode: result.mode || 'free' // 'free' or 'daily'
+  });
+  
+  // Update streak
+  if (data.lastPlayDate !== today) {
+    const lastDate = data.lastPlayDate ? new Date(data.lastPlayDate) : null;
+    const todayDate = new Date(today);
+    if (lastDate) {
+      const diffDays = Math.floor((todayDate - lastDate) / (1000 * 60 * 60 * 24));
+      if (diffDays === 1) {
+        data.dailyStreak++;
+      } else if (diffDays > 1) {
+        data.dailyStreak = 1;
+      }
+    } else {
+      data.dailyStreak = 1;
+    }
+    data.lastPlayDate = today;
+    data.totalDays++;
+  }
+  
+  // Track skill progression
+  const { iq, skills } = calculateSkillRating();
+  Object.keys(skills).forEach(k => {
+    data.skillHistory[k].push({ date: today, value: skills[k] });
+    // Keep last 30 entries
+    if (data.skillHistory[k].length > 30) data.skillHistory[k].shift();
+  });
+  
+  // Keep last 50 sessions
+  if (data.sessions.length > 50) data.sessions = data.sessions.slice(-50);
+  
+  saveBrainData(data);
+}
+
+// Adaptive difficulty: return weak level numbers to prioritize
+function getWeakLevels() {
+  const data = getBrainData();
+  const weak = Object.entries(data.weakAreas)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([lvl]) => parseInt(lvl));
+  return weak;
+}
+
+// Check if rest day is recommended (7+ consecutive days)
+function shouldRest() {
+  const data = getBrainData();
+  return data.dailyStreak >= 7;
+}
+
+// Daily training mode: 15-20 min randomized session with weak area focus
+function startDailyTraining() {
+  const data = getBrainData();
+  
+  // Rest day check
+  if (shouldRest()) {
+    const confirm = window.confirm(
+      `🧠 You've trained ${data.dailyStreak} days straight!\n\n` +
+      `Your brain needs REST to consolidate.\n` +
+      `A rest day actually HELPS neuroplasticity.\n\n` +
+      `Train anyway? (Recommended: take a day off)`
+    );
+    if (!confirm) {
+      data.restDaysTaken++;
+      saveBrainData(data);
+      return;
+    }
+  }
+  
+  // Set up daily training mode
+  state.dailyMode = true;
+  state.dailyStartTime = Date.now();
+  state.dailyTimeLimit = 20 * 60; // 20 minutes max
+  state.dailyLevelsCompleted = [];
+  state.dailyScore = 0;
+  
+  // Generate level order: prioritize weak areas, then randomize rest
+  const weakLevels = getWeakLevels();
+  const allLevels = Array.from({length: 18}, (_, i) => i + 1);
+  
+  // Put weak levels first (up to 6), then randomize remaining
+  let levelOrder = [];
+  weakLevels.forEach(l => { if (!levelOrder.includes(l)) levelOrder.push(l); });
+  const remaining = allLevels.filter(l => !levelOrder.includes(l));
+  shuffle(remaining);
+  levelOrder = [...levelOrder, ...remaining];
+  
+  state.dailyLevelOrder = levelOrder;
+  state.dailyCurrentIdx = 0;
+  
+  // Start
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  state.level = 0;
+  state.lives = 2; // HARDER: only 2 lives in daily mode
+  state.totalTime = 0;
+  state.levelTimes = [];
+  state.attempts = [];
+  state.score = 0;
+  state.combo = 0;
+  state.maxCombo = 0;
+  state.achievements = new Set();
+  state.totalCorrect = 0;
+  state.totalWrong = 0;
+  isPaused = false;
+  updateScoreDisplay();
+  updateComboDisplay();
+  initProgressBar();
+  startAmbient();
+  
+  showDailyTransition();
+}
+
+function showDailyTransition() {
+  if (state.dailyCurrentIdx >= state.dailyLevelOrder.length || 
+      (Date.now() - state.dailyStartTime) / 1000 > state.dailyTimeLimit) {
+    endDailyTraining();
+    return;
+  }
+  
+  const lvl = state.dailyLevelOrder[state.dailyCurrentIdx];
+  state.level = lvl;
+  
+  const elapsed = Math.round((Date.now() - state.dailyStartTime) / 1000);
+  const remaining = state.dailyTimeLimit - elapsed;
+  
+  const names = [
+    '', 'NEURAL STORM', 'DUAL CORTEX', 'LOGIC WEB', 'SPATIAL HELL',
+    'MEMORY OVERLOAD', 'STROOP INFERNO', 'ATTENTION SPLIT', 'PATTERN MAZE',
+    'SYNAPSE FIRE', 'OMEGA MIND', 'REACTION STORM', 'PATTERN COMBAT',
+    'SPEED DEMON', 'REFLEX DUEL', 'FINAL BOSS', 'BOUNCE PREDICT',
+    'SEQUENCE ORACLE', 'MIND READER'
+  ];
+  
+  document.getElementById('trans-level').textContent = lvl;
+  document.getElementById('trans-label').textContent = names[lvl];
+  document.getElementById('trans-sub').textContent = 
+    `🏋️ DAILY TRAIN | ${state.dailyCurrentIdx + 1}/${state.dailyLevelOrder.length} | ${Math.floor(remaining/60)}:${String(remaining%60).padStart(2,'0')} left` +
+    (getWeakLevels().includes(lvl) ? ' | ⚠️ WEAK AREA' : '');
+  showScreen('transition-screen');
+  
+  setTimeout(() => {
+    startLevel(lvl);
+  }, 2000); // Faster transitions in daily mode
+}
+
+// Override completeLevel for daily mode
+const origCompleteLevel = completeLevel;
+completeLevel = function() {
+  if (state.dailyMode) {
+    state.dailyLevelsCompleted.push(state.level);
+    state.dailyScore = state.score;
+    state.dailyCurrentIdx++;
+    
+    stopTimer();
+    playSuccess();
+    levelFlash();
+    spawnCorrectParticles();
+    
+    const elapsed = Math.round((Date.now() - state.levelStartTime) / 1000);
+    state.levelTimes.push(elapsed);
+    state.totalTime += elapsed;
+    state.score += 500;
+    addCombo();
+    updateScoreDisplay();
+    
+    // Check if daily training time is up
+    const totalElapsed = (Date.now() - state.dailyStartTime) / 1000;
+    if (totalElapsed > state.dailyTimeLimit || state.dailyCurrentIdx >= state.dailyLevelOrder.length) {
+      setTimeout(endDailyTraining, 1000);
+      return;
+    }
+    
+    setTimeout(showDailyTransition, 1500);
+  } else {
+    origCompleteLevel();
+  }
+};
+
+// Override failLevel for daily mode
+const origFailLevel = failLevel;
+failLevel = function(reason) {
+  if (state.dailyMode) {
+    // Record the failed level for adaptive tracking
+    recordSession({
+      level: state.level,
+      score: state.score,
+      correct: state.totalCorrect,
+      wrong: state.totalWrong + 1,
+      time: Math.round((Date.now() - state.dailyStartTime) / 1000),
+      maxCombo: state.maxCombo,
+      failedLevel: state.level,
+      mode: 'daily'
+    });
+    origFailLevel(reason);
+  } else {
+    // Record for non-daily mode when final life lost
+    if (state.lives <= 1) {
+      recordSession({
+        level: state.level,
+        score: state.score,
+        correct: state.totalCorrect,
+        wrong: state.totalWrong + 1,
+        time: Math.round((Date.now() - state.levelStartTime) / 1000),
+        maxCombo: state.maxCombo,
+        failedLevel: state.level,
+        mode: 'free'
+      });
+    }
+    origFailLevel(reason);
+  }
+};
+
+function endDailyTraining() {
+  state.phase = 'win';
+  stopTimer();
+  stopAmbient();
+  playLevelUp();
+  
+  const totalElapsed = Math.round((Date.now() - state.dailyStartTime) / 1000);
+  
+  // Record session
+  recordSession({
+    level: state.dailyLevelsCompleted.length,
+    score: state.score,
+    correct: state.totalCorrect,
+    wrong: state.totalWrong,
+    time: totalElapsed,
+    maxCombo: state.maxCombo,
+    mode: 'daily'
+  });
+  
+  // Show results
+  renderSkillRating('win-skill-rating');
+  
+  const stats = document.getElementById('win-stats');
+  const data = getBrainData();
+  let html = `<div style="font-family:Orbitron;color:var(--accent);margin-bottom:0.5rem;">🏋️ DAILY TRAINING COMPLETE</div>`;
+  html += `<div>Time: ${Math.floor(totalElapsed/60)}:${String(totalElapsed%60).padStart(2,'0')} | Levels: ${state.dailyLevelsCompleted.length}/18 | Score: ${state.score}</div>`;
+  html += `<div>Streak: ${data.dailyStreak} days 🔥</div>`;
+  html += `<div>Total training days: ${data.totalDays}</div>`;
+  
+  if (state.dailyLevelsCompleted.length < 5) {
+    html += `<div style="color:var(--danger);margin-top:0.5rem;">💡 You struggled today. The weak areas will be prioritized tomorrow.</div>`;
+  } else if (state.dailyLevelsCompleted.length >= 10) {
+    html += `<div style="color:var(--success);margin-top:0.5rem;">🧠 Strong session! Brain pathways strengthening.</div>`;
+  }
+  
+  stats.innerHTML = html;
+  
+  renderBadges('win-badges');
+  renderLeaderboard('win-leaderboard');
+  showScreen('win-screen');
+  
+  state.dailyMode = false;
+}
+
+// RetryLevel override for daily mode
+const origRetryLevel = retryLevel;
+retryLevel = function() {
+  if (state.dailyMode) {
+    if (state.lives <= 0) {
+      endDailyTraining();
+      return;
+    }
+    // Re-show same level in daily mode
+    showDailyTransition();
+  } else {
+    origRetryLevel();
+  }
+};
+
+// RestartGame override
+const origRestartGame = restartGame;
+restartGame = function() {
+  state.dailyMode = false;
+  origRestartGame();
+};
+
+// ===== BRAIN PROGRESS SCREEN =====
+function showBrainProgress() {
+  const data = getBrainData();
+  
+  // Streak info
+  const streakEl = document.getElementById('bp-streak');
+  let streakMsg = `🔥 Current streak: ${data.dailyStreak} days | Total days trained: ${data.totalDays}`;
+  if (shouldRest()) streakMsg += ` | ⚠️ REST DAY RECOMMENDED`;
+  streakEl.textContent = streakMsg;
+  
+  // Skill chart (text-based sparklines)
+  const chartEl = document.getElementById('bp-chart');
+  const skillNames = { memory: 'MEMORY', logic: 'LOGIC', speed: 'SPEED', focus: 'FOCUS', combat: 'COMBAT' };
+  const skillColors = { memory: 'var(--primary)', logic: 'var(--secondary)', speed: 'var(--accent)', focus: 'var(--success)', combat: 'var(--danger)' };
+  
+  let chartHtml = '<div class="panel-title">SKILL PROGRESSION (last 7 sessions)</div>';
+  Object.keys(data.skillHistory).forEach(skill => {
+    const history = data.skillHistory[skill].slice(-7);
+    if (history.length === 0) return;
+    const latest = history[history.length - 1].value;
+    const first = history[0].value;
+    const trend = latest - first;
+    const trendIcon = trend > 5 ? '📈' : trend < -5 ? '📉' : '➡️';
+    
+    // Mini bar chart
+    const bars = history.map(h => {
+      const h2 = Math.round(h.value / 5);
+      return `<span style="display:inline-block;width:20px;height:${h2}px;background:${skillColors[skill]};margin:0 1px;vertical-align:bottom;opacity:0.7;"></span>`;
+    }).join('');
+    
+    chartHtml += `
+      <div style="display:flex;align-items:center;gap:0.5rem;margin:0.4rem 0;font-size:0.75rem;">
+        <span style="width:70px;text-align:right;color:${skillColors[skill]};">${skillNames[skill]}</span>
+        <span style="flex:1;display:flex;align-items:flex-end;height:25px;">${bars}</span>
+        <span style="width:40px;text-align:center;color:${skillColors[skill]};font-family:Orbitron;font-size:0.7rem;">${latest}</span>
+        <span>${trendIcon}</span>
+      </div>
+    `;
+  });
+  chartEl.innerHTML = chartHtml;
+  
+  // Current skill bars
+  const skillsEl = document.getElementById('bp-skills');
+  const { skills } = calculateSkillRating();
+  let skillsHtml = '<div class="panel-title">CURRENT SKILL LEVELS</div><div class="skill-bars">';
+  Object.keys(skills).forEach(name => {
+    skillsHtml += `
+      <div class="skill-bar-row">
+        <span class="skill-name">${name.toUpperCase()}</span>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill" style="width:${skills[name]}%;background:${skillColors[name]};"></div>
+        </div>
+        <span class="skill-val" style="color:${skillColors[name]};">${skills[name]}</span>
+      </div>`;
+  });
+  skillsHtml += '</div>';
+  skillsEl.innerHTML = skillsHtml;
+  
+  // Weak areas
+  const weakEl = document.getElementById('bp-weak');
+  const weakLevels = getWeakLevels();
+  if (weakLevels.length > 0) {
+    const names = ['', 'Neural Storm', 'Dual Cortex', 'Logic Web', 'Spatial Hell',
+      'Memory Overload', 'Stroop Inferno', 'Attention Split', 'Pattern Maze',
+      'Synapse Fire', 'Omega Mind', 'Reaction Storm', 'Pattern Combat',
+      'Speed Demon', 'Reflex Duel', 'Final Boss', 'Bounce Predict',
+      'Sequence Oracle', 'Mind Reader'];
+    weakEl.innerHTML = `
+      <div class="panel-title" style="color:var(--danger);">⚠️ WEAK AREAS (prioritized in daily training)</div>
+      ${weakLevels.map(l => `<div class="info-box" style="margin:3px 0;color:var(--danger);font-size:0.75rem;">Level ${l}: ${names[l]} — Failed ${data.weakAreas[l]}x</div>`).join('')}
+    `;
+  } else {
+    weakEl.innerHTML = '<div class="info-box" style="color:var(--success);font-size:0.75rem;">No weak areas detected yet. Keep training!</div>';
+  }
+  
+  // Recent sessions
+  const sessionsEl = document.getElementById('bp-sessions');
+  const recentSessions = data.sessions.slice(-10).reverse();
+  if (recentSessions.length > 0) {
+    sessionsEl.innerHTML = `
+      <div class="panel-title">RECENT SESSIONS</div>
+      ${recentSessions.map(s => `
+        <div class="leaderboard-entry" style="font-size:0.7rem;">
+          <span>${s.date} | Lv${s.level} | ${s.score}pts ${s.mode === 'daily' ? '🏋️' : '⚔️'}</span>
+          <span>${s.failedLevel ? `❌ Failed L${s.failedLevel}` : '✅'}</span>
+        </div>
+      `).join('')}
+    `;
+  } else {
+    sessionsEl.innerHTML = '';
+  }
+  
+  showScreen('brain-progress-screen');
+}
+
+// ===== TITLE SCREEN BRAIN STATS =====
+function updateTitleBrainStats() {
+  const data = getBrainData();
+  const el = document.getElementById('title-brain-stats');
+  const reminder = document.getElementById('daily-reminder');
+  
+  if (data.sessions.length === 0) {
+    el.innerHTML = '';
+    reminder.style.display = 'none';
+    return;
+  }
+  
+  el.innerHTML = `
+    <div style="display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;font-size:0.75rem;">
+      <div style="color:var(--accent);">🔥 Streak: ${data.dailyStreak} days</div>
+      <div style="color:var(--primary);">📊 Total sessions: ${data.sessions.length}</div>
+      <div style="color:var(--success);">📅 Days trained: ${data.totalDays}</div>
+      <button onclick="showBrainProgress()" style="background:none;border:1px solid var(--primary);color:var(--primary);padding:0.2rem 0.6rem;cursor:pointer;font-family:Orbitron;font-size:0.65rem;border-radius:4px;">📈 PROGRESS</button>
+    </div>
+  `;
+  
+  // Rest day reminder
+  if (shouldRest()) {
+    reminder.style.display = '';
+    reminder.innerHTML = '⚠️ <span style="color:var(--danger);">You\'ve trained ' + data.dailyStreak + ' days straight.</span> <span style="color:var(--accent);">A rest day helps your brain consolidate. Take it easy today.</span>';
+  } else if (data.lastPlayDate !== new Date().toLocaleDateString()) {
+    reminder.style.display = '';
+    reminder.innerHTML = '💡 <span style="color:var(--primary);">Haven\'t trained today. Daily training builds lasting neural pathways.</span>';
+  } else {
+    reminder.style.display = 'none';
+  }
+}
+
+// Record session on fail/win (non-daily mode)
+const origWinGame2 = winGame;
+winGame = function() {
+  if (!state.dailyMode) {
+    recordSession({
+      level: state.level,
+      score: state.score,
+      correct: state.totalCorrect,
+      wrong: state.totalWrong,
+      time: state.totalTime,
+      maxCombo: state.maxCombo,
+      mode: 'free'
+    });
+  }
+  origWinGame2();
 };
 
 // ===== AUDIO ENGINE =====
@@ -1464,7 +1956,7 @@ function hideHowToPlay() {
 
 // ===== SCREEN MANAGEMENT =====
 function showScreen(id) {
-  ['title-screen', 'howto-screen', 'transition-screen', 'game-area', 'fail-screen', 'win-screen', 'hud'].forEach(s => {
+  ['title-screen', 'howto-screen', 'brain-progress-screen', 'transition-screen', 'game-area', 'fail-screen', 'win-screen', 'hud'].forEach(s => {
     document.getElementById(s).style.display = 'none';
   });
   document.getElementById(id).style.display = '';
@@ -4739,6 +5231,7 @@ document.addEventListener('keydown', (e) => {
 
 // ===== INIT =====
 renderLeaderboard('title-leaderboard');
+updateTitleBrainStats();
 </script>
 </body>
 </html>
