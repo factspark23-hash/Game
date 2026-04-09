@@ -206,10 +206,33 @@ body::after {
   50% { opacity: 0.3; }
 }
 
+#hud .hud-right {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
 #hud .lives {
   color: var(--danger);
   font-size: 1.1rem;
 }
+
+#hud .score-display {
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+#hud .combo-display {
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+
+#hud .combo-display.x2 { color: var(--success); }
+#hud .combo-display.x3 { color: var(--accent); }
+#hud .combo-display.x4 { color: var(--secondary); }
+#hud .combo-display.x5 { color: var(--danger); text-shadow: 0 0 10px var(--danger); }
 
 /* ===== GAME AREA ===== */
 #game-area {
@@ -661,21 +684,235 @@ body::after {
   background: linear-gradient(180deg, transparent, var(--secondary), transparent);
   align-self: stretch;
 }
+
+/* Screen shake */
+.screen-shake {
+  animation: screenShake 0.4s ease;
+}
+
+@keyframes screenShake {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-8px, -5px); }
+  20% { transform: translate(7px, 4px); }
+  30% { transform: translate(-6px, 3px); }
+  40% { transform: translate(5px, -4px); }
+  50% { transform: translate(-4px, 6px); }
+  60% { transform: translate(3px, -3px); }
+  70% { transform: translate(-2px, 2px); }
+  80% { transform: translate(2px, -1px); }
+  90% { transform: translate(-1px, 1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Particle container */
+#particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particleFly 0.8s ease-out forwards;
+}
+
+@keyframes particleFly {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0) translateY(-80px); }
+}
+
+/* Combo popup */
+.combo-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3rem;
+  font-weight: 900;
+  pointer-events: none;
+  z-index: 9999;
+  animation: comboPop 0.8s ease-out forwards;
+}
+
+@keyframes comboPop {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+  30% { transform: translate(-50%, -50%) scale(1.3); }
+  100% { opacity: 0; transform: translate(-50%, -80%) scale(1); }
+}
+
+/* Level complete flash */
+.level-flash {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle, rgba(0,255,136,0.3), transparent);
+  pointer-events: none;
+  z-index: 9997;
+  animation: levelFlash 0.6s ease-out forwards;
+}
+
+@keyframes levelFlash {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Achievement badge */
+.achievement {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 0.8rem 1.5rem;
+  background: rgba(10,10,15,0.95);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.7rem;
+  color: var(--accent);
+  z-index: 10000;
+  animation: achieveIn 0.5s ease, achieveOut 0.5s ease 2.5s forwards;
+  box-shadow: 0 0 20px rgba(255,230,0,0.3);
+}
+
+@keyframes achieveIn {
+  from { transform: translateX(100px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes achieveOut {
+  from { opacity: 1; }
+  to { opacity: 0; transform: translateY(20px); }
+}
+
+/* Leaderboard */
+.leaderboard {
+  max-width: 400px;
+  width: 100%;
+  margin: 1rem auto;
+}
+
+.leaderboard-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid var(--glass-border);
+  font-size: 0.8rem;
+}
+
+.leaderboard-entry.highlight {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* How to play screen */
+.how-to-play {
+  max-width: 600px;
+  width: 100%;
+  text-align: left;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 1rem;
+}
+
+.how-to-play h3 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  color: var(--primary);
+  margin: 1rem 0 0.5rem;
+}
+
+.how-to-play p {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+/* Achievement list in stats */
+.achievement-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.badge {
+  padding: 0.3rem 0.8rem;
+  font-size: 0.65rem;
+  border-radius: 4px;
+  border: 1px solid;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.badge.earned { border-color: var(--accent); color: var(--accent); background: rgba(255,230,0,0.1); }
+.badge.locked { border-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.2); }
 </style>
 </head>
 <body>
 
 <div id="app">
+  <!-- Particles -->
+  <div id="particles"></div>
+
   <!-- Title Screen -->
   <div id="title-screen">
     <h1>MIND</h1>
-    <div class="subtitle">the brain melter</div>
+    <div class="subtitle">the brain melter — 15 levels</div>
     <div class="warning">
       ⚠️ WARNING: This game activates multiple cognitive functions simultaneously.<br>
-      10 levels. Brutal from level 1. Less than 1% will finish.<br>
+      15 levels. Brutal from level 1. Less than 1% will finish.<br>
       You have been warned.
     </div>
-    <button class="btn" onclick="startGame()">BEGIN</button>
+    <div style="margin-top:1.5rem;">
+      <button class="btn" onclick="startGame()">BEGIN</button>
+      <button class="btn btn-small" onclick="showHowToPlay()" style="margin-left:0.5rem;background:linear-gradient(135deg,#333,#666);">HOW TO PLAY</button>
+    </div>
+    <div id="title-leaderboard" style="margin-top:2rem;"></div>
+  </div>
+
+  <!-- How To Play Screen -->
+  <div id="howto-screen" style="display:none">
+    <div class="how-to-play">
+      <h2 style="font-family:Orbitron;color:var(--primary);margin-bottom:1rem;">HOW TO PLAY</h2>
+      <h3>🧠 The Concept</h3>
+      <p>MIND is a 15-level brain training gauntlet that tests every cognitive function simultaneously. Memory, logic, pattern recognition, reaction speed, spatial reasoning, and math — all at once.</p>
+      
+      <h3>⚔️ Levels 1-10: Foundation</h3>
+      <p><strong>1. Neural Storm</strong> — Memorize a grid, then fill missing cells using row/column math constraints.</p>
+      <p><strong>2. Dual Cortex</strong> — Remember color AND tone sequences simultaneously. Reproduce both.</p>
+      <p><strong>3. Logic Web</strong> — Solve interconnected logic puzzles with unique constraints.</p>
+      <p><strong>4. Spatial Hell</strong> — Mental rotation under time pressure. Identify rotated shapes.</p>
+      <p><strong>5. Memory Overload</strong> — Memorize an entire symbol grid, answer detailed questions.</p>
+      <p><strong>6. Stroop Inferno</strong> — Name the COLOR of text, not what it says. Brain interference.</p>
+      <p><strong>7. Attention Split</strong> — Track a moving dot AND solve math. Both must be correct.</p>
+      <p><strong>8. Pattern Maze</strong> — Dual number sequences with compound hidden rules.</p>
+      <p><strong>9. Synapse Fire</strong> — 4 sub-problems (memory + logic + math + counting) combined into one answer.</p>
+      <p><strong>10. Omega Mind</strong> — All skills combined in a 4-phase gauntlet.</p>
+      
+      <h3>🔥 Levels 11-15: Combat</h3>
+      <p><strong>11. Reaction Storm</strong> — Click targets before they escape. Pure speed. Hit 20 targets.</p>
+      <p><strong>12. Pattern Combat</strong> — Find the odd shape among 4. Lightning fast.</p>
+      <p><strong>13. Speed Demon</strong> — Dodge 🔴 obstacles, grab 🟢 points. Items accelerate. Quick math bonuses.</p>
+      <p><strong>14. Reflex Duel</strong> — Combat signals vs decoys. HIT ⚔️ or SKIP 🌸 in milliseconds.</p>
+      <p><strong>15. Final Boss</strong> — 3 mini-challenges per round. Reaction + Pattern + Math + Stroop + Memory combos.</p>
+      
+      <h3>⚡ Scoring</h3>
+      <p><strong>Combo System:</strong> Consecutive correct answers build a combo multiplier (x2, x3, x4, x5). Wrong answers reset it.</p>
+      <p><strong>Lives:</strong> You get 3 lives. Lose all = restart. Retrying costs a life.</p>
+      <p><strong>Leaderboard:</strong> Your best runs are saved locally. Beat your own records.</p>
+      
+      <h3>🎯 Tips</h3>
+      <p>• Stay calm. Panicking makes you slower.</p>
+      <p>• Trust your first instinct on reaction tests.</p>
+      <p>• For memory levels, use chunking — group items mentally.</p>
+      <p>• On Stroop levels, say the COLOR out loud to override reading.</p>
+      <p>• Speed levels: anticipate. Don't react — predict.</p>
+    </div>
+    <button class="btn btn-small" onclick="hideHowToPlay()" style="margin-top:1rem;">BACK</button>
   </div>
 
   <!-- Transition Screen -->
@@ -688,11 +925,15 @@ body::after {
   <!-- Game HUD -->
   <div id="hud" style="display:none">
     <div>
-      <span class="level-info">LEVEL <span id="hud-level">1</span>/10</span>
+      <span class="level-info">LEVEL <span id="hud-level">1</span>/15</span>
       <span class="level-name" id="hud-name"></span>
     </div>
     <div class="timer" id="hud-timer">--:--</div>
-    <div class="lives" id="hud-lives">♥ ♥ ♥</div>
+    <div class="hud-right">
+      <div class="combo-display" id="hud-combo"></div>
+      <div class="score-display" id="hud-score">0</div>
+      <div class="lives" id="hud-lives">♥ ♥ ♥</div>
+    </div>
   </div>
 
   <!-- Game Area -->
@@ -703,6 +944,7 @@ body::after {
     <h2>SYSTEM FAILURE</h2>
     <div class="fail-msg" id="fail-msg">Your mind collapsed.</div>
     <div style="margin-top:1rem; color:rgba(255,255,255,0.3); font-size:0.8rem;" id="fail-stats"></div>
+    <div class="achievement-list" id="fail-badges"></div>
     <button class="btn btn-small" onclick="retryLevel()" style="margin-top:1.5rem; margin-right:0.5rem;">RETRY</button>
     <button class="btn btn-small" onclick="restartGame()" style="margin-top:1.5rem; background:linear-gradient(135deg,var(--danger),#ff6600);">RESTART</button>
   </div>
@@ -712,6 +954,11 @@ body::after {
     <h2>MIND CONQUERED</h2>
     <div style="color:rgba(255,255,255,0.5); margin-top:1rem;">You are the 1%.</div>
     <div class="stats" id="win-stats"></div>
+    <div class="achievement-list" id="win-badges" style="margin-top:1rem;"></div>
+    <div style="margin-top:1.5rem;">
+      <div class="panel-title" style="margin-bottom:0.5rem;">🏆 LEADERBOARD</div>
+      <div class="leaderboard" id="win-leaderboard"></div>
+    </div>
     <button class="btn btn-small" onclick="restartGame()" style="margin-top:2rem;">PLAY AGAIN</button>
   </div>
 </div>
@@ -730,7 +977,13 @@ const state = {
   attempts: [],
   currentLevelData: null,
   phase: 'title', // title, transition, playing, fail, win
-  inputLocked: false
+  inputLocked: false,
+  score: 0,
+  combo: 0,
+  maxCombo: 0,
+  achievements: new Set(),
+  totalCorrect: 0,
+  totalWrong: 0
 };
 
 // ===== AUDIO ENGINE =====
@@ -764,9 +1017,241 @@ function playLevelUp() {
   });
 }
 
+// ===== AMBIENT MUSIC =====
+let ambientOsc = null;
+let ambientGain = null;
+
+function startAmbient() {
+  if (ambientOsc) return;
+  ambientOsc = audioCtx.createOscillator();
+  ambientGain = audioCtx.createGain();
+  const filter = audioCtx.createBiquadFilter();
+  
+  ambientOsc.type = 'sine';
+  ambientOsc.frequency.value = 55;
+  filter.type = 'lowpass';
+  filter.frequency.value = 200;
+  ambientGain.gain.value = 0.03;
+  
+  ambientOsc.connect(filter);
+  filter.connect(ambientGain);
+  ambientGain.connect(audioCtx.destination);
+  ambientOsc.start();
+
+  // Subtle LFO modulation
+  const lfo = audioCtx.createOscillator();
+  const lfoGain = audioCtx.createGain();
+  lfo.frequency.value = 0.1;
+  lfoGain.gain.value = 10;
+  lfo.connect(lfoGain);
+  lfoGain.connect(ambientOsc.frequency);
+  lfo.start();
+}
+
+function stopAmbient() {
+  if (ambientOsc) {
+    ambientOsc.stop();
+    ambientOsc = null;
+  }
+}
+
+// ===== SCREEN SHAKE =====
+function screenShake() {
+  const app = document.getElementById('app');
+  app.classList.add('screen-shake');
+  setTimeout(() => app.classList.remove('screen-shake'), 400);
+}
+
+// ===== PARTICLES =====
+function spawnParticles(x, y, color = 'var(--primary)', count = 12) {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < count; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = randInt(4, 10);
+    const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+    const dist = randInt(40, 120);
+    const dx = Math.cos(angle) * dist;
+    const dy = Math.sin(angle) * dist;
+    
+    p.style.cssText = `
+      width: ${size}px; height: ${size}px;
+      left: ${x}px; top: ${y}px;
+      background: ${color};
+      box-shadow: 0 0 ${size * 2}px ${color};
+      animation: none;
+    `;
+    container.appendChild(p);
+    
+    // Custom animation
+    p.animate([
+      { transform: 'scale(1) translate(0, 0)', opacity: 1 },
+      { transform: `scale(0) translate(${dx}px, ${dy}px)`, opacity: 0 }
+    ], { duration: 600 + Math.random() * 400, easing: 'ease-out' }).onfinish = () => p.remove();
+  }
+}
+
+function spawnCorrectParticles() {
+  const x = window.innerWidth / 2 + randInt(-100, 100);
+  const y = window.innerHeight / 2 + randInt(-50, 50);
+  spawnParticles(x, y, '#00ff88', 15);
+}
+
+function spawnFailParticles() {
+  const x = window.innerWidth / 2;
+  const y = window.innerHeight / 2;
+  spawnParticles(x, y, '#ff3333', 8);
+}
+
+// ===== LEVEL COMPLETE FLASH =====
+function levelFlash() {
+  const flash = document.createElement('div');
+  flash.className = 'level-flash';
+  document.body.appendChild(flash);
+  setTimeout(() => flash.remove(), 600);
+}
+
+// ===== COMBO SYSTEM =====
+function addCombo() {
+  state.combo++;
+  state.totalCorrect++;
+  if (state.combo > state.maxCombo) state.maxCombo = state.combo;
+  
+  const multiplier = Math.min(state.combo, 5);
+  state.score += 100 * multiplier;
+  
+  updateComboDisplay();
+  
+  // Show combo popup at milestones
+  if (state.combo === 5) showComboPopup('x2 COMBO!', 'var(--success)');
+  if (state.combo === 10) showComboPopup('x3 COMBO!', 'var(--accent)');
+  if (state.combo === 15) showComboPopup('x4 COMBO!!', 'var(--secondary)');
+  if (state.combo === 20) showComboPopup('x5 MAX!!!', 'var(--danger)');
+  
+  // Achievement checks
+  if (state.combo === 10) unlockAchievement('COMBO MASTER', '10 hit combo');
+  if (state.combo === 20) unlockAchievement('UNSTOPPABLE', '20 hit combo');
+  
+  updateScoreDisplay();
+}
+
+function breakCombo() {
+  state.combo = 0;
+  state.totalWrong++;
+  updateComboDisplay();
+}
+
+function updateComboDisplay() {
+  const el = document.getElementById('hud-combo');
+  if (state.combo >= 2) {
+    const mult = Math.min(state.combo, 5);
+    el.textContent = `x${mult} COMBO`;
+    el.className = `combo-display x${mult}`;
+  } else {
+    el.textContent = '';
+    el.className = 'combo-display';
+  }
+}
+
+function updateScoreDisplay() {
+  document.getElementById('hud-score').textContent = state.score;
+}
+
+function showComboPopup(text, color) {
+  const popup = document.createElement('div');
+  popup.className = 'combo-popup';
+  popup.textContent = text;
+  popup.style.color = color;
+  popup.style.textShadow = `0 0 20px ${color}`;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 800);
+}
+
+// ===== ACHIEVEMENTS =====
+const ACHIEVEMENTS = [
+  { id: 'first_blood', name: 'FIRST BLOOD', desc: 'Complete Level 1' },
+  { id: 'combo_10', name: 'COMBO MASTER', desc: '10 hit combo' },
+  { id: 'combo_20', name: 'UNSTOPPABLE', desc: '20 hit combo' },
+  { id: 'speed_demon', name: 'SPEED DEMON', desc: 'Complete a level in under 10 seconds' },
+  { id: 'no_damage', name: 'UNTOUCHABLE', desc: 'Complete a level without mistakes' },
+  { id: 'halfway', name: 'HALFWAY HERO', desc: 'Reach Level 8' },
+  { id: 'combat_ready', name: 'COMBAT READY', desc: 'Reach Level 11' },
+  { id: 'survivor', name: 'SURVIVOR', desc: 'Complete a level with 1 life left' },
+  { id: 'brain_melter', name: 'BRAIN MELTER', desc: 'Complete all 15 levels' },
+  { id: 'speed_score', name: 'LIGHTNING', desc: 'Score over 5000 points' },
+  { id: 'perfect_level', name: 'PERFECTIONIST', desc: 'Complete 3 levels perfectly' },
+  { id: 'reaction_master', name: 'REFLEX GOD', desc: 'Average reaction under 400ms' },
+];
+
+function unlockAchievement(name, desc) {
+  if (state.achievements.has(name)) return;
+  state.achievements.add(name);
+  
+  const badge = document.createElement('div');
+  badge.className = 'achievement';
+  badge.innerHTML = `🏆 ${name}<br><span style="font-size:0.55rem;opacity:0.6;">${desc}</span>`;
+  document.body.appendChild(badge);
+  playLevelUp();
+  setTimeout(() => badge.remove(), 3000);
+}
+
+function renderBadges(containerId) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = ACHIEVEMENTS.map(a => 
+    `<span class="badge ${state.achievements.has(a.name) ? 'earned' : 'locked'}">${state.achievements.has(a.name) ? '🏆' : '🔒'} ${a.name}</span>`
+  ).join('');
+}
+
+// ===== LEADERBOARD (localStorage) =====
+function saveToLeaderboard() {
+  const entry = {
+    date: new Date().toLocaleDateString(),
+    level: state.level,
+    score: state.score,
+    time: state.totalTime,
+    maxCombo: state.maxCombo,
+    achievements: state.achievements.size
+  };
+  
+  let board = JSON.parse(localStorage.getItem('mind_leaderboard') || '[]');
+  board.push(entry);
+  board.sort((a, b) => b.score - a.score);
+  board = board.slice(0, 10); // Keep top 10
+  localStorage.setItem('mind_leaderboard', JSON.stringify(board));
+  return board;
+}
+
+function getLeaderboard() {
+  return JSON.parse(localStorage.getItem('mind_leaderboard') || '[]');
+}
+
+function renderLeaderboard(containerId) {
+  const board = getLeaderboard();
+  const el = document.getElementById(containerId);
+  if (!board.length) {
+    el.innerHTML = '<div style="color:rgba(255,255,255,0.3);font-size:0.8rem;">No runs yet. Be the first!</div>';
+    return;
+  }
+  el.innerHTML = board.map((entry, i) => `
+    <div class="leaderboard-entry ${i === 0 ? 'highlight' : ''}">
+      <span>#${i + 1} — Lv${entry.level} — ${entry.score}pts</span>
+      <span>${entry.date}</span>
+    </div>
+  `).join('');
+}
+
+// ===== HOW TO PLAY =====
+function showHowToPlay() {
+  showScreen('howto-screen');
+}
+
+function hideHowToPlay() {
+  showScreen('title-screen');
+}
+
 // ===== SCREEN MANAGEMENT =====
 function showScreen(id) {
-  ['title-screen', 'transition-screen', 'game-area', 'fail-screen', 'win-screen', 'hud'].forEach(s => {
+  ['title-screen', 'howto-screen', 'transition-screen', 'game-area', 'fail-screen', 'win-screen', 'hud'].forEach(s => {
     document.getElementById(s).style.display = 'none';
   });
   document.getElementById(id).style.display = '';
@@ -816,6 +1301,15 @@ function startGame() {
   state.totalTime = 0;
   state.levelTimes = [];
   state.attempts = [];
+  state.score = 0;
+  state.combo = 0;
+  state.maxCombo = 0;
+  state.achievements = new Set();
+  state.totalCorrect = 0;
+  state.totalWrong = 0;
+  updateScoreDisplay();
+  updateComboDisplay();
+  startAmbient();
   nextLevel();
 }
 
@@ -901,9 +1395,14 @@ function failLevel(reason) {
   state.lives--;
   updateLives();
   playFail();
+  screenShake();
+  spawnFailParticles();
+  breakCombo();
+  
   const elapsed = Math.round((Date.now() - state.levelStartTime) / 1000);
   document.getElementById('fail-msg').textContent = reason || 'Your mind collapsed.';
-  document.getElementById('fail-stats').textContent = `Time: ${elapsed}s | Lives: ${state.lives}`;
+  document.getElementById('fail-stats').textContent = `Time: ${elapsed}s | Lives: ${state.lives} | Score: ${state.score}`;
+  renderBadges('fail-badges');
   showScreen('fail-screen');
 }
 
@@ -911,21 +1410,46 @@ function completeLevel() {
   state.phase = 'complete';
   stopTimer();
   playSuccess();
+  levelFlash();
+  spawnCorrectParticles();
+  
   const elapsed = Math.round((Date.now() - state.levelStartTime) / 1000);
   state.levelTimes.push(elapsed);
   state.totalTime += elapsed;
+  state.score += 500; // Level completion bonus
+  addCombo();
+  updateScoreDisplay();
+  
+  // Achievements
+  if (state.level === 1) unlockAchievement('FIRST BLOOD', 'Complete Level 1');
+  if (elapsed < 10) unlockAchievement('SPEED DEMON', 'Complete a level in under 10 seconds');
+  if (state.level === 8) unlockAchievement('HALFWAY HERO', 'Reach Level 8');
+  if (state.level === 11) unlockAchievement('COMBAT READY', 'Reach Level 11');
+  if (state.lives === 1) unlockAchievement('SURVIVOR', 'Complete a level with 1 life left');
+  if (state.score > 5000) unlockAchievement('LIGHTNING', 'Score over 5000 points');
+  
   nextLevel();
 }
 
 function winGame() {
   state.phase = 'win';
+  stopTimer();
+  stopAmbient();
   playLevelUp();
+  unlockAchievement('BRAIN MELTER', 'Complete all 15 levels');
+  
+  const board = saveToLeaderboard();
+  
   const stats = document.getElementById('win-stats');
-  let html = `<div>Total time: ${state.totalTime}s</div>`;
+  let html = `<div>Total time: ${state.totalTime}s | Score: ${state.score} | Max Combo: x${state.maxCombo}</div>`;
+  html += `<div>Correct: ${state.totalCorrect} | Wrong: ${state.totalWrong} | Accuracy: ${state.totalCorrect + state.totalWrong > 0 ? Math.round(state.totalCorrect / (state.totalCorrect + state.totalWrong) * 100) : 0}%</div>`;
   state.levelTimes.forEach((t, i) => {
     html += `<div>Level ${i+1}: ${t}s</div>`;
   });
   stats.innerHTML = html;
+  
+  renderBadges('win-badges');
+  renderLeaderboard('win-leaderboard');
   showScreen('win-screen');
 }
 
@@ -2824,6 +3348,9 @@ document.addEventListener('keydown', (e) => {
     if (confirm('Quit current game?')) restartGame();
   }
 });
+
+// ===== INIT =====
+renderLeaderboard('title-leaderboard');
 </script>
 </body>
 </html>
