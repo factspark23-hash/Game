@@ -4201,7 +4201,7 @@ function level15() {
 }
 
 // ===== WISDOM VAULT =====
-// Psychology, Power & Human Nature books broken into levels
+// Interactive psychology training - scenarios, choices, behavioral analysis
 
 const WISDOM_BOOKS = [
   {
@@ -4210,78 +4210,216 @@ const WISDOM_BOOKS = [
     author: 'Robert Greene',
     color: '#ff00aa',
     icon: '⚡',
-    desc: 'The classic on power dynamics, manipulation, and strategic thinking.',
-    levels: [
-      { n: 1, title: 'Never Outshine the Master', insight: 'Make those above you feel superior. Display your talents subtly — never so much that they feel threatened. Too much excellence creates insecurity in those who hold power over you.', action: 'Next time you impress someone above you, immediately credit them for teaching/inspiring you. Redirect the spotlight upward.' },
-      { n: 2, title: 'Never Put Too Much Trust in Friends', insight: 'Friends betray faster than enemies because they are easily aroused to envy. Use former enemies — they have more to prove. Keep friends for comfort, former enemies for competence.', action: 'Audit your circle: who are you relying on out of friendship rather than ability? Separate the two.' },
-      { n: 3, title: 'Conceal Your Intentions', insight: 'Keep people off-balance by being unpredictable. If they can\'t figure out your goal, they can\'t prepare a defense. Use false trails to mislead — let them chase shadows.', action: 'Practice strategic vagueness. When asked about plans, give direction without specifics.' },
-      { n: 4, title: 'Always Say Less Than Necessary', insight: 'The more you speak, the more common you appear. Powerful people impress by saying less. Silence makes others uncomfortable — and they reveal themselves to fill the void.', action: 'In your next conversation, aim to speak 40% less than usual. Let the silence work for you.' },
-      { n: 5, title: 'So Much Depends on Reputation', insight: 'Your reputation is your cornerstone. Once destroyed, it can never be fully rebuilt. Guard it with your life. A strong reputation intimidates and wins battles before they begin.', action: 'Identify the #1 trait you want to be known for. Every action this week should reinforce it.' },
-      { n: 6, title: 'Court Attention at All Costs', insight: 'Better to be attacked than ignored. Controversy keeps you visible. Surround yourself with mystery or scandal — anything except boredom. Attention is the currency of power.', action: 'Stand out in one deliberate way this week. Make people talk about you — positively or with intrigue.' },
-      { n: 7, title: 'Get Others to Do the Work, Take the Credit', insight: 'Never do yourself what others can do for you. Save your energy for judgment and strategy. Those who do the work for you become invested in your success — they can\'t abandon their own work.', action: 'Delegate one task you normally do yourself. Frame it as their opportunity to shine (while you steer).' },
-      { n: 8, title: 'Make Other People Come to You', insight: 'When you force the other person to act, you\'re the one in control. Lure them into your territory. The moment you react to them, you\'ve lost the initiative.', action: 'In your next negotiation or request, make them come to your space, your time, your terms.' },
-      { n: 9, title: 'Win Through Actions, Never Argument', insight: 'Arguments create resentment. You may win the point but lose the relationship. Demonstrate your position through results. Let others argue — while you act.', action: 'Next disagreement: state your position once, then demonstrate it through action instead of more words.' },
-      { n: 10, title: 'Infection: Avoid the Unhappy and Unlucky', insight: 'Emotional states are contagious. Chronic complainers, the perpetually unlucky, the chronically dissatisfied — they will drain your energy and infect your thinking. Surround yourself with the successful and the ambitious.', action: 'Audit your closest 5 people. Who drains you? Create distance. Who elevates you? Invest more time.' },
-      { n: 11, title: 'Learn to Keep People Dependent on You', insight: 'If you are easily replaced, you are easily discarded. Make your skills and presence so integral that removing you would cause collapse. Independence is freedom; but others\' dependence on you is power.', action: 'Identify what only YOU can do in your organization/relationships. Cultivate and deepen that unique value.' },
-      { n: 12, title: 'Use Selective Honesty to Disarm', insight: 'One honest gesture can cover a dozen dishonest ones. A generous act at the right moment disarms suspicion permanently. People trust those who have shown vulnerability once.', action: 'Deliver one unexpected, genuine act of honesty or generosity. It creates a shield for future influence.' },
-      { n: 13, title: 'When Asking for Help, Appeal to Self-Interest', insight: 'Never appeal to mercy, gratitude, or duty — these weaken you. Always frame your request as serving THEIR interest. People will move mountains for their own benefit; they\'ll barely lift a finger for yours.', action: 'Reframe your next request: instead of "I need help with X" try "This is an opportunity for you to Y".' },
-      { n: 14, title: 'Pose as a Friend, Work as a Spy', insight: 'Information is power. The more you know about others\' plans, weaknesses, and intentions, the better you can maneuver. Use casual conversation to extract intelligence. Every interaction is a recon mission.', action: 'In every meeting this week, listen for what people reveal when they feel comfortable. Document patterns.' },
-      { n: 15, title: 'Crush Your Enemy Totally', insight: 'Half-measures create future enemies. If you must fight, annihilate. A wounded enemy will recover, regroup, and seek revenge. Leave no ember alive — complete victory only.', action: 'Identify one unfinished conflict in your life. Resolve it completely — either reconcile fully or cut ties entirely.' },
-      { n: 16, title: 'Use Absence to Increase Respect', insight: 'Too much presence cheapens you. Appear often enough to be remembered, but disappear enough to be missed. Scarcity creates value. The less accessible you are, the more people want you.', action: 'Withdraw from one social circle for 2 weeks. Note how differently they treat you when you return.' },
-      { n: 17, title: 'Keep Others in Suspended Terror', insight: 'Predictability breeds contempt. If people can never be sure what you\'ll do, they remain alert and cautious. Unpredictability keeps people anxious — and anxiety creates compliance.', action: 'Break one pattern this week. Do something those around you wouldn\'t expect from you.' },
-      { n: 18, title: 'Do Not Build Fortresses to Protect Yourself', insight: 'Isolation is dangerous. It cuts you off from information and makes you a static target. Stay mobile, stay connected, stay informed. The fortress mindset creates a false sense of security while real threats accumulate outside.', action: 'Identify where you\'ve been isolating. Reach out to one new source of information or connection today.' },
-      { n: 19, title: 'Know Who You\'re Dealing With', insight: 'Never treat everyone the same. Some people are foxes (cunning), some are lions (powerful), some are sheep (followers). Misjudge someone\'s nature and you\'ll use the wrong weapon.', action: 'Before your next important interaction, categorize the person: fox, lion, or sheep? Adapt your approach.' },
-      { n: 20, title: 'Commit to No One', insight: 'Commitment limits your options. By staying uncommitted, you maintain flexibility and force others to compete for your favor. The uncommitted position is the power position.', action: 'Delay one commitment this week. Let others reveal their hands first while you maintain options.' },
-      { n: 21, title: 'Play a Sucker to Catch a Sucker', insight: 'Appear dumber than your mark. Nobody likes to feel outsmarted. Let people think they\'re smarter than you — they\'ll lower their guard completely. The best con artists never look like con artists.', action: 'In your next business deal, ask "naive" questions. Watch how freely people reveal information when they think you don\'t understand.' },
-      { n: 22, title: 'Use the Surrender Tactic', insight: 'Surrender when weaker. Fighting from weakness destroys you. Surrender buys time, lets the opponent\'s guard down, and gives you opportunity to wait for their mistake. Converting loss into a future victory is the ultimate flex.', action: 'Find one conflict you\'re losing. Strategically surrender now. Regroup. Plan your return.' },
-      { n: 23, title: 'Concentrate Your Forces', insight: 'Conserve energy and focus on the single point where you can have the greatest impact. Spreading yourself thin is a recipe for mediocrity. One overwhelming force at one decisive point beats scattered effort everywhere.', action: 'Cut 3 of your 10 priorities. Pour everything into the remaining 7.' },
-      { n: 24, title: 'Play the Perfect Courtier', insight: 'Master the art of indirection. Flatter subtly, yield to superiors, assert dominance over inferiors quietly. The perfect courtier never appears to be maneuvering — they simply seem pleasant and accommodating while achieving everything.', action: 'Practice indirect influence: make people feel like your idea was their idea.' },
-      { n: 25, title: 'Re-Create Yourself', insight: 'Don\'t accept the identity others give you. Shape your own persona deliberately. The self you present to the world is a creation — make it a masterpiece. Reinvention is the ultimate freedom.', action: 'Identify one trait people associate with you that limits you. Deliberately contradict it this week.' },
-      { n: 26, title: 'Keep Your Hands Clean', insight: 'Never do the dirty work yourself. Use scapegoats to take the blame. If you must act ruthlessly, use intermediaries. Your reputation must remain spotless while others bear the consequences.', action: 'When something goes wrong, ensure the blame falls on process, not on you personally.' },
-      { n: 27, title: 'Play on People\'s Need to Believe', insight: 'People crave meaning. Offer them a cause, a cult, a belief system — and they\'ll follow you to the ends of the earth. The less rational your message, the more fervent the belief. Faith doesn\'t need evidence.', action: 'When presenting any idea, wrap it in a compelling narrative. Facts tell, stories sell.' },
-      { n: 28, title: 'Enter Action with Boldness', insight: 'Boldness overcomes everything. Hesitation creates doubt in others and yourself. If you\'re going to act, act completely. Half-measures signal weakness. Total commitment inspires followers and intimidates enemies.', action: 'Take one bold action you\'ve been hesitating on. Commit fully. The worst outcome is mediocrity.' },
-      { n: 29, title: 'Plan All the Way to the End', insight: 'Don\'t just plan the opening move — plan the entire sequence. Consider every possible outcome. Those who think only of the next step are surprised by the tenth step. The end determines the beginning.', action: 'For your next decision, map out: action → consequence → reaction → final outcome. Adjust your opening move.' },
-      { n: 30, title: 'Make Your Accomplishments Seem Effortless', insight: 'Never reveal the work behind your success. What seems natural appears magical. People are intimidated by apparent ease. Your struggle should be invisible; only the results should be visible.', action: 'Stop talking about how hard you work. Let results speak. Mystery creates mystique.' },
-      { n: 31, title: 'Control the Options', insight: 'Give people choices — but make sure all choices benefit you. The power isn\'t in choosing; it\'s in setting the menu. When people think they\'re choosing freely, they never question the options.', action: 'In your next proposal, offer 3 options. All serve your goal, but let them feel in control.' },
-      { n: 32, title: 'Play to People\'s Fantasies', insight: 'People prefer romantic illusions to harsh truths. Offer them a grand vision, a fairy tale, an escape from reality. The more mundane reality is, the more desperately people want fantasy.', action: 'Frame your next pitch in terms of transformation and aspiration, not logistics and process.' },
-      { n: 33, title: 'Discover Each Man\'s Thumbscrew', insight: 'Everyone has a weakness — a hidden insecurity, an uncontrollable emotion, a secret passion. Find it, and you hold the key to their behavior. Observation and patience reveal what people hide most carefully.', action: 'Listen for what people brag about most — that reveals their deepest insecurity.' },
-      { n: 34, title: 'Be Royal in Your Own Fashion', insight: 'Act like a king and you\'ll be treated like one. Dignity and self-respect command attention. People mirror your self-image. If you present yourself as powerful, others will unconsciously treat you as such.', action: 'Upgrade one element of your presentation: how you walk, speak, dress, or enter a room.' },
-      { n: 35, title: 'Master the Art of Timing', insight: 'Never seem in a hurry. Hurrying signals lack of control. Patience, strategic timing, and the ability to wait for the perfect moment — these separate the master from the amateur. Time reveals all.', action: 'Delay one reaction by 24 hours. Let the situation develop. The perfect moment reveals itself.' },
-      { n: 36, title: 'Disdain Things You Cannot Have', insight: 'Ignoring something is the best revenge. Paying attention to what you can\'t have gives it power over you. By seeming indifferent, you appear above it — and often what you ignore comes running back.', action: 'Pretend the thing/person frustrating you doesn\'t exist for one week. Watch how your energy shifts.' },
-      { n: 37, title: 'Create Compelling Spectacles', insight: 'Visual imagery and ritual create a sense of power and importance. The right setting, the right appearance, the right symbolic gesture — these bypass rational thinking and speak directly to emotion.', action: 'Design one "spectacle" for your next important moment: the venue, the timing, the visual impact.' },
-      { n: 38, title: 'Think as You Like but Behave Like Others', insight: 'Flaunting unconventional ideas creates enemies and makes you a target. Keep your true beliefs private. Blend in publicly while thinking freely in private. The social chameleon survives; the rebel gets crushed.', action: 'In public, match the room. Save your true opinions for trusted ears only.' },
-      { n: 39, title: 'Stir Up Waters to Catch Fish', insight: 'Anger and emotion make people vulnerable. The calm one in any conflict holds the power. If you can provoke your opponent\'s emotions while staying cold yourself, you\'ve already won.', action: 'Next heated exchange: stay absolutely calm. Your composure will unnerve them more than any argument.' },
-      { n: 40, title: 'Despise the Free Lunch', insight: 'Nothing is truly free. What\'s offered for free usually comes with a hidden obligation or trap. Pay your own way — it keeps you independent. The free lunch creates debt, and debt creates dependence.', action: 'Identify any "free" benefits you receive. What unspoken obligations come with them?' },
-      { n: 41, title: 'Avoid Stepping into a Great Man\'s Shoes', insight: 'Following in the footsteps of greatness ensures comparison and diminishment. Establish your own identity, your own path. The shadow of a predecessor is the hardest to escape. Create something entirely new.', action: 'If you\'re following a predecessor, deliberately differentiate yourself in at least 3 visible ways.' },
-      { n: 42, title: 'Strike the Shepherd', insight: 'In any group, there\'s one person who holds everything together. Remove them and the group falls apart. Identify the true leader — not the loudest voice, but the one others depend on.', action: 'In any problematic group dynamic, identify the linchpin. Influence them, and you influence everyone.' },
-      { n: 43, title: 'Work on the Hearts and Minds', insight: 'Coercion creates resistance. Influence the mind and the body follows willingly. Understand what motivates people emotionally — fear, love, ambition, insecurity — and speak to that directly.', action: 'Before persuading anyone, ask: what does this person FEEL most strongly about? Address that first.' },
-      { n: 44, title: 'Mirror Effect', insight: 'Mirroring others\' behavior creates trust and confusion. People trust those who reflect them. Use mirroring to disarm, to mock without being detected, or to infiltrate. Reflection is the ultimate camouflage.', action: 'In your next important meeting, subtly mirror the other person\'s body language and speech patterns.' },
-      { n: 45, title: 'Preach the Need for Change', insight: 'Too much change at once creates fear and resistance. People cling to the familiar. Introduce change gradually and frame it as improvement, not revolution. The reformer is the most dangerous role — attacked from all sides.', action: 'When proposing change, position it as "building on what works" rather than "fixing what\'s broken".' },
-      { n: 46, title: 'Never Appear Too Perfect', insight: 'Perfection creates envy. Envy creates silent enemies who wait for you to stumble. Show occasional flaws, admit minor mistakes, display human vulnerability. People forgive imperfection; they resent perfection.', action: 'Share one small, calculated vulnerability this week. It makes you relatable and disarms envy.' },
-      { n: 47, title: 'Do Not Go Past the Mark', insight: 'In victory, know when to stop. Overextension, overconfidence, and hubris in success are the most common causes of downfall. The moment of greatest triumph is the moment of greatest danger.', action: 'After your next success, pause. Don\'t immediately push for more. Consolidate before advancing.' },
-      { n: 48, title: 'Assume Formlessness', insight: 'Be shapeless, formless — like water. The rigid break; the flexible survive. Adapt to every situation. Having a fixed identity or strategy makes you predictable and vulnerable. The ultimate power is adaptability itself.', action: 'Practice one new approach to something you always do the same way. Flexibility is survival.' }
+    desc: 'Learn power dynamics through real workplace, social & political scenarios.',
+    scenarios: [
+      {
+        situation: "Your boss presents YOUR idea to the CEO as his own. He gets praised. What do you do?",
+        choices: [
+          { text: "Confront him in front of the CEO — 'Actually, that was MY idea'", tag: "aggressive" },
+          { text: "Stay silent, but feel bitter and tell coworkers it was your idea", tag: "passive-aggressive" },
+          { text: "Say nothing publicly, but privately let your boss know you noticed", tag: "strategic" },
+          { text: "Let it go completely — ideas don't matter, results do", tag: "passive" }
+        ],
+        law: "Law 1: Never Outshine the Master",
+        analysis: {
+          "aggressive": "You just made a powerful enemy. Your boss now sees you as a threat. He'll sideline you, block promotions, and make your life miserable. You won the battle, lost the war. CONSEQUENCE: Your boss starts excluding you from meetings. 3 months later, you're transferred.",
+          "passive-aggressive": "Gossip reaches your boss. He now knows you're bitter but also that you're too weak to confront him directly. He respects you even less. CONSEQUENCE: You become known as the complainer. Nobody wants you on their team.",
+          "strategic": "Perfect. You showed awareness without public humiliation. Your boss now knows you're not naive, but you haven't burned the bridge. He may actually start crediting you — because he knows you'll notice. This is how power works. UPGRADE: Wait 2 weeks, then present your next idea directly to the CEO WITH your boss present. Now the CEO knows who generates ideas.",
+          "passive": "Noble but foolish. If you never claim credit, you'll never advance. People who don't claim credit become invisible. Your boss will keep taking credit because there's no cost. CONSEQUENCE: You become the person who does the work while others get the promotions."
+        },
+        correctChoice: 2,
+        principle: "When someone above you takes credit, don't compete — POSITION yourself so credit flows naturally to you without confrontation."
+      },
+      {
+        situation: "A close friend asks to borrow ₹50,000. They've been unreliable with money before. What do you do?",
+        choices: [
+          { text: "Lend it — they're my friend, I can't say no", tag: "people-pleaser" },
+          { text: "Refuse directly — 'Sorry, I don't lend money to friends'", tag: "direct" },
+          { text: "Say you don't have it right now, make an excuse", tag: "avoidant" },
+          { text: "Lend a small amount (₹5,000) and see if they return it", tag: "strategic" }
+        ],
+        law: "Law 2: Never Put Too Much Trust in Friends",
+        analysis: {
+          "people-pleaser": "You've just created a toxic dynamic. When they don't pay back (they won't), resentment builds. The friendship dies anyway — but now with ₹50,000 lost. You tried to save the friendship and destroyed it. CONSEQUENCE: 6 months later, they avoid you. The money is gone. The friendship is gone.",
+          "direct": "Brutal but honest. However, you may have damaged the friendship unnecessarily. The direct approach works with strangers but wounds close relationships. BETTER APPROACH: Combine honesty with empathy: 'I care about you, but money has ruined more friendships than anything else.'",
+          "avoidant": "The lie buys time but creates a pattern. Now you're avoiding their calls, making excuses, living in anxiety. The friendship erodes from dishonesty, not from the money. They sense the lie. Trust breaks. CONSEQUENCE: You lose the friend AND your integrity.",
+          "strategic": "Smart. ₹5,000 is your 'test fee.' If they return it, you know they're trustworthy. If they don't, you've learned the lesson cheaply. This is investing in information, not lending money. UPGRADE: Never call it a loan. Say 'Here's what I can help with right now.' If they return it, they're gold. If not, it was tuition fee."
+        },
+        correctChoice: 3,
+        principle: "Trust is built through ACTIONS, not words. Test small before committing big. Your friend's track record IS their character — believe it."
+      },
+      {
+        situation: "You discover a colleague is secretly interviewing at competitor companies. You're close friends. What do you do?",
+        choices: [
+          { text: "Tell management immediately — company loyalty comes first", tag: "loyalist" },
+          { text: "Confront your friend — 'I know what you're doing'", tag: "direct" },
+          { text: "Say nothing to anyone. Use this information strategically later", tag: "strategic" },
+          { text: "Offer to help them prepare for the interview", tag: "supportive" }
+        ],
+        law: "Law 3: Conceal Your Intentions",
+        analysis: {
+          "loyalist": "You betrayed a friend for an organization that would replace you in 2 weeks. Your friend gets fired. Other colleagues learn you're a snitch. Nobody trusts you. CONSEQUENCE: You're isolated. The company thanks you... then forgets. You gained nothing.",
+          "direct": "Risky. Now your friend knows YOU know. If they stay, they're suspicious of you. If they leave, they may tell others you knew. You've taken on risk with no reward. CONSEQUENCE: The friendship becomes awkward.",
+          "strategic": "This is how power works. Information is currency. You don't use it immediately — you hold it. When YOU need something, this knowledge gives you leverage. Not blackmail — just... awareness. UPGRADE: Keep this in your back pocket. The day will come when this information becomes useful naturally.",
+          "supportive": "Generous but naive. You're helping someone leave while you stay behind. Also — if management finds out you knew, YOUR loyalty is questioned. You take on all the risk for zero reward."
+        },
+        correctChoice: 2,
+        principle: "Information is the most valuable currency. Don't spend it impulsively. Hold it until the moment of maximum impact."
+      },
+      {
+        situation: "In a team meeting, everyone is arguing. The loudest voice is winning — even though their idea is terrible. What do you do?",
+        choices: [
+          { text: "Raise your voice louder and argue your point forcefully", tag: "competitive" },
+          { text: "Stay quiet — not worth the fight", tag: "passive" },
+          { text: "Ask strategic questions that expose the flaws without attacking", tag: "strategic" },
+          { text: "Talk to the decision-maker privately after the meeting", tag: "behind-scenes" }
+        ],
+        law: "Law 4: Always Say Less Than Necessary",
+        analysis: {
+          "competitive": "Now you're just another loud voice. The meeting becomes a shouting match. Even if your idea is better, nobody can tell because it's buried in noise. The decision-maker picks whoever was most confident, not most correct.",
+          "passive": "The terrible idea gets implemented because you said nothing. Silence is only power when you PLAN to act later. Unplanned silence is just cowardice. CONSEQUENCE: You watch the project fail, then say 'I knew it.' Too late.",
+          "strategic": "Masterful. 'Interesting approach — how would we handle the scenario where X happens?' You let them discover the flaw themselves. They save face. The group sees YOU as the thoughtful one. The idea dies without you ever appearing to oppose it. UPGRADE: After exposing flaws, offer your alternative as a 'complement' to theirs.",
+          "behind-scenes": "Effective but limited. You influence one person. In the meeting, the bad idea still wins. Your private conversation may or may not change anything. RISK: You appear political."
+        },
+        correctChoice: 2,
+        principle: "Questions are more powerful than statements. A well-placed question makes others think they discovered the truth themselves."
+      },
+      {
+        situation: "Your company is doing layoffs. You're safe, but your talented teammate isn't. Management asks for your input on who to cut. What do you do?",
+        choices: [
+          { text: "Advocate strongly to keep your teammate", tag: "loyal" },
+          { text: "Stay neutral — 'I don't want to be involved'", tag: "neutral" },
+          { text: "Strategically mention that another less valuable member could be cut", tag: "strategic" },
+          { text: "Tell your teammate privately so they can start job hunting", tag: "informant" }
+        ],
+        law: "Law 5: So Much Depends on Reputation",
+        analysis: {
+          "loyal": "Noble but risky. Management sees you as someone who fights for individuals over company interests. BALANCE: Advocate, but frame it as a business case: 'Losing them costs us X in productivity.'",
+          "neutral": "You've shown you can't be counted on in hard times. Management marks you as someone who avoids responsibility. In leadership, neutrality in crisis is a character flaw.",
+          "strategic": "Cold, calculated, effective. You saved someone valuable AND positioned yourself as someone who makes tough calls. MORAL COST: This builds power but may erode your soul. Choose carefully.",
+          "informant": "Good-hearted but dangerous. If management finds out you leaked layoff info, YOUR job is at risk. You traded your security for someone else's."
+        },
+        correctChoice: 2,
+        principle: "Your reputation is your most valuable asset. Every decision either builds or erodes it. In crises, people remember who stood where."
+      },
+      {
+        situation: "Two powerful people in your company are feuding. Both try to recruit you to their side. What do you do?",
+        choices: [
+          { text: "Pick the winning side — align with whoever seems stronger", tag: "opportunistic" },
+          { text: "Stay completely neutral — don't get involved", tag: "isolated" },
+          { text: "Play both sides — agree with each privately, help neither publicly", tag: "double-agent" },
+          { text: "Position yourself as the bridge — 'I work well with both'", tag: "mediator" }
+        ],
+        law: "Law 18: Do Not Build Fortresses",
+        analysis: {
+          "opportunistic": "If your chosen side loses, you lose. If they win, you're a follower. And the losing side remembers your betrayal. You've shown everyone you're a climber, not a loyalist.",
+          "isolated": "By refusing to engage, you lose influence with BOTH sides. When the conflict resolves, the winner rewards their allies. You weren't an ally to anyone.",
+          "double-agent": "Tempting but extremely dangerous. When discovered, BOTH sides turn on you. Double agents are universally despised.",
+          "mediator": "The ultimate power position. Both sides need you. When they resolve, YOU get credit. You become the person everyone relies on. UPGRADE: Genuinely help both sides see each other's perspective."
+        },
+        correctChoice: 3,
+        principle: "In conflicts between powerful people, the most powerful position is the MIDDLE. Don't choose sides — become the bridge."
+      }
     ]
   },
   {
     id: 'influence',
-    title: 'Influence: The Psychology of Persuasion',
+    title: 'Influence: Psychology of Persuasion',
     author: 'Robert Cialdini',
     color: '#00f0ff',
     icon: '🎯',
-    desc: 'The 6 weapons of influence that control human decision-making.',
-    levels: [
-      { n: 1, title: 'Reciprocity — Give First', insight: 'People feel obligated to return favors, even unwanted ones. The key: give something BEFORE asking. It doesn\'t need to be valuable — it needs to be unexpected. The Hare Krishna movement gave flowers at airports (unsolicited) and received millions in donations.', action: 'Give something genuinely useful to someone today with zero expectation. Note how they naturally want to help you later.' },
-      { n: 2, title: 'Reciprocity — The Concession Trap', insight: 'Start with an outrageous request (rejected), then retreat to your real request (accepted). The second feels like a concession, creating obligation. "Can you sponsor our event for $1000?" → No → "How about $50?" → Yes (they wouldn\'t have said yes to $50 alone).', action: 'Practice the door-in-face technique: ask for something big, get rejected, then ask for what you actually want.' },
-      { n: 3, title: 'Commitment & Consistency — The Foot in the Door', insight: 'Once people say "yes" to something small, they\'re psychologically compelled to stay consistent with that commitment. Start small, escalate gradually. Each micro-commitment makes the next bigger request harder to refuse.', action: 'Get someone to agree to something tiny first. Then build. The small "yes" becomes the foundation for bigger asks.' },
-      { n: 4, title: 'Commitment — Public Declarations', insight: 'Written and public commitments are the strongest. Once someone states a position publicly, they\'ll defend it even when it\'s wrong. Ask people to write down their goals, announce intentions, sign agreements — all create binding psychological contracts.', action: 'Want someone to follow through? Have them state it publicly or write it down. The commitment becomes nearly unbreakable.' },
-      { n: 5, title: 'Social Proof — The Herd Follows', insight: 'When uncertain, people look at what others are doing. The more people do something, the more "correct" it appears. Fake popularity creates real popularity. "Best seller," "Most popular," "Everyone is doing it" — these phrases bypass critical thinking entirely.', action: 'When presenting anything, show evidence that others are already doing it. "Join 10,000 others" beats "This is great."' },
-      { n: 6, title: 'Social Proof — Similarity Effect', insight: 'People follow those most similar to them, not experts. A testimonial from "someone like me" is more persuasive than any expert opinion. Peer pressure works because peers represent the truest measure of "normal."', action: 'Use testimonials from people similar to your audience, not from celebrities or experts.' },
-      { n: 7, title: 'Authority — The Uniform Effect', insight: 'People obey authority figures automatically, often without thinking. Titles, clothes, and credentials create instant compliance. A man in a lab coat can make people do things they\'d never do otherwise. Authority triggers deep programming.', action: 'If you need to influence, establish your authority FIRST (credentials, experience, position) before making your pitch.' },
-      { n: 8, title: 'Liking — The Halo Effect', insight: 'We say yes to people we like. We like people who: are similar to us, compliment us, are physically attractive, or cooperate with us. The halo effect means one positive trait (beauty, competence) makes us perceive ALL traits positively.', action: 'Before any important interaction, find genuine common ground. Compliment authentically. Like breeds compliance.' },
-      { n: 9, title: 'Scarcity — The FOMO Engine', insight: 'Scarce = valuable. Even if the thing hasn\'t changed, perceived scarcity increases desire. "Limited time," "Only 3 left," "Exclusive access" — these trigger fear of loss, which is more powerful than desire for gain.', action: 'Create genuine (or perceived) scarcity around what you offer. Deadlines, limits, exclusivity — all drive action.' },
-      { n: 10, title: 'Scarcity — Loss > Gain', insight: 'People are more motivated by what they might LOSE than by what they might GAIN. Frame opportunities in terms of what they\'ll miss, not what they\'ll get. "You\'ll lose this discount" works better than "You\'ll save 20%."', action: 'Reframe your next pitch: instead of "here\'s what you get," try "here\'s what you\'ll miss if you don\'t act."' },
-      { n: 11, title: 'The Click, Whirr Response', insight: 'Humans have automatic response patterns — like a click triggers a whirr. Recognize these triggers in yourself: automatic compliance based on shortcuts (expensive = good, popular = good, familiar = good). Awareness is your only defense.', action: 'When you feel a strong "yes" or "no" reaction, pause. Ask: what triggered this? Is it rational or automatic?' },
-      { n: 12, title: 'Defense Against Manipulation', insight: 'The best defense against influence tactics is RECOGNITION. Once you see the pattern — reciprocity, commitment, social proof, authority, liking, scarcity — you can choose to comply consciously rather than automatically. Awareness transforms manipulation into conscious choice.', action: 'Every day this week, identify ONE influence tactic being used on you (ads, requests, negotiations). Name it. Then decide.' }
+    desc: 'Learn the 6 weapons of influence through real-life manipulation scenarios.',
+    scenarios: [
+      {
+        situation: "A street vendor gives you a flower for free. You didn't ask for it. Now he asks for a donation. You feel obligated. What's happening?",
+        choices: [
+          { text: "Donate generously — he was kind to give me a flower", tag: "reciprocated" },
+          { text: "Hand the flower back and walk away", tag: "resistant" },
+          { text: "Donate a small amount to relieve the discomfort", tag: "compliant" },
+          { text: "Recognize the tactic — 'Nice try, but I didn't ask for this'", tag: "aware" }
+        ],
+        law: "Weapon 1: Reciprocity",
+        analysis: {
+          "reciprocated": "You fell for the oldest influence trick. The 'gift' was bait. The Hare Krishna movement made millions using this at airports. Your brain is HARDWIRED to return favors. That's not kindness — that's programming.",
+          "resistant": "Physically correct but socially costly. Returning the flower feels aggressive. Most people can't do this because the social pressure is too strong. The vendor COUNTS on your inability to refuse.",
+          "compliant": "The intended outcome. The small donation relieves your discomfort but you paid for something you never wanted. 100 small donations per hour = great income. YOU are the business model.",
+          "aware": "Level unlocked. You see the mechanism. The flower isn't a gift — it's a psychological trigger. Once you see it, you can CHOOSE whether to comply. REAL POWER: Give before you ask, but do it CONSCIOUSLY."
+        },
+        correctChoice: 3,
+        principle: "Unwanted gifts create unwanted obligations. The first move in any negotiation is to create DEBT. Recognize it or become its victim."
+      },
+      {
+        situation: "A waiter says 'Our most popular dish is the lobster — everyone orders it.' You weren't planning to order lobster. What do you do?",
+        choices: [
+          { text: "Order the lobster — if everyone gets it, it must be good", tag: "herd" },
+          { text: "Ignore him and order what you originally wanted", tag: "independent" },
+          { text: "Ask 'What do YOU personally recommend?' to break the script", tag: "probing" },
+          { text: "Order something else but feel uncertain", tag: "doubtful" }
+        ],
+        law: "Weapon 2: Social Proof",
+        analysis: {
+          "herd": "'Everyone does it' bypasses your personal judgment. You let strangers decide your dinner. The waiter may be telling the truth — or the lobster has the highest profit margin. You'll never know because you didn't think — you followed.",
+          "independent": "Strong. You maintained preference over social pressure. But you still FELT the pull. Social proof works even on those who resist it. AWARENESS: 'Most popular' means 'most ordered' — not 'best.'",
+          "probing": "Smart. You broke the rehearsed sales script. Their genuine answer is more valuable than the company line. Watch their face — hesitation means it's real, quick answer means it's scripted.",
+          "doubtful": "Worst outcome. You resisted but it still damaged your experience. Social proof doesn't need compliance — it just needs DOUBT. Once doubt enters, the tactic worked. You'll enjoy your meal less."
+        },
+        correctChoice: 2,
+        principle: "Social proof ('everyone does it') bypasses personal judgment. Verify claims, then make YOUR decision."
+      },
+      {
+        situation: "A salesperson in a suit with 'Dr.' on their name tag recommends an expensive supplement. You weren't planning to buy. How do you respond?",
+        choices: [
+          { text: "Buy it — they're a doctor, they know best", tag: "deferential" },
+          { text: "Ask to see actual credentials and research", tag: "skeptical" },
+          { text: "Politely decline and research on your own later", tag: "cautious" },
+          { text: "Buy a cheaper alternative because the principle seems sound", tag: "compromised" }
+        ],
+        law: "Weapon 3: Authority",
+        analysis: {
+          "deferential": "The 'Dr.' triggered your authority compliance. But — are they a medical doctor? A PhD in literature? The white coat bypasses critical thinking. MILGRAM EXPERIMENT: People gave lethal shocks because a man in a lab coat told them to.",
+          "skeptical": "Correct defense. Real experts welcome scrutiny. If they get defensive, they're selling. CHECK: What KIND of doctor? What research? Published where? Peer-reviewed? Real authority stands up to questions.",
+          "cautious": "Good default. But notice — you still gave the 'doctor' credibility by planning to 'research it later.' The authority seeded doubt about your current health. You're now thinking about supplements when you weren't before.",
+          "compromised": "You resisted the expensive option but still bought. The authority moved you from 'no supplements' to 'some supplements.' The anchor made the cheaper one seem reasonable — when your original plan was NOTHING."
+        },
+        correctChoice: 1,
+        principle: "Authority symbols trigger automatic compliance. Always verify: Is this person REALLY an authority on THIS specific topic?"
+      },
+      {
+        situation: "You sign up for a 'free 30-day trial.' On day 25, you realize you don't use it. Trial ends in 5 days. What do you do?",
+        choices: [
+          { text: "Cancel immediately — I don't use it", tag: "decisive" },
+          { text: "Wait until day 29 — maybe I'll use it more", tag: "procrastinator" },
+          { text: "Keep it — I've already invested time setting it up", tag: "sunk-cost" },
+          { text: "Forget about it and get charged automatically", tag: "passive" }
+        ],
+        law: "Weapon 4: Commitment & Consistency",
+        analysis: {
+          "decisive": "You escaped. Most people can't because of SUNK COST: 'I already spent time setting up.' But the time is GONE either way. The only question: does this provide value NOW? If no, cancel.",
+          "procrastinator": "The company bet against your self-discipline — and won. They KNOW most people won't cancel in time. The 30-day period isn't generosity — it's a bet. They win 70% of the time. COST: ₹999/month × 6 months = ₹5,994 for 5 days of use.",
+          "sunk-cost": "THE SUNK COST TRAP. 'I've already invested, so I should continue.' No! Past investment is GONE. Only future ROI matters. Companies make setup tedious on purpose, knowing you'll think 'I spent 2 hours, I can't quit.'",
+          "passive": "You're the ideal customer. Auto-renewal exists because of you. They don't need you to love it — they just need you to NOT cancel. Inertia is the most profitable human trait."
+        },
+        correctChoice: 0,
+        principle: "Free trials exploit commitment bias. ALWAYS set calendar reminders for ALL trials. Cancel first, re-subscribe if you miss it."
+      },
+      {
+        situation: "An online course says 'ONLY 3 SEATS LEFT! Sale ends in 2:47:33!' You're mildly interested. What do you feel?",
+        choices: [
+          { text: "Urgency! Buy now before it's gone!", tag: "triggered" },
+          { text: "Recognize the tactic — the timer is fake, seats are unlimited", tag: "immune" },
+          { text: "Feel anxious — what if it IS limited?", tag: "manipulated" },
+          { text: "Bookmark it, check back in a week if the 'limited offer' still exists", tag: "testing" }
+        ],
+        law: "Weapon 6: Scarcity",
+        analysis: {
+          "triggered": "Scarcity hijacked your rational brain. The countdown creates urgency. 'Only 3 left' creates FOMO. Loss-aversion fires: 'What if I miss out?' You bought something you wouldn't have without the timer.",
+          "immune": "You see through it, but SCARCITY STILL AFFECTED YOU. Notice: you had to THINK about why it's fake. The initial reaction was still 'OMG limited!' Even knowing it's fake, you felt something.",
+          "manipulated": "The intended state. The conflict between 'probably fake' and 'what if real' creates mental fatigue. Many resolve this by buying — not for the course, but to stop THINKING about it. You buy to end the decision.",
+          "testing": "Smartest move. Test the claim. Screenshot the offer. Check in a week. 95% of the time, it's still there — sometimes at a LOWER 'new sale' price. DATA over EMOTION."
+        },
+        correctChoice: 3,
+        principle: "Scarcity triggers loss-aversion, the most powerful emotional driver. Test every scarcity claim. Real scarcity is rare. Manufactured scarcity is the default."
+      }
     ]
   },
   {
@@ -4290,18 +4428,62 @@ const WISDOM_BOOKS = [
     author: 'Robert Greene',
     color: '#ff3366',
     icon: '🌹',
-    desc: 'The timeless strategies of seduction — not just romantic, but social influence.',
-    levels: [
-      { n: 1, title: 'The Rake', insight: 'The Rake gives a woman the dangerous thrill of being pursued by someone who will stop at nothing. His desire is so intense, it overrides all caution. The key: show no hesitation, no doubt, total fixation on the target.', action: 'When pursuing any goal, show absolute, unwavering desire. Hesitation kills seduction.' },
-      { n: 2, title: 'The Siren', insight: 'The Siren offers a purely physical pleasure, a sexual experience that transcends the mental. Through visual spectacle and an aura of abandon, the Siren creates an irresistible lure. Gender is irrelevant — the principle is about offering an experience that overwhelms reason.', action: 'Create an unforgettable sensory experience around yourself. Appearance, voice, movement — make people feel something primal.' },
-      { n: 3, title: 'The Ideal Lover', insight: 'The Ideal Lover mirrors the target\'s deepest fantasies. They study what the target dreams of and become that dream. Most people are disappointed in reality — the Ideal Lover offers the fantasy made flesh.', action: 'Study what someone truly wants (not what they say they want) and embody it.' },
-      { n: 4, title: 'The Dandy', insight: 'The Dandy refuses to play by society\'s rules. They create their own aesthetic, their own gender expression, their own values. This radical independence is intoxicating because most people secretly wish they could be so free.', action: 'Develop one aspect of yourself that defies convention. Radical authenticity is magnetic.' },
-      { n: 5, title: 'The Natural', insight: 'Children are the most seductive beings because they\'re unselfconscious, playful, and vulnerable. The Natural retains childlike qualities in adulthood: spontaneity, sincerity, innocence. Dropping your defenses makes others drop theirs.', action: 'Show genuine childlike wonder or vulnerability. Perfection is intimidating; authentic imperfection is captivating.' },
-      { n: 6, title: 'The Coquette', insight: 'The Coquette masters the art of hot and cold. Alternating between warmth and withdrawal creates emotional turbulence. The target becomes addicted to the uncertainty. Mixed signals are more addictive than consistent attention.', action: 'In any relationship, strategically alternate engagement and distance. Uncertainty creates obsessive thinking.' },
-      { n: 7, title: 'The Charmer', insight: 'Charm is not about being interesting — it\'s about making others feel interesting. The Charmer listens intently, reflects people\'s best selves back at them, and makes every person feel like the most important person in the room.', action: 'In your next conversation, focus entirely on making THEM feel fascinating. Ask questions. Listen deeply. Reflect their best qualities.' },
-      { n: 8, title: 'The Charismatic', insight: 'Charisma comes from a quality of self-belief so strong it\'s contagious. The charismatic person has a vision, a purpose, a burning inner fire — and people are drawn to that flame like moths. Confidence without purpose is arrogance; confidence WITH purpose is charisma.', action: 'Develop an unshakeable conviction about one thing. When you speak about it, your intensity will be magnetic.' },
-      { n: 9, title: 'The Star', insight: 'The Star is distant, ethereal, unattainable — like a celebrity. People project their fantasies onto distant figures. By maintaining distance, you allow others to imagine you as whatever they desire. Closeness destroys illusion; distance preserves it.', action: 'Strategically limit access to yourself. What people can\'t fully have, they can\'t stop wanting.' },
-      { n: 10, title: 'Anti-Seduction', insight: 'Recognize the patterns so you\'re not the target of manipulation. The greatest seducers are invisible — you don\'t realize you\'re being seduced until it\'s too late. Awareness is the only protection.', action: 'When someone makes you feel intensely drawn to them, pause. Ask: what technique are they using? Awareness breaks the spell.' }
+    desc: 'Master social magnetism through real interaction scenarios.',
+    scenarios: [
+      {
+        situation: "At a party, someone attractive is surrounded by admirers. You want their attention. What do you do?",
+        choices: [
+          { text: "Join the crowd and try to impress them with your best stories", tag: "compete" },
+          { text: "Don't approach — let them come to you", tag: "star" },
+          { text: "Make eye contact from across the room, smile, then talk to someone else", tag: "coquette" },
+          { text: "Wait for them to be alone, then approach with genuine curiosity", tag: "charmer" }
+        ],
+        law: "The Coquette: Hot & Cold Creates Addiction",
+        analysis: {
+          "compete": "You're now one of 10 people trying to impress them. Being the 11th person to compliment them makes you forgettable. You competed instead of differentiated.",
+          "star": "Works if you have existing social proof. Distance creates mystique only if you're already known. Otherwise you're just the person standing alone in the corner.",
+          "coquette": "Powerful. Eye contact + smile = interest signal. Walking away = withdrawal. Now their brain works: 'Why did they leave? Who are they?' You created INTRIGUE. PSYCHOLOGY: Intermittent reinforcement is the most addictive pattern known.",
+          "charmer": "Genuine and effective, but lacks the tension that creates attraction. UPGRADE: Show interest, then excuse yourself. 'I'd love to keep talking but my friend needs me.' Leave them wanting."
+        },
+        correctChoice: 2,
+        principle: "Attraction isn't about pursuing — it's about creating a VACUUM. Show interest, then withdraw. Intermittent signals create obsession."
+      },
+      {
+        situation: "Someone interesting keeps talking about themselves, their achievements, their problems. The conversation is one-sided. What do you do?",
+        choices: [
+          { text: "Try to match them — share your own achievements", tag: "competitive" },
+          { text: "Keep listening — they need to talk", tag: "passive" },
+          { text: "Ask deep questions: 'What was that really like for you?'", tag: "penetrating" },
+          { text: "Excuse yourself — this is boring", tag: "dismiss" }
+        ],
+        law: "The Charmer: Make Them Feel Fascinating",
+        analysis: {
+          "competitive": "Now it's a monologue competition. Two people talking AT each other. Nobody feels heard. Nobody feels special. You both leave thinking 'that person was so self-absorbed.'",
+          "passive": "Listening is powerful but passive listening is just being an audience. They'll think 'nice person, good listener' but not 'WOW, that person really got me.'",
+          "penetrating": "The Charmer's weapon. You went BEHIND their rehearsed stories to the real person. 'What was that really like?' forces vulnerability. When someone shows you their real self, BONDING happens instantly. PSYCHOLOGY: People bond through vulnerability, not impressive stories.",
+          "dismiss": "You missed an opportunity. The person talking about themselves does so because nobody EVER really listens. If you'd gone deeper, you'd have found the real person underneath."
+        },
+        correctChoice: 2,
+        principle: "The most magnetic people draw the REAL person out of others. Deep questions create instant intimacy."
+      },
+      {
+        situation: "Your friend group plans a trip. Everyone wants Goa. You secretly want Manali. How do you handle it?",
+        choices: [
+          { text: "Say nothing and agree to Goa — don't cause conflict", tag: "people-pleaser" },
+          { text: "Insist on Manali — your preference matters too", tag: "assertive" },
+          { text: "Suggest Manali by framing it as better FOR THE GROUP — cheaper, unique, adventure", tag: "charismatic" },
+          { text: "Agree to Goa but plant seeds about Manali for next time", tag: "long-game" }
+        ],
+        law: "Lead Through Vision, Not Force",
+        analysis: {
+          "people-pleaser": "You taught the group your preferences don't matter. Next trip: same thing. Eventually you're the person who 'doesn't care' about anything. Silence = invisible.",
+          "assertive": "You stated your preference, but now it's conflict: Goa vs Manali, group vs you. Even if you 'win,' the trip is tainted by the argument. ASSERTIVENESS WITHOUT STRATEGY = conflict.",
+          "charismatic": "Influence. You didn't say 'I want Manali.' You said 'Manali would be AMAZING for us because...' You made YOUR desire sound like THEIR benefit. The charismatic leader doesn't impose — they INSPIRE.",
+          "long-game": "Strategic patience. By planting seeds about Manali, you create desire in the group for next time. By the next trip, half the group suggests Manali themselves. You got what you wanted without anyone knowing."
+        },
+        correctChoice: 2,
+        principle: "True charisma makes your way sound like EVERYONE'S way. Frame your desires as collective benefits."
+      }
     ]
   },
   {
@@ -4310,102 +4492,175 @@ const WISDOM_BOOKS = [
     author: 'Daniel Kahneman',
     color: '#ffe600',
     icon: '🧠',
-    desc: 'How your brain\'s two systems create biases, errors, and brilliant decisions.',
-    levels: [
-      { n: 1, title: 'System 1 vs System 2', insight: 'System 1: fast, automatic, emotional, effortless. System 2: slow, deliberate, logical, exhausting. 95% of your decisions are made by System 1, then rationalized by System 2. You think you\'re rational — you\'re not.', action: 'For every important decision today, ask: "Is this System 1 (gut) or System 2 (logic)?" Notice how often it\'s System 1.' },
-      { n: 2, title: 'Cognitive Ease', insight: 'Your brain prefers what\'s easy to process. Repetition, clear fonts, simple language, familiar ideas — all create "cognitive ease" which your brain interprets as "true." This is why propaganda repeats. This is why simple lies beat complex truths.', action: 'When something feels "obviously true," question whether it\'s just easy to process. Difficulty doesn\'t mean wrong.' },
-      { n: 3, title: 'Anchoring Effect', insight: 'The first number you hear sets the reference point for everything after. A house listed at $500K seems reasonable after you see one at $800K. Anchors are everywhere: salary negotiations, pricing, estimates. Even random numbers affect your judgment.', action: 'In any negotiation, state YOUR number first. Whoever sets the anchor controls the conversation.' },
-      { n: 4, title: 'Availability Heuristic', insight: 'You judge probability by how easily examples come to mind. Plane crashes feel common (vivid, dramatic) while car accidents feel rare (boring, frequent). Media amplifies this: what you see most = what you think is most common.', action: 'When assessing risk or frequency, check: am I basing this on actual data or on how easily I can recall examples?' },
-      { n: 5, title: 'Representativeness Heuristic', insight: 'You judge things by how similar they look to a stereotype, ignoring base rates. "She looks like a librarian" overrides the statistical fact that few people are librarians. Your brain confuses resemblance with probability.', action: 'Before making a judgment based on "looks like," ask: what\'s the ACTUAL probability? Base rate beats stereotypes.' },
-      { n: 6, title: 'Loss Aversion', insight: 'Losing $100 hurts roughly twice as much as gaining $100 feels good. This asymmetry drives irrational behavior: holding losing stocks, refusing to cut losses, staying in bad situations. Fear of loss controls your life more than desire for gain.', action: 'When making a decision framed as "avoid loss," reframe it as "pursue gain." Same math, different emotion.' },
-      { n: 7, title: 'The Endowment Effect', insight: 'You overvalue what you own simply because you own it. Your house is worth more TO YOU than to a buyer. Your idea is better than others\' ideas — because it\'s yours. Ownership inflates perceived value.', action: 'Before valuing something you own, ask: "If I didn\'t own this, what would I pay for it?" Strip the ownership bias.' },
-      { n: 8, title: 'WYSIATI — What You See Is All There Is', insight: 'Your brain constructs stories from limited information and acts as if it has the full picture. You don\'t know what you don\'t know, and your brain doesn\'t flag this. It fills gaps with assumptions and treats them as facts.', action: 'Before any conclusion, ask: "What information am I MISSING?" The absent data is usually the most important.' },
-      { n: 9, title: 'Overconfidence', insight: 'Experts and novices are equally overconfident. People who are 90% confident are right about 70% of the time. Overconfidence is built into human cognition — you literally cannot feel uncertain enough to match reality.', action: 'For every prediction, reduce your confidence by 20%. "I\'m sure" → "I think." Track your accuracy over time.' },
-      { n: 10, title: 'Planning Fallacy', insight: 'Humans chronically underestimate time, cost, and risk — while overestimating benefits. This isn\'t optimism; it\'s a cognitive bias. Every project takes longer than planned. Every budget is exceeded. Reference class forecasting is the only fix.', action: 'For your next project: look at how long SIMILAR projects took you. Use THAT number, not your optimistic estimate.' },
-      { n: 11, title: 'Hindsight Bias', insight: 'After an event, you believe you "knew it all along." This creates the illusion that the world is more predictable than it is. Hindsight bias destroys learning because you can\'t learn from mistakes you convince yourself you already understood.', action: 'Write down your predictions BEFORE events happen. Review them after. Reality is humbling.' },
-      { n: 12, title: 'Regression to the Mean', insight: 'Extreme performances tend to return to average. The rookie who has an amazing first year usually performs worse the second year — not because of "sophistic jinx" but because of statistics. Punishment for bad performance and reward for good performance are both illusions.', action: 'Don\'t over-interpret peaks or valleys. Look at the trend over time, not individual data points.' }
+    desc: 'Train your brain to catch its own biases through real decision scenarios.',
+    scenarios: [
+      {
+        situation: "A bat and ball cost ₹110 together. The bat costs ₹100 more than the ball. How much does the ball cost?",
+        choices: [
+          { text: "₹10", tag: "system1" },
+          { text: "₹5", tag: "system2" },
+          { text: "₹100", tag: "confused" },
+          { text: "Not enough information", tag: "overthink" }
+        ],
+        law: "System 1 vs System 2 Thinking",
+        analysis: {
+          "system1": "WRONG. 50% of Harvard students got this wrong too. System 1 jumped to ₹10 because 110-100=10 feels right. But check: ball ₹10 + bat ₹110 = ₹120, not ₹110. Your fast brain LIED. Correct: ₹5 ball + ₹105 bat = ₹110.",
+          "system2": "Correct. You activated System 2 (slow, deliberate) instead of trusting System 1. This question exploits the gap between intuition and logic. LESSON: For important decisions — always ask 'Does this actually add up?'",
+          "confused": "You subtracted without thinking. ₹110-₹100=₹10 is your brain's first offer. But the ₹100 is the DIFFERENCE, not the bat's price. System 1 grabs the most available answer and presents it as truth.",
+          "overthink": "There IS enough information. Your hesitation shows you sensed something wrong (good instinct!) but couldn't work it out. Answer: ₹5. Your System 2 tried to override System 1 but didn't have enough fuel."
+        },
+        correctChoice: 1,
+        principle: "System 1 gives quick answers that FEEL right. System 2 gives correct answers that ARE right. For important decisions, always engage System 2."
+      },
+      {
+        situation: "You've invested 2 years in a startup that's failing. Cut losses now or invest ₹5 lakh more hoping it recovers?",
+        choices: [
+          { text: "Invest more — I've already put in 2 years, can't give up now", tag: "sunk-cost" },
+          { text: "Analyze coldly: ignoring past investment, is ₹5 lakh for THIS startup's FUTURE a good deal?", tag: "rational" },
+          { text: "Cut all losses immediately and move on", tag: "decisive" },
+          { text: "Ask 3 successful founders for honest assessment", tag: "external" }
+        ],
+        law: "Sunk Cost Fallacy + Loss Aversion",
+        analysis: {
+          "sunk-cost": "THE MOST EXPENSIVE BIAS IN BUSINESS. 'I've already invested so much' is not a reason to invest more. The 2 years are GONE. Only question: is the NEXT ₹5 lakh worth the EXPECTED RETURN? BILLIONAIRE RULE: Best investors cut losses FAST.",
+          "rational": "The only correct framework. Remove all emotion, history, sunk costs. Ask: 'If someone offered me THIS startup for ₹5 lakh, would I buy it?' If yes, invest. If no, walk away. Incredibly hard emotionally, but financially essential.",
+          "decisive": "Fast and clean, but potentially premature. You might cut a viable business. COMBINE with rational analysis: decide fast, but based on FUTURE value, not fear.",
+          "external": "Smart supplement. Founders who've been through this see what you can't because you're emotionally invested. Ask for their ANALYSIS, not opinion."
+        },
+        correctChoice: 1,
+        principle: "Past investment is a trap. The only valid question: 'Is future investment worth future return?' Always decide forward, never backward."
+      },
+      {
+        situation: "You read about a plane crash on the news. You need to fly tomorrow. How do you feel?",
+        choices: [
+          { text: "Nervous — there seem to be a lot of crashes lately", tag: "availability" },
+          { text: "Fine — flying is statistically safer than driving to the airport", tag: "statistical" },
+          { text: "Uneasy but I know it's safe — the feeling doesn't match reality", tag: "aware" },
+          { text: "Terrified — canceling the trip", tag: "emotional" }
+        ],
+        law: "Availability Heuristic",
+        analysis: {
+          "availability": "Your brain judged probability by how easily you RECALL crashes — not statistics. Plane crashes are vivid, dramatic, heavily covered. Car accidents are boring, common. Flying FEELS more dangerous but driving is 100x more lethal.",
+          "statistical": "Correct and rare. You overrode emotion with data. The availability heuristic uses VIVIDNESS as a proxy for FREQUENCY. Most people can't do this because System 1 is faster than System 2.",
+          "aware": "Healthiest response. You FEEL the fear (System 1) but KNOW it's irrational (System 2). This is emotional intelligence: not suppressing emotions, but not being controlled by them.",
+          "emotional": "The heuristic won. Your brain treated a VIVID memory as a PROBABILITY. You made a worse decision: driving (100x more dangerous) to avoid flying (safest transport)."
+        },
+        correctChoice: 2,
+        principle: "Your brain judges probability by how easily examples come to mind. Check ACTUAL statistics before making decisions based on 'gut feeling' about risk."
+      }
     ]
   },
   {
     id: 'prince',
-    title: 'The Prince',
+    title: 'The Prince — Machiavelli',
     author: 'Niccolò Machiavelli',
     color: '#ff8800',
     icon: '👑',
-    desc: 'The original playbook on how power actually works — 500 years later, still relevant.',
-    levels: [
-      { n: 1, title: 'It Is Better to Be Feared Than Loved', insight: '"If one must choose, it is safer to be feared than loved." Love is fickle — people abandon those they love when it suits them. Fear, supported by the certainty of punishment, is a bond that never breaks. But never be HATED — hatred breeds conspiracy.', action: 'Earn respect through competence and consistency. Love is a bonus; fear of consequences is the baseline.' },
-      { n: 2, title: 'The Fox and the Lion', insight: 'A ruler must be both fox (to recognize traps) and lion (to frighten wolves). The lion alone is naive; the fox alone is weak. You must be able to break your word when circumstances demand it — and know WHEN to break it.', action: 'Adapt your approach: be bold when strength is needed, cunning when subtlety is required. Never be just one.' },
-      { n: 3, title: 'Appearances vs Reality', insight: '"Everyone sees what you appear to be, few really know what you are." The masses are impressed by appearances. What matters is SEEMING virtuous, merciful, religious — not BEING those things. The mask is more powerful than the face.', action: 'Master the gap between your internal reality and external perception. People judge surfaces; give them brilliant surfaces.' },
-      { n: 4, title: 'The Means Justify the Ends', insight: 'A prince who wants to maintain power must be prepared to act against faith, charity, religion, and humanity when necessary. Cruelty well-used (quick, decisive, for the public good) is better than mercy that causes chaos.', action: 'Make hard decisions quickly and completely. Half-measures create suffering; decisive action, even if harsh, creates order.' },
-      { n: 5, title: 'New Princes Are Tested Most', insight: 'Those who come to power through their own ability face more challenges than those who inherit it. New leaders must prove themselves quickly. The first actions set the tone for everything that follows.', action: 'In any new role, establish your authority in the first 30 days. Early impressions become permanent.' },
-      { n: 6, title: 'Fortune Favors the Bold', insight: '"Fortune is a woman: if you want to control her, you must beat her and strike her." Fortune (luck, circumstance) favors those who act decisively. Timidity invites disaster. Bold action creates its own luck.', action: 'When opportunity appears, act immediately. The bold seize what the cautious only contemplate.' },
-      { n: 7, title: 'Armed Prophets Succeed', insight: '"All armed prophets have conquered, all unarmed prophets have been destroyed." Ideas without power behind them are easily crushed. The combination of vision + force = success. Philosophy without action is useless.', action: 'Back every vision with concrete action. Ideas + execution = results. Ideas alone = noise.' }
+    desc: 'Ancient power wisdom applied to modern workplace & social dynamics.',
+    scenarios: [
+      {
+        situation: "You're promoted to team lead. The previous lead was loved by everyone. Your team is loyal to the OLD style. How do you establish yourself?",
+        choices: [
+          { text: "Keep everything the same — don't rock the boat", tag: "imitator" },
+          { text: "Immediately change everything to show who's in charge", tag: "revolutionary" },
+          { text: "Make 2-3 visible, impactful changes quickly — then stabilize", tag: "machiavellian" },
+          { text: "Ask the team what they want and follow their preferences", tag: "democratic" }
+        ],
+        law: "New Princes Must Act Decisively",
+        analysis: {
+          "imitator": "You're in the old leader's shadow. Every success gets attributed to 'the system they built.' Every failure gets blamed on you. You'll never escape comparison by imitation.",
+          "revolutionary": "Too fast, too much. You've alienated the team and signaled you don't respect what came before. People resist forced change from new authority. CONSEQUENCE: Passive resistance, sabotage.",
+          "machiavellian": "Machiavelli's exact advice: 'Make authority felt quickly through decisive action, then consolidate.' The 2-3 changes establish YOU. The stabilization shows you're not reckless. PSYCHOLOGY: Ambiguity is worse than change. People fear uncertainty more than bad news.",
+          "democratic": "Sounds good. In practice, you're a follower, not a leader. When tough decisions come, they expect to vote. Democratic leaders in crisis get overruled by the loudest voice. LEADERSHIP: Listen, but YOU make the final call."
+        },
+        correctChoice: 2,
+        principle: "New leaders must establish authority through visible, decisive action in the first 30 days — then stabilize."
+      },
+      {
+        situation: "A competitor spreads rumors about your company. Clients are asking questions. What do you do?",
+        choices: [
+          { text: "Ignore it — responding gives rumors credibility", tag: "silent" },
+          { text: "Counter-attack with worse rumors about them", tag: "aggressive" },
+          { text: "Address rumors head-on with transparency and evidence", tag: "honest" },
+          { text: "Don't address rumors — flood the market with positive evidence instead", tag: "strategic" }
+        ],
+        law: "Control the Narrative",
+        analysis: {
+          "silent": "In the information age, silence = guilt. People interpret unchallenged rumors as truth. Your dignity costs you clients.",
+          "aggressive": "Now you're in a mud fight. Both companies look bad. Clients see two competitors attacking each other and think 'neither is trustworthy.'",
+          "honest": "Streisand Effect. By addressing rumors, you amplify them. People who never heard the rumor now know. 'We deny the false claim that...' — now everyone knows the claim exists.",
+          "strategic": "Machiavelli's approach. Don't fight the rumor — OUTSHINE it. Let results speak so loudly whispers can't be heard. The strongest defense against lies is reality so visible that deception looks absurd."
+        },
+        correctChoice: 3,
+        principle: "Don't fight rumors — overwhelm them with evidence. Create so much light that shadows disappear."
+      }
     ]
   },
   {
     id: 'winfriends',
-    title: 'How to Win Friends & Influence People',
+    title: 'How to Win Friends',
     author: 'Dale Carnegie',
     color: '#00ff88',
     icon: '🤝',
-    desc: 'The original people skills bible — still the foundation of all social influence.',
-    levels: [
-      { n: 1, title: 'Don\'t Criticize, Condemn, or Complain', insight: 'Criticism puts people on the defense and makes them justify themselves. It wounds pride, arouses resentment, and never produces lasting change. Instead of pointing out what\'s wrong, understand WHY they did what they did.', action: 'For 24 hours, don\'t criticize anyone for anything. Replace criticism with curiosity: "Help me understand why you did it this way."' },
-      { n: 2, title: 'Give Honest and Sincere Appreciation', insight: 'The deepest human craving is the desire to feel important. Every person you meet considers themselves superior in some way. Feed this hunger sincerely and you\'ll have influence. False flattery fails — genuine appreciation wins.', action: 'Find one person today and give them SPECIFIC, HONEST appreciation. Not "good job" but "The way you handled X showed real skill in Y."' },
-      { n: 3, title: 'Arouse in the Other Person an Eager Want', insight: 'Don\'t talk about what YOU want. Talk about what THEY want and show them how to get it. Fishing analogy: you don\'t bait the hook with strawberries (what YOU like) — you bait it with worms (what the FISH likes).', action: 'Frame every request in terms of the other person\'s desires. "You\'ll benefit from this because..." not "I need you to..."' },
-      { n: 4, title: 'Become Genuinely Interested in Other People', insight: 'You can make more friends in two months by becoming interested in other people than you can in two years by trying to get people interested in you. People are fascinating — if you actually look.', action: 'Ask someone about their life and LISTEN. No planning your response. No redirecting to yourself. Pure curiosity.' },
-      { n: 5, title: 'Smile', insight: 'A genuine smile says: "I like you. I\'m happy to see you." Actions speak louder than words, and a smile says: "You make me happy." Even on the phone — people can hear a smile.', action: 'Smile at everyone you meet today. Notice how it changes the dynamic of every interaction.' },
-      { n: 6, title: 'Remember Names', insight: 'A person\'s name is the sweetest sound to them in any language. Remembering a name shows respect; forgetting it shows contempt. Using someone\'s name is a subtle compliment that works every time.', action: 'Use someone\'s name at least twice in every conversation. It creates an instant connection.' },
-      { n: 7, title: 'Be a Good Listener', insight: 'Listening is the highest form of flattery. Encourage others to talk about themselves. Ask questions they\'ll enjoy answering. People who "listen well" are just people who let others talk — and they\'re adored for it.', action: 'In your next conversation, aim to listen 70% and talk 30%. Ask follow-up questions. People will love you.' },
-      { n: 8, title: 'Talk in Terms of Their Interests', insight: 'The royal road to someone\'s heart is to talk about the things they treasure most. Their hobbies, their achievements, their passions. The fastest way to bore someone is to talk about YOUR interests.', action: 'Research one person\'s interests before your next meeting. Lead with THEIR topic, not yours.' },
-      { n: 9, title: 'Make the Other Person Feel Important', insight: 'Do this sincerely and you\'ll have them eating out of your hand. Every human being craves significance. "What you\'ve done with X is remarkable." Specific + sincere = irresistible.', action: 'Find what someone is proud of and acknowledge it genuinely. This is the most powerful social tool that exists.' },
-      { n: 10, title: 'The Only Way to Win an Argument', insight: 'The only way to get the best of an argument is to avoid it. Arguments produce no winners — both sides become more convinced of their position. Even if you "win," you\'ve lost the relationship.', action: 'Next argument: find ONE thing you agree on and start there. Build from agreement, not conflict.' },
-      { n: 11, title: 'Never Say "You\'re Wrong"', insight: 'Directly telling someone they\'re wrong is like attacking their identity. Instead: "I may be wrong. Let\'s examine the facts." Give them a way to save face. Pride is more important than truth.', action: 'Replace "you\'re wrong" with "I see it differently" or "That\'s an interesting perspective — have you considered...?"' },
-      { n: 12, title: 'If You\'re Wrong, Admit It Quickly', insight: 'When you\'re wrong, admit it emphatically and quickly. It disarms the other person entirely. They were expecting a fight; you gave them victory. Now they want to be generous in return. Fighting blame creates enemies; accepting blame creates allies.', action: 'The next mistake you make, own it IMMEDIATELY and FULLY. Watch how fast people forgive you and even defend you.' }
-    ]
-  },
-  {
-    id: 'strategiesofwar',
-    title: 'The 33 Strategies of War',
-    author: 'Robert Greene',
-    color: '#ff3333',
-    icon: '⚔️',
-    desc: 'Military strategy applied to life, business, and personal warfare.',
-    levels: [
-      { n: 1, title: 'Declare War on Your Enemies (Polarize)', insight: 'In life you need a sense of purpose — a direction. Without an enemy to define yourself against, you drift. Create a clear sense of who/what you\'re fighting. Polarize: make people choose sides. Neutrality is death.', action: 'Define your "war" — what are you fighting FOR? What are you fighting AGAINST? Clarity of purpose is your first weapon.' },
-      { n: 2, title: 'Amidst Chaos, Find Opportunity', insight: 'When everything falls apart, the timid retreat and the bold advance. Chaos is the greatest opportunity because everyone else panics. While they\'re frozen, you act. Crisis is the forge of power.', action: 'The next crisis in your life: instead of reacting emotionally, ask "What opportunity does this create?" Then act.' },
-      { n: 3, title: 'Avoid the Unhappy and Unlucky', insight: 'Emotional states are contagious. The chronically unlucky are usually unlucky for reasons — their thinking, their habits, their attitudes. Surround yourself with winners or become a loser by proximity.', action: 'Audit your inner circle. Remove one person who consistently drains your energy or brings drama.' },
-      { n: 4, title: 'Create a Sense of Urgency and Desperation', insight: 'Burn your boats. Remove retreat as an option. When people have no escape route, they fight with everything. Comfort is the enemy of excellence. Create deadlines, eliminate fallbacks.', action: 'Commit to something publicly with a deadline. Remove your escape routes. Watch your productivity skyrocket.' },
-      { n: 5, title: 'Control the Dynamic — Strike First', insight: 'Whoever sets the terms of engagement controls the battle. Strike first to set the agenda. Don\'t wait for the world to act on you — act on the world. Passive people are acted upon; active people act.', action: 'In your next important situation, don\'t wait. Set the agenda first. Define the terms before others define them for you.' },
-      { n: 6, title: 'The Guerrilla War of the Mind', insight: 'Your worst enemy is your own mind — doubt, fear, overthinking. These internal enemies are more dangerous than any external opponent. Master your inner guerrilla war: discipline your thoughts or they will destroy you.', action: 'Identify your #1 mental enemy (fear, doubt, perfectionism). Name it. Fight it deliberately every day.' }
-    ]
-  },
-  {
-    id: 'atomichabits',
-    title: 'Atomic Habits',
-    author: 'James Clear',
-    color: '#00f0ff',
-    icon: '⚛️',
-    desc: 'Tiny changes, remarkable results — the science of building habits that stick.',
-    levels: [
-      { n: 1, title: '1% Better Every Day', insight: 'Improving by 1% every day for a year makes you 37 times better. Declining by 1% makes you nearly zero. Habits are compound interest of self-improvement. Small changes appear to make no difference until you cross a critical threshold.', action: 'Pick ONE thing to improve by 1% today. Not 10%. Just 1%. Stack that daily.' },
-      { n: 2, title: 'Systems > Goals', insight: 'Winners and losers have the same goals. Every Olympian wants gold. What separates them is their SYSTEM. Goals are about results; systems are about processes. Fall in love with the process, not the outcome.', action: 'Instead of setting a goal, design a daily system. "I will run a marathon" → "I will run every morning at 6 AM."' },
-      { n: 3, title: 'Identity-Based Habits', insight: 'Don\'t focus on what you want to achieve — focus on who you want to BE. Every action is a vote for the type of person you want to become. "I\'m a reader" beats "I want to read more." Identity drives behavior.', action: 'Reframe your habits as identity. "I don\'t eat junk food" (identity) vs "I\'m trying to eat healthy" (goal).' },
-      { n: 4, title: 'The 4 Laws of Behavior Change', insight: 'Make it OBVIOUS (cue). Make it ATTRACTIVE (craving). Make it EASY (response). Make it SATISFYING (reward). Reverse these to break bad habits: make it invisible, unattractive, difficult, unsatisfying.', action: 'Audit one habit: check each law. Which one is broken? Fix THAT specific law.' },
-      { n: 5, title: 'Habit Stacking', insight: 'After [CURRENT HABIT], I will [NEW HABIT]. Your existing habits are the best cues for new ones. Stack new behaviors onto established routines. The sequence matters: link habits together like a chain.', action: 'Design 3 habit stacks: "After I pour my coffee, I will [new habit]." "After I sit at my desk, I will [new habit]."' },
-      { n: 6, title: 'Environment Design', insight: 'Motivation is overrated; environment matters more. Make good habits obvious and easy by redesigning your space. Put the book on the pillow. Put the gym clothes by the door. Make the right thing the easy thing.', action: 'Redesign one physical space to make your desired habit the path of least resistance.' },
-      { n: 7, title: 'The 2-Minute Rule', insight: 'When starting a new habit, scale it down to 2 minutes or less. "Read before bed" → "read one page." "Run 3 miles" → "put on running shoes." The point is to master the art of SHOWING UP. The rest follows naturally.', action: 'Take your biggest habit goal and reduce it to a 2-minute version. Do that for 30 days.' },
-      { n: 8, title: 'Make It Satisfying', insight: 'What is immediately rewarded is repeated. What is immediately punished is avoided. The human brain evolved for immediate gratification — use this. Track your habits (visual progress = instant reward). Never break the chain twice.', action: 'Start a habit tracker TODAY. One checkmark per day. The streak itself becomes the reward.' }
+    desc: 'Master people skills through real interaction challenges.',
+    scenarios: [
+      {
+        situation: "Your colleague makes a big mistake on a shared project. They're already stressed. How do you address it?",
+        choices: [
+          { text: "Point out the mistake directly — we need to fix this NOW", tag: "blunt" },
+          { text: "Fix it yourself and never mention it — spare their feelings", tag: "avoidant" },
+          { text: "'Hey, I noticed something in section 3 — can you take a look? I think we might need to adjust it'", tag: "diplomatic" },
+          { text: "Report to the manager — this is too important for informality", tag: "escalator" }
+        ],
+        law: "Don't Criticize — Understand",
+        analysis: {
+          "blunt": "Direct but destructive. Stress + criticism = defensive reaction. They'll argue, justify, or shut down. The mistake gets fixed but the relationship is damaged. And damaged relationships create more mistakes.",
+          "avoidant": "Protected feelings, sacrificed your time. They never learn — it'll happen again. And resentment builds in YOU: 'I always clean up after them.' The 'nice' approach creates hidden toxicity.",
+          "diplomatic": "Carnegie's golden approach. 'WE might need to adjust' — no blame, no shame, just collaboration. Their dignity is intact. They'll fix it gratefully. PSYCHOLOGY: 'Can you take a look?' makes THEM the expert, not the culprit.",
+          "escalator": "Nuclear option. Manager sees your colleague as incompetent. Colleague sees you as a snitch. Two relationships damaged. ESCALATION RULE: Only escalate when direct approaches have failed."
+        },
+        correctChoice: 2,
+        principle: "The way you deliver criticism determines whether someone improves or becomes defensive. 'WE' > 'YOU.'"
+      },
+      {
+        situation: "At networking, you meet someone valuable for your career. They seem bored. How do you re-engage?",
+        choices: [
+          { text: "Talk more enthusiastically about your work", tag: "loud" },
+          { text: "Ask about THEIR work — 'What's the most interesting project you're on?'", tag: "pivot" },
+          { text: "Make a self-deprecating joke to break tension", tag: "humor" },
+          { text: "Excuse yourself gracefully — not every connection works", tag: "exit" }
+        ],
+        law: "Become Genuinely Interested in Other People",
+        analysis: {
+          "loud": "Louder 'me' content is still 'me' content. They're not bored because you lack enthusiasm — they're bored because the conversation is about YOU. FUNDAMENTAL ERROR: Being interesting means being interested in THEM.",
+          "pivot": "Instant course correction. The moment you ask about their work, their eyes light up. 'Most interesting project' invites pride, not boredom. Within 2 minutes they're thinking 'Wow, this person is great.' REALITY: They think YOU'RE interesting because you made THEM feel interesting.",
+          "humor": "Can work but risky. Self-deprecation signals low confidence. And humor doesn't fix the core issue: the conversation is one-directional.",
+          "exit": "Premature. You didn't try the simplest fix: asking about them. Most 'boring' people become fascinating when you find the right question."
+        },
+        correctChoice: 1,
+        principle: "The secret to being interesting is being INTERESTED. Make others feel fascinating."
+      }
     ]
   }
 ];
 
-// ===== WISDOM VAULT FUNCTIONS =====
+// ===== WISDOM VAULT GAME ENGINE =====
+let wisdomState = {
+  currentBook: null,
+  currentScenario: 0,
+  choices: [],
+  score: 0,
+  totalScenarios: 0,
+  behavioralProfile: {
+    aggressive: 0, passive: 0, strategic: 0, aware: 0,
+    emotional: 0, rational: 0, social: 0, independent: 0
+  }
+};
+
 function showWisdomVault() {
   const listEl = document.getElementById('vault-book-list');
   listEl.innerHTML = WISDOM_BOOKS.map(book => `
-    <div onclick="showWisdomBook('${book.id}')" style="
+    <div onclick="startWisdomBook('${book.id}')" style="
       background: ${book.color}11;
       border: 1px solid ${book.color}44;
       padding: 1rem 1.5rem;
@@ -4418,7 +4673,7 @@ function showWisdomVault() {
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <div>
           <div style="font-family:Orbitron;font-size:0.9rem;color:${book.color};">${book.icon} ${book.title}</div>
-          <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-top:0.2rem;">${book.author} — ${book.levels.length} laws/levels</div>
+          <div style="font-size:0.75rem;color:rgba(255,255,255,0.4);margin-top:0.2rem;">${book.author} — ${book.scenarios.length} scenarios</div>
           <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:0.3rem;">${book.desc}</div>
         </div>
         <div style="font-size:1.5rem;color:${book.color};opacity:0.5;">→</div>
@@ -4428,93 +4683,165 @@ function showWisdomVault() {
   showScreen('wisdom-vault-screen');
 }
 
-function showWisdomBook(bookId) {
+function startWisdomBook(bookId) {
   const book = WISDOM_BOOKS.find(b => b.id === bookId);
   if (!book) return;
-  
-  document.getElementById('wb-book-header').innerHTML = `
-    <div style="font-size:2.5rem;">${book.icon}</div>
-    <h2 style="font-family:Orbitron;color:${book.color};margin:0.3rem 0;">${book.title}</h2>
-    <div style="color:rgba(255,255,255,0.5);font-size:0.8rem;">${book.author}</div>
-    <div style="color:rgba(255,255,255,0.35);font-size:0.75rem;margin-top:0.3rem;">${book.desc}</div>
-  `;
-  
-  const levelsEl = document.getElementById('wb-levels');
-  levelsEl.innerHTML = book.levels.map(lvl => `
-    <div onclick="showWisdomLevel('${bookId}', ${lvl.n})" style="
-      background: var(--glass);
-      border: 1px solid var(--glass-border);
-      padding: 0.7rem 1rem;
-      margin-bottom: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    " onmouseover="this.style.borderColor='${book.color}'" onmouseout="this.style.borderColor='var(--glass-border)'">
-      <div>
-        <span style="font-family:Orbitron;font-size:0.75rem;color:${book.color};">Law ${lvl.n}</span>
-        <span style="font-size:0.8rem;margin-left:0.5rem;">${lvl.title}</span>
-      </div>
-      <span style="color:rgba(255,255,255,0.3);">→</span>
-    </div>
-  `).join('');
-  
-  showScreen('wisdom-book-screen');
+  wisdomState.currentBook = book;
+  wisdomState.currentScenario = 0;
+  wisdomState.choices = [];
+  wisdomState.score = 0;
+  wisdomState.totalScenarios = book.scenarios.length;
+  wisdomState.behavioralProfile = { aggressive:0, passive:0, strategic:0, aware:0, emotional:0, rational:0, social:0, independent:0 };
+  showWisdomScenario();
 }
 
-function showWisdomLevel(bookId, levelNum) {
-  const book = WISDOM_BOOKS.find(b => b.id === bookId);
-  if (!book) return;
-  const lvl = book.levels.find(l => l.n === levelNum);
-  if (!lvl) return;
+function showWisdomScenario() {
+  const book = wisdomState.currentBook;
+  const idx = wisdomState.currentScenario;
+  const scenario = book.scenarios[idx];
+  if (!scenario) { showWisdomResults(); return; }
+  
+  const contentEl = document.getElementById('wl-content');
+  contentEl.innerHTML = `
+    <div style="text-align:center;margin-bottom:0.5rem;">
+      <span style="font-family:Orbitron;font-size:0.65rem;color:${book.color};letter-spacing:0.2em;">${book.icon} ${book.title.toUpperCase()}</span>
+      <div style="font-size:0.6rem;color:rgba(255,255,255,0.3);margin-top:0.2rem;">SCENARIO ${idx+1} / ${book.scenarios.length}</div>
+    </div>
+    <div style="background:rgba(255,255,255,0.03);border:1px solid ${book.color}33;padding:1.2rem;margin-bottom:1.2rem;border-radius:4px;font-size:0.9rem;line-height:1.6;color:rgba(255,255,255,0.85);">
+      <div style="font-family:Orbitron;font-size:0.6rem;color:${book.color};margin-bottom:0.5rem;">⚡ SITUATION</div>
+      ${scenario.situation}
+    </div>
+    <div style="font-family:Orbitron;font-size:0.65rem;color:rgba(255,255,255,0.5);margin-bottom:0.5rem;letter-spacing:0.1em;">WHAT DO YOU DO?</div>
+    <div id="wisdom-choices">
+      ${scenario.choices.map((choice, i) => `
+        <div onclick="selectWisdomChoice(${i})" id="wchoice-${i}" style="background:var(--glass);border:1px solid var(--glass-border);padding:0.8rem 1rem;margin-bottom:6px;cursor:pointer;transition:all 0.2s;font-size:0.8rem;color:rgba(255,255,255,0.8);border-radius:4px;" onmouseover="if(!this.classList.contains('locked')){this.style.borderColor='${book.color}'}" onmouseout="if(!this.classList.contains('locked')){this.style.borderColor='var(--glass-border)'}">
+          <span style="font-family:Orbitron;font-size:0.65rem;color:${book.color};margin-right:0.5rem;">${String.fromCharCode(65+i)}.</span> ${choice.text}
+        </div>
+      `).join('')}
+    </div>
+    <div id="wisdom-analysis" style="display:none;"></div>
+    <div class="progress-bar" style="margin-top:1rem;"><div class="progress-fill" id="w-progress" style="width:${(idx/book.scenarios.length)*100}%;background:${book.color};"></div></div>
+  `;
+  document.getElementById('wl-nav').innerHTML = '';
+}
+
+function selectWisdomChoice(choiceIdx) {
+  const book = wisdomState.currentBook;
+  const scenario = book.scenarios[wisdomState.currentScenario];
+  const choice = scenario.choices[choiceIdx];
+  const isCorrect = choiceIdx === scenario.correctChoice;
+  
+  document.querySelectorAll('#wisdom-choices > div').forEach(el => {
+    el.classList.add('locked');
+    el.style.cursor = 'default';
+    el.style.pointerEvents = 'none';
+  });
+  
+  const selectedEl = document.getElementById('wchoice-'+choiceIdx);
+  selectedEl.style.borderColor = isCorrect ? 'var(--success)' : 'var(--danger)';
+  selectedEl.style.background = isCorrect ? 'rgba(0,255,136,0.1)' : 'rgba(255,51,51,0.1)';
+  
+  if (!isCorrect) {
+    const correctEl = document.getElementById('wchoice-'+scenario.correctChoice);
+    correctEl.style.borderColor = 'var(--success)';
+    correctEl.style.background = 'rgba(0,255,136,0.1)';
+  }
+  
+  if (isCorrect) wisdomState.score++;
+  wisdomState.choices.push({ scenario: wisdomState.currentScenario, choice: choiceIdx, tag: choice.tag, correct: isCorrect });
+  
+  const tag = choice.tag;
+  if (['aggressive','confrontational','competitive','revolutionary','blunt','assertive','compete'].includes(tag)) wisdomState.behavioralProfile.aggressive++;
+  if (['passive','passive-aggressive','people-pleaser','avoidant','neutral','imitator','silent','herd','reciprocated','deferential','procrastinator','sunk-cost','passive','compliant'].includes(tag)) wisdomState.behavioralProfile.passive++;
+  if (['strategic','calculated','machiavellian','behind-scenes','long-game','master'].includes(tag)) wisdomState.behavioralProfile.strategic++;
+  if (['aware','skeptical','immune','probing','analytical','rational','testing','system2'].includes(tag)) wisdomState.behavioralProfile.aware++;
+  if (['emotional','triggered','infected','flattered','confused','naive','availability','system1','doubtful','compromised'].includes(tag)) wisdomState.behavioralProfile.emotional++;
+  if (['decisive','direct','boundary','independent','statistical'].includes(tag)) wisdomState.behavioralProfile.rational++;
+  if (['supportive','loyal','generous','charmer','charismatic','mediator','democratic','diplomatic','penetrating','resistant'].includes(tag)) wisdomState.behavioralProfile.social++;
+  if (['rogue','opportunistic','double-agent','shadow','star','coquette','informant','escalator','dismiss','loud','humor','exit'].includes(tag)) wisdomState.behavioralProfile.independent++;
+  
+  if (isCorrect) playClick(); else playFail();
+  
+  const analysisEl = document.getElementById('wisdom-analysis');
+  analysisEl.style.display = '';
+  analysisEl.innerHTML = `
+    <div style="background:${isCorrect?'rgba(0,255,136,0.05)':'rgba(255,51,51,0.05)'};border-left:3px solid ${isCorrect?'var(--success)':'var(--danger)'};padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
+      <div style="font-family:Orbitron;font-size:0.65rem;color:${isCorrect?'var(--success)':'var(--danger)'};margin-bottom:0.5rem;letter-spacing:0.1em;">${isCorrect?'✅ STRATEGIC CHOICE':'❌ YOUR CHOICE — CONSEQUENCE'}</div>
+      <div style="color:rgba(255,255,255,0.8);font-size:0.82rem;line-height:1.7;">${scenario.analysis[choice.tag]}</div>
+    </div>
+    <div style="background:rgba(255,0,170,0.05);border-left:3px solid ${book.color};padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
+      <div style="font-family:Orbitron;font-size:0.65rem;color:${book.color};margin-bottom:0.5rem;letter-spacing:0.1em;">📚 PRINCIPLE</div>
+      <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;line-height:1.7;font-style:italic;">"${scenario.principle}"</div>
+    </div>
+    <div style="background:rgba(0,240,255,0.05);border-left:3px solid var(--primary);padding:1rem;margin:1rem 0;border-radius:0 4px 4px 0;">
+      <div style="font-family:Orbitron;font-size:0.65rem;color:var(--primary);margin-bottom:0.5rem;letter-spacing:0.1em;">📖 LAW: ${scenario.law}</div>
+    </div>
+  `;
+  
+  const navEl = document.getElementById('wl-nav');
+  const isLast = wisdomState.currentScenario >= book.scenarios.length - 1;
+  navEl.innerHTML = `<button class="btn btn-small" onclick="wisdomNext()" style="font-size:0.75rem;padding:0.5rem 1.5rem;background:linear-gradient(135deg,${book.color},${book.color}88);">${isLast?'📊 SEE YOUR PROFILE':'NEXT SCENARIO →'}</button>`;
+  
+  const prog = document.getElementById('w-progress');
+  if (prog) prog.style.width = `${((wisdomState.currentScenario+1)/book.scenarios.length)*100}%`;
+}
+
+function wisdomNext() {
+  wisdomState.currentScenario++;
+  if (wisdomState.currentScenario >= wisdomState.currentBook.scenarios.length) showWisdomResults();
+  else showWisdomScenario();
+}
+
+function showWisdomResults() {
+  const book = wisdomState.currentBook;
+  const score = wisdomState.score;
+  const total = book.scenarios.length;
+  const pct = Math.round((score/total)*100);
+  const profile = wisdomState.behavioralProfile;
+  const sorted = Object.entries(profile).sort((a,b) => b[1]-a[1]);
+  const dominant = sorted[0][0];
+  
+  const traits = {
+    aggressive: { name:'THE WARRIOR', desc:'You confront head-on. Powerful but dangerous — you create as many enemies as victories. Work on timing and diplomacy.', color:'var(--danger)' },
+    passive: { name:'THE PEACEMAKER', desc:'You avoid conflict at all costs. Safe but invisible. People walk over you because you let them. Learn to assert strategically.', color:'rgba(255,255,255,0.4)' },
+    strategic: { name:'THE PUPPET MASTER', desc:'You think three moves ahead. Powerful — but don\'t lose your humanity in the game.', color:'var(--secondary)' },
+    aware: { name:'THE ANALYST', desc:'You see through manipulation. Your awareness protects you. But analysis without action is just observation.', color:'var(--primary)' },
+    emotional: { name:'THE FEELER', desc:'You lead with emotion. Empathetic but vulnerable to manipulation. Your feelings are data — not directives.', color:'#ff8800' },
+    rational: { name:'THE LOGICIAN', desc:'You decide on evidence. Effective but sometimes cold. People want to feel understood, not just analyzed.', color:'var(--success)' },
+    social: { name:'THE CONNECTOR', desc:'You build relationships and inspire loyalty. Social skills are your superpower. Don\'t sacrifice your needs for the group.', color:'#00ff88' },
+    independent: { name:'THE LONE WOLF', desc:'You play your own game. Clever and self-reliant, but you miss the power of genuine connection.', color:'var(--accent)' }
+  };
+  const trait = traits[dominant];
   
   const contentEl = document.getElementById('wl-content');
   contentEl.innerHTML = `
     <div style="text-align:center;margin-bottom:1.5rem;">
-      <div style="font-size:1.5rem;">${book.icon}</div>
-      <div style="font-family:Orbitron;font-size:0.65rem;color:rgba(255,255,255,0.3);letter-spacing:0.2em;margin-top:0.3rem;">${book.title.toUpperCase()}</div>
-      <div style="font-family:Orbitron;font-size:1.5rem;color:${book.color};margin:0.5rem 0;">Law ${lvl.n}: ${lvl.title}</div>
+      <div style="font-size:2rem;">${book.icon}</div>
+      <div style="font-family:Orbitron;font-size:1.2rem;color:${book.color};margin:0.5rem 0;">${book.title}</div>
+      <div style="font-size:0.7rem;color:rgba(255,255,255,0.3);">SCENARIO ANALYSIS COMPLETE</div>
     </div>
-    
-    <div style="
-      background: ${book.color}08;
-      border-left: 3px solid ${book.color};
-      padding: 1rem 1.2rem;
-      margin-bottom: 1rem;
-      border-radius: 0 4px 4px 0;
-    ">
-      <div style="font-family:Orbitron;font-size:0.65rem;color:${book.color};margin-bottom:0.5rem;letter-spacing:0.15em;">💡 INSIGHT</div>
-      <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;line-height:1.7;">${lvl.insight}</div>
+    <div style="text-align:center;margin:1.5rem 0;">
+      <div style="font-family:Orbitron;font-size:3rem;color:${pct>=70?'var(--success)':pct>=40?'var(--accent)':'var(--danger)'};">${score}/${total}</div>
+      <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);">Strategic choices</div>
     </div>
-    
-    <div style="
-      background: rgba(0,255,136,0.05);
-      border-left: 3px solid var(--success);
-      padding: 1rem 1.2rem;
-      margin-bottom: 1rem;
-      border-radius: 0 4px 4px 0;
-    ">
-      <div style="font-family:Orbitron;font-size:0.65rem;color:var(--success);margin-bottom:0.5rem;letter-spacing:0.15em;">🎯 ACTION STEP</div>
-      <div style="color:rgba(255,255,255,0.8);font-size:0.85rem;line-height:1.7;">${lvl.action}</div>
+    <div style="background:${trait.color}11;border:1px solid ${trait.color}44;padding:1.2rem;margin:1rem 0;border-radius:4px;text-align:center;">
+      <div style="font-family:Orbitron;font-size:1.3rem;color:${trait.color};margin-bottom:0.5rem;">${trait.name}</div>
+      <div style="font-size:0.8rem;color:rgba(255,255,255,0.7);line-height:1.6;">${trait.desc}</div>
     </div>
+    <div style="font-family:Orbitron;font-size:0.65rem;color:rgba(255,255,255,0.4);margin:1rem 0 0.5rem;letter-spacing:0.1em;">BEHAVIORAL BREAKDOWN</div>
+    ${sorted.filter(([k,v])=>v>0).map(([key,val])=>{
+      const maxV=Math.max(...Object.values(profile),1);
+      const colors={aggressive:'var(--danger)',passive:'rgba(255,255,255,0.4)',strategic:'var(--secondary)',aware:'var(--primary)',emotional:'#ff8800',rational:'var(--success)',social:'#00ff88',independent:'var(--accent)'};
+      return `<div style="display:flex;align-items:center;gap:0.5rem;margin:0.3rem 0;font-size:0.7rem;"><span style="width:80px;text-align:right;color:${colors[key]};text-transform:uppercase;">${key}</span><div style="flex:1;height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;"><div style="width:${(val/maxV)*100}%;height:100%;background:${colors[key]};border-radius:4px;"></div></div><span style="width:20px;font-family:Orbitron;font-size:0.6rem;">${val}</span></div>`;
+    }).join('')}
+    ${sorted[1]?`<div style="background:rgba(255,230,0,0.05);border:1px solid rgba(255,230,0,0.2);padding:1rem;margin:1.5rem 0;border-radius:4px;"><div style="font-family:Orbitron;font-size:0.65rem;color:var(--accent);margin-bottom:0.5rem;letter-spacing:0.1em;">💡 YOUR WEAKNESS PATTERN</div><div style="font-size:0.8rem;color:rgba(255,255,255,0.7);line-height:1.6;">Your secondary tendency is <strong style="color:${traits[sorted[1][0]].color}">${sorted[1][0]}</strong>. Under pressure, you slip from ${dominant} → ${sorted[1][0]}. That's your blind spot. Review the scenarios you got wrong — that's where it shows.</div></div>`:''}
   `;
   
-  // Navigation
-  const navEl = document.getElementById('wl-nav');
-  let navHtml = '';
-  if (levelNum > 1) {
-    navHtml += `<button class="btn btn-small" onclick="showWisdomLevel('${bookId}', ${levelNum - 1})" style="font-size:0.7rem;padding:0.4rem 1rem;">← PREV</button>`;
-  }
-  navHtml += `<button class="btn btn-small" onclick="showWisdomBook('${bookId}')" style="font-size:0.7rem;padding:0.4rem 1rem;background:linear-gradient(135deg,#444,#222);">ALL LAWS</button>`;
-  if (levelNum < book.levels.length) {
-    navHtml += `<button class="btn btn-small" onclick="showWisdomLevel('${bookId}', ${levelNum + 1})" style="font-size:0.7rem;padding:0.4rem 1rem;">NEXT →</button>`;
-  }
-  navEl.innerHTML = navHtml;
-  
-  showScreen('wisdom-level-screen');
+  document.getElementById('wl-nav').innerHTML = `
+    <button class="btn btn-small" onclick="startWisdomBook('${book.id}')" style="font-size:0.7rem;padding:0.4rem 1rem;">🔄 PLAY AGAIN</button>
+    <button class="btn btn-small" onclick="showWisdomVault()" style="font-size:0.7rem;padding:0.4rem 1rem;background:linear-gradient(135deg,#444,#222);">📚 OTHER BOOKS</button>
+  `;
 }
-
 // ===== MATRIX RAIN BACKGROUND =====
 (function initMatrix() {
   const canvas = document.getElementById('matrix-canvas');
